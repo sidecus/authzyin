@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace lib
+﻿namespace authzyin
 {
+    using System;
+
     public class Class1
     {
     }
