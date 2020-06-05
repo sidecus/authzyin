@@ -1,4 +1,4 @@
-namespace sample.Auth
+namespace sample
 {
     /// <summary>
     /// Authentication config object

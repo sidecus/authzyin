@@ -1,12 +1,12 @@
-namespace sample.Auth
+namespace sample.AuthN
 {
     using AuthZyin.Authorization;
     using Microsoft.AspNetCore.Http;
 
     /// <summary>
-    /// Client data manager
+    /// Authorization context for the sample project
     /// </summary>
-    public class SampleClientDataManager : AuthZyinDataManager<Membership>
+    public class SampleAuthZyinContext : AuthZyinContext<Membership>
     {
         /// <summary>
         /// Custom claim to process
@@ -14,11 +14,11 @@ namespace sample.Auth
         protected override string CustomClaimTypeToProcess => Membership.ClaimType;
  
         /// <summary>
-        /// Initializes a new instance of the AuthZyinClientDataManager class
+        /// Initializes a new instance of the SampleAuthZyinContext class
         /// </summary>
         /// <param name="policyList">policy list</param>
         /// <param name="contextAccessor">httpContextAccessor</param>
-        public SampleClientDataManager(IAuthorizationPolicyList policyList, IHttpContextAccessor contextAccessor)
+        public SampleAuthZyinContext(IAuthorizationPolicyList policyList, IHttpContextAccessor contextAccessor)
             : base(policyList, contextAccessor)
         {
         }

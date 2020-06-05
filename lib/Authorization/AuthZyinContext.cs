@@ -5,11 +5,13 @@ namespace AuthZyin.Authorization
     using AuthZyin.Authentication;
     using Microsoft.AspNetCore.Http;
     using AuthZyin.Authorization.Client;
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore.Authorization;
 
     /// <summary>
     /// Interface to construct required authorization data
     /// </summary>
-    public interface IAuthZyinDataManager
+    public interface IAuthZyinContext
     {
         /// <summary>
         /// Generate client data used for client authorization
@@ -19,9 +21,9 @@ namespace AuthZyin.Authorization
     }
 
     /// <summary>
-    /// AuthZyinDataManager managing generation of data required during authorization
+    /// AuthZyinContext managing generation of data required during authorization
     /// </summary>
-    public class AuthZyinDataManager<T> : IAuthZyinDataManager
+    public class AuthZyinContext<T> : IAuthZyinContext
         where T : class
     {
         /// <summary>
@@ -32,7 +34,7 @@ namespace AuthZyin.Authorization
         /// <summary>
         // Authorization policy list
         /// </summary>
-        private readonly IAuthorizationPolicyList policyList;
+        private readonly IEnumerable<(string name, AuthorizationPolicy policy)> policies;
 
         /// <summary>
         /// custom data for authorization purpose
@@ -48,19 +50,35 @@ namespace AuthZyin.Authorization
         /// Interface implementation, get an object representing the authorization data to send to client
         /// </summary>
         /// <returns>client data object</returns>
-        public object ClientData => new AuthZyinClientData<T>(this.userContext, this.CustomData, this.policyList.Policies);
+        public object ClientData => new AuthZyinClientData<T>(this.userContext, this.CustomData, this.policies);
 
         /// <summary>
-        /// Initializes a new instance of the AuthZyinClientDataManager class
+        /// Initializes a new instance of the AuthZyinContext class
         /// </summary>
         /// <param name="policyList">policy list</param>
         /// <param name="contextAccessor">httpContextAccessor</param>
-        public AuthZyinDataManager(IAuthorizationPolicyList policyList, IHttpContextAccessor contextAccessor)
+        public AuthZyinContext(
+            IAuthorizationPolicyList policyList,
+            IHttpContextAccessor contextAccessor)
+            : this(policyList?.Policies, new AadClaimsAccessor(contextAccessor?.HttpContext?.User))
         {
-            this.policyList = policyList ?? throw new ArgumentNullException(nameof(policyList));
-            
-            var principal = contextAccessor?.HttpContext?.User ?? throw new ArgumentNullException(nameof(contextAccessor));
-            var claimsAccessor = new AadClaimsAccessor(principal);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the AuthZyinContext class
+        /// </summary>
+        /// <param name="policies">list of policies</param>
+        /// <param name="contextAccessor">httpContextAccessor</param>
+        public AuthZyinContext(
+            IEnumerable<(string name, AuthorizationPolicy policy)> policies,
+            AadClaimsAccessor claimsAccessor)
+        {
+            this.policies = policies ?? throw new ArgumentNullException(nameof(policies));
+            if (claimsAccessor == null)
+            {
+                throw new ArgumentNullException(nameof(claimsAccessor));
+            }
+
             this.userContext = new AuthZyinUserContext(claimsAccessor);
 
             // Retrieve the custom data json string from claims as well (if any).

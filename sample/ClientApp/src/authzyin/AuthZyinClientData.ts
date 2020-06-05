@@ -1,4 +1,4 @@
-export const policyApi = '/authzyin/policies';
+export const policyApi = '/authzyin/context';
 
 /* Definitions here maps to types defined in AuthZyin.Authorization.Client */
 /* We can also consider auto ts generation from C# */

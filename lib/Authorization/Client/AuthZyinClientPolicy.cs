@@ -16,9 +16,13 @@ namespace AuthZyin.Authorization.Client
         public string Name { get; }
 
         /// <summary>
-        /// Gets or sets the requirement list
+        /// Gets or sets the requirement list - note we are using object as the type here.
+        /// In fact all requirements to send to lient should be of type AuthZyinRequirement.
+        /// The reason to use object as the item type is to force System.Text.Json to serialize all members.
+        /// Otherwise it only serialize the members from AuthZyinRequirement.
+        /// We need the deeply polymorphic behavior here.
         /// </summary>
-        public List<string> Requirements { get; }
+        public List<object> Requirements { get; }
 
         /// <summary>
         /// Initializes a new instance of AuthZyinClientPolicy class
@@ -28,7 +32,7 @@ namespace AuthZyin.Authorization.Client
         public AuthZyinClientPolicy(string name, AuthorizationPolicy policy)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.Requirements = policy.Requirements.Select(x => x.GetType().Name).ToList();
+            this.Requirements = policy.Requirements.Where(r => r is AuthZyinRequirement).Select(r => r as object).ToList();
         }
     }
 }

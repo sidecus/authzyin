@@ -1,8 +1,9 @@
-namespace sample.Auth
+namespace sample
 {
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authentication;
+    using sample.AuthN;
 
     /// <summary>
     /// Claims transformer
@@ -38,8 +39,8 @@ namespace sample.Auth
         /// <param name="ci">claims identity</param>
         private void AddMembershipClaim(ClaimsIdentity ci)
         {
+            // AuthZyin[sidecus]: add required "custom data" (Membership) in this case to claims
             var membership = new Membership();
-
             ci.AddClaim(membership.GetClaim());
         }
     }

@@ -7,7 +7,7 @@
     /// <summary>
     /// Auth extensions
     /// </summary>
-    public static class AuthZyinExtensions
+    public static class AuthorizationExtensions
     {
         /// <summary>
         /// Add authorization
@@ -23,18 +23,19 @@
             }
 
             // Add current assembly as an ApplicationPart for the controller to work
-            services.AddControllers().AddApplicationPart(typeof(AuthZyinExtensions).Assembly);
+            services.AddControllers().AddApplicationPart(typeof(AuthorizationExtensions).Assembly);
 
-            // Add http context accessor - needed by AuthZyinClientDataManager
+            // Add http context accessor - needed by AuthZyinContext registration
             services.AddHttpContextAccessor();
 
             // Add authorization and register the policy list instance
             var authZyinOptions = new AuthZyinAuthorizationOptions();
             configure(authZyinOptions);
             services.AddAuthorization(authZyinOptions.ConfigureAuthorizationOptions);
-
-            services.AddSingleton<IAuthorizationHandler, AuthZyinHandler>();
             services.AddSingleton<IAuthorizationPolicyList>(authZyinOptions);
+
+            // Add scoped authorization handler
+            services.AddScoped<IAuthorizationHandler, AuthZyinHandler>();
 
             return services;
         }

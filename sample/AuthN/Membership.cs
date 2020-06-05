@@ -1,10 +1,11 @@
-namespace sample.Auth
+namespace sample.AuthN
 {
     using System.Text.Json;
     using System.Security.Claims;
     using System.Collections.Generic;
+    using AuthZyin.Authorization;
 
-    public class Department
+    public class Department : AuthZyinResource
     {
         public int RegionId { get; set; }
         public int DepartmentId { get; set; }

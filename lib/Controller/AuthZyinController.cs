@@ -7,7 +7,9 @@ namespace AuthZyin.Controller
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
-    /// Auto injected controller to handle policy serialization
+    /// Automatically adds api for the client to retrieve authorization context.
+    /// It can be retrieved with "GET /authzyin/context".
+    /// For security purpose, anonymouse access is not allowed to this api.
     /// </summary>
     [ApiController]
     [Authorize]
@@ -15,17 +17,17 @@ namespace AuthZyin.Controller
     public class AuthZyinController : ControllerBase
     {
         /// <summary>
-        /// client data manager via DI
+        /// Authorization context
         /// </summary>
-        private readonly IAuthZyinDataManager clientDataManager;
+        private readonly IAuthZyinContext authZyinContext;
 
         /// <summary>
         /// Initializes a new instance of AuthZyinController
         /// </summary>
-        /// <param name="options">authorization options</param>
-        public AuthZyinController(IAuthZyinDataManager clientDataManager)
+        /// <param name="context">authorization context</param>
+        public AuthZyinController(IAuthZyinContext context)
         {
-            this.clientDataManager = clientDataManager ?? throw new ArgumentNullException(nameof(clientDataManager));
+            this.authZyinContext = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
@@ -33,10 +35,10 @@ namespace AuthZyin.Controller
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("policies")]
+        [Route("context")]
         public async Task<IActionResult> GetPolicies()
         {
-            var data = await Task.FromResult(this.clientDataManager.ClientData);
+            var data = await Task.FromResult(this.authZyinContext.ClientData);
             return this.Ok(data);
         }
     }

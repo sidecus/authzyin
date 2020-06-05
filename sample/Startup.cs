@@ -8,8 +8,9 @@ namespace sample
     using Microsoft.Extensions.Hosting;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
+    using AuthZyin.Authentication;
     using AuthZyin.Authorization;
-    using sample.Auth;
+    using sample.AuthN;
 
     /// <summary>
     /// Startup class
@@ -46,17 +47,17 @@ namespace sample
             Configuration.GetSection(nameof(AuthConfig)).Bind(authConfig);
 
             // Add jwt bearer token authentication for web apis
-            services.AddAadJwtBearerAuthentication(authConfig);
+            services.AddAadJwtBearer(authConfig.Authority, authConfig.AadAppId);
             
-            // Add AuthZyin authorization
-            var userPolicy = new AuthorizationPolicyBuilder().RequireRole("user").Build();
+            // AuthZyin[sidecus]: Add authorization
+            var userPolicy = new AuthorizationPolicyBuilder().RequireRole("user").AddRequirements(new AdminOfRequirement()).Build();
             services.AddAuthZyinAuthorization(options =>
             {
                 options.AddPolicy("user", userPolicy);
             });
 
-            // Override default client data manager
-            services.AddTransient<IAuthZyinDataManager, SampleClientDataManager>();
+            // AuthZyin[sidecus]: Add scoped context, used for authorization on both server and client
+            services.AddScoped<IAuthZyinContext, SampleAuthZyinContext>();
 
             // Add other services
             services.AddSingleton<IClaimsTransformation, ClaimsTransformer>();

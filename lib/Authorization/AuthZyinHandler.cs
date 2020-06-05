@@ -3,15 +3,19 @@ namespace AuthZyin.Authorization
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using AuthZyin.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.Extensions.Logging;
 
     /// <summary>
-    /// AuthZinHandler which handles our requirements
+    /// AuthZinHandler which handles our requirements - needs to be registered as scoped
     /// </summary>
     public class AuthZyinHandler: IAuthorizationHandler
     {
+        /// <summary>
+        /// AuthZyin authorization context
+        /// </summary>
+        private readonly IAuthZyinContext authZyinContext;
+
         /// <summary>
         /// logger instance
         /// </summary>
@@ -20,9 +24,11 @@ namespace AuthZyin.Authorization
         /// <summary>
         /// Initializes a new intance of AuthZyinHandler
         /// </summary>
+        /// <param name="authZyinContext">context</param>
         /// <param name="logger">logger instance</param>
-        public AuthZyinHandler(ILogger<AuthZyinHandler> logger)
+        public AuthZyinHandler(IAuthZyinContext authZyinContext, ILogger<AuthZyinHandler> logger)
         {
+            this.authZyinContext = authZyinContext ?? throw new ArgumentNullException(nameof(authZyinContext));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -34,12 +40,11 @@ namespace AuthZyin.Authorization
         /// <returns>task</returns>
         public Task HandleAsync(AuthorizationHandlerContext context)
         {
-            var claimsAccessor = new AadClaimsAccessor(context.User);
             var requirements = context.Requirements.OfType<AuthZyinRequirement>();
 
             foreach (var requirement in requirements)
             {
-                if (requirement.Evaluate(claimsAccessor, context.Resource))
+                if (requirement.Evaluate(this.authZyinContext, context.Resource))
                 {
                     context.Succeed(requirement);
                 }
