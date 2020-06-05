@@ -1,4 +1,4 @@
-namespace AuthZyin.Authorization
+namespace AuthZyin.Authorization.Client
 {
     using System;
     using System.Collections.Generic;
@@ -20,6 +20,11 @@ namespace AuthZyin.Authorization
         /// </summary>
         public List<string> Requirements { get; }
 
+        /// <summary>
+        /// Initializes a new instance of AuthZyinClientPolicy class
+        /// </summary>
+        /// <param name="name">policy name</param>
+        /// <param name="policy">policy object</param>
         public AuthZyinClientPolicy(string name, AuthorizationPolicy policy)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));

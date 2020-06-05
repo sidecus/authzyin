@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { logInAsync } from '../api/MsalClient';
 import { getAuthClientDataAsync, AuthClientData } from '../api/api';
+import { ClientData } from './ClientData';
 
 interface LoginState {
     loginSuccess: boolean,
@@ -48,19 +49,9 @@ const Home = () => {
 
     // main rendering based on state
     if (loginState.loginSuccess && authClientDataState) {
-        return (
-            <div>
-                <h1>Welcome {authClientDataState.userName}!</h1>
-                <h4>User id: {authClientDataState.userId}</h4>
-                <h4>Tenant id: {authClientDataState.tenantId}</h4>
-                <h4>Roles: {JSON.stringify(authClientDataState.roles)}</h4>
-                <h4>Custom data: {JSON.stringify(authClientDataState.customData)}</h4>
-                <p></p>
-                <h3>Auth policies: {JSON.stringify(authClientDataState.policies)}</h3>
-            </div>
-        );
+        return <ClientData data={authClientDataState} />;
     } else if (loginState.loginError) {
-        return (<h3>Error: {loginState.loginError}</h3>);
+        return <h3>Error: {loginState.loginError}</h3>;
     }
 
     return <></>;

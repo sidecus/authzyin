@@ -1,4 +1,4 @@
-namespace AuthZyin.Authorization
+namespace AuthZyin.Authorization.Client
 {
     using System;
     using System.Collections.Generic;
@@ -13,29 +13,14 @@ namespace AuthZyin.Authorization
     public class AuthZyinClientData<T>
     {
         /// <summary>
-        /// Gets user id
+        /// Gets the user context, which will also be sent to client
         /// </summary>
-        public string UserId { get; }
-
-        /// <summary>
-        /// Gets user name
-        /// </summary>
-        public string UserName { get; }
-
-        /// <summary>
-        /// Gets tenant id
-        /// </summary>
-        public string TenantId { get; }
-
-        /// <summary>
-        /// Gets user roles (string list)
-        /// </summary>
-        public List<string> Roles { get; }
+        /// <value></value>
+        public AuthZyinUserContext UserContext { get; }
 
         /// <summary>
         /// Gets the polices to be used by the client
         /// </summary>
-        /// <value></value>
         public List<AuthZyinClientPolicy> Policies { get; }
 
         /// <summary>
@@ -46,16 +31,17 @@ namespace AuthZyin.Authorization
         /// <summary>
         /// Initializes a new instance of the AuthZyinClientData class (initialized without CustomData)
         /// </summary>
-        /// <param name="claimsAccessor">claims accessor</param>
+        /// <param name="userContext">AuthZyin user context</param>
+        /// <param name="customData">custom data</param>
         /// <param name="policies">policy list</param>
         public AuthZyinClientData(
-            AadClaimsAccessor claimsAccessor,
-            IEnumerable<(string name, AuthorizationPolicy policy)> policies,
-            Func<T> customDataFactory)
+            AuthZyinUserContext userContext,
+            T customData,
+            IEnumerable<(string name, AuthorizationPolicy policy)> policies)
         {
-            if (claimsAccessor == null)
+            if (userContext == null)
             {
-                throw new ArgumentNullException(nameof(claimsAccessor));
+                throw new ArgumentNullException(nameof(userContext));
             }
 
             if (policies == null)
@@ -63,16 +49,9 @@ namespace AuthZyin.Authorization
                 throw new ArgumentNullException(nameof(policies));
             }
 
-            this.UserId = claimsAccessor.UserId;
-            this.UserName = claimsAccessor.UserName;
-            this.TenantId = claimsAccessor.TenantId;
-            this.Roles = claimsAccessor.Roles.ToList();
+            this.UserContext = userContext;
             this.Policies = policies.Select(x => new AuthZyinClientPolicy(x.name, x.policy)).ToList();
-
-            if (customDataFactory != null)
-            {
-                this.CustomData = customDataFactory();
-            }
+            this.CustomData = customData;
         }
     }
 }
