@@ -1,11 +1,14 @@
-namespace sample
+namespace AuthZyin.Authentication
 {
-    using Microsoft.IdentityModel.Tokens;
     using System.Collections.Generic;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
+    using Microsoft.IdentityModel.Tokens;
 
-    public static class IssuerValidator
+    /// <summary>
+    /// Issue validator which supports proper multitenant app issuer validation
+    /// </summary>
+    public static class AadIssuerValidator
     {
         /// <summary>
         /// Validate the issuer for multi-tenant applications of various audience (Work and School account, or Work and School accounts +
@@ -53,7 +56,7 @@ namespace sample
                 configuredIssuers = configuredIssuers.Append(validationParameters.ValidIssuer);
             }
 
-            // Get all valid issuers by replacing {TenantId} with the true tennat id if any
+            // Get all valid issuers by replacing {TenantId} with the true tennat id if any (to support multi tenant app scenarios)
             var allValidIssuers = new List<string>(configuredIssuers.Select(x => GetTenantedIssuer(x, currentTenantId)));
 
             // Consider the aliases (https://login.microsoftonline.com (v2.0 tokens) => https://sts.windows.net (v1.0 tokens) )

@@ -10,7 +10,7 @@
 
     [ApiController]
     [Route("api")]
-    [Authorize]
+    [Authorize("user")]
     public class SampleController : ControllerBase
     {
         public class AuthNResult

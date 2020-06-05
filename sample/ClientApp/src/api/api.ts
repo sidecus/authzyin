@@ -1,17 +1,42 @@
 import { acquireTokenAsync } from '../auth/MsalClient';
 
-const userApi = "/api/user";
-const adminApi = "/api/admin";
+const userApi = '/api/user';
+const adminApi = '/api/admin';
+const policyApi = '/authzyin/policies';
 
 export interface AuthNResult {
     forRole: string;
     message: string;
 }
 
-const callApiAsync = async <T>(url: string, accessToken: string):Promise<T> => {
+export interface AuthPolicy {
+    name: string;
+    requirements: string[];
+}
+
+export interface Department {
+    regionId: number;
+    departmentId: number;
+}
+
+export interface Membership {
+    admins: Department[];
+}
+
+export interface AuthClientData {
+    userId: string;
+    userName: string;
+    tenantId: string;
+    roles: string[];
+    policies: AuthPolicy[];
+    customData: Membership;
+}
+
+const callApiAsync = async <T>(url: string):Promise<T> => {
+    const tokenResponse = await acquireTokenAsync();
     const response = await fetch(url, {
         headers: {
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${tokenResponse.accessToken}`
         }
     });
 
@@ -19,12 +44,14 @@ const callApiAsync = async <T>(url: string, accessToken: string):Promise<T> => {
 };
 
 export const getUserAsync = async () => {
-    const tokenResponse = await acquireTokenAsync();
-    const ret = await callApiAsync<AuthNResult>(userApi, tokenResponse.accessToken);
+    const ret = await callApiAsync<AuthNResult>(userApi);
     return ret;
 };
 
 export const getAdminAsync = async () => {
-    const tokenResponse = await acquireTokenAsync();
-    return await callApiAsync<AuthNResult>(adminApi, tokenResponse.accessToken);
+    return await callApiAsync<AuthNResult>(adminApi);
 };
+
+export const getPolicies = async () => {
+    return await callApiAsync<AuthClientData>(policyApi);
+}
