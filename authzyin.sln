@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib", "lib\lib.csproj", "{7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sample", "sample\sample.csproj", "{79C6A8DC-79E9-46E2-A866-A2F974F647C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{79C6A8DC-79E9-46E2-A866-A2F974F647C7}.Release|x64.Build.0 = Release|Any CPU
 		{79C6A8DC-79E9-46E2-A866-A2F974F647C7}.Release|x86.ActiveCfg = Release|Any CPU
 		{79C6A8DC-79E9-46E2-A866-A2F974F647C7}.Release|x86.Build.0 = Release|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Debug|x64.Build.0 = Debug|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Debug|x86.Build.0 = Debug|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Release|x64.ActiveCfg = Release|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Release|x64.Build.0 = Release|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Release|x86.ActiveCfg = Release|Any CPU
+		{5BE5BF14-DC68-44CC-8979-72E5CBA9962B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

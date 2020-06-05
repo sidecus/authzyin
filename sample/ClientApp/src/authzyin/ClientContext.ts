@@ -34,7 +34,7 @@ export interface ClientPolicy {
 * AuthZyin client requirement definition. Serialized from server and will be used in client authorization.
 */
 interface BaseRequirement {
-    type: string;
+    requirementType: string;
 }
 
 export enum JsonRequirementDirection {

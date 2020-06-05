@@ -23,6 +23,7 @@ namespace AuthZyin.Authorization
 
         /// <summary>
         /// Initializes a new intance of AuthZyinHandler
+        /// BUGBUG[zhezhu] - this can reference wrong authZyinContext.
         /// </summary>
         /// <param name="authZyinContext">context</param>
         /// <param name="logger">logger instance</param>

@@ -10,9 +10,12 @@ namespace AuthZyin.Authorization
     {
         /// <summary>
         /// Requirement type used by client lib.
-        /// Only Rquirement types with a sealed Evaluate() implementation should override this.
+        /// Type should be overriden when there is special evaluation logic.
+        /// This helps ensure the same valuate logic can be safely coded on the client.
+        /// If a derived class from AbstractRequirement (or its derived classes) only changes
+        /// some data not evaluation logic, it should bet on its base type's Type member.
         /// </summary>
-        public virtual string Type => "Unknown";
+        public virtual string RequirementType => "Unknown";
 
         /// <summary>
         // Evaluate current requirement against given user and resource
@@ -45,7 +48,7 @@ namespace AuthZyin.Authorization
             var typedResource = resource as TResource ??
                 throw new InvalidOperationException($"resource type is unexpected. expected: {typeof(TResource).Name}, actual: {resource.GetType().Name}");
 
-            return this.Evaluate(typedContext, resource as TResource);
+            return this.Evaluate(typedContext, typedResource);
         }
 
         /// <summary>

@@ -14,16 +14,18 @@ namespace AuthZyin.Authorization
     public interface IAuthZyinContext
     {
         /// <summary>
-        /// Gets client context used for client authorization
+        /// Gets client context used for client authorization.
+        /// Use object because:
+        /// 1. we don't know the exact type of CustomData here
+        /// 2. object helps with System.Text.Json serialization to include all needed members.
         /// </summary>
         object ClientContext { get; }
     }
 
     /// <summary>
-    /// AuthZyinContext managing generation of data required during authorization
+    /// AuthZyinContext managing generation of data required during authorization.
     /// </summary>
-    public class AuthZyinContext<T> : IAuthZyinContext
-        where T : class
+    public class AuthZyinContext<T> : IAuthZyinContext where T : class
     {
         /// <summary>
         /// Authorization user context
@@ -47,12 +49,13 @@ namespace AuthZyin.Authorization
 
         /// <summary>
         /// Gets an object representing the authorization context to send to client
+        /// Implementing IAuthZyinContext.
         /// </summary>
         /// <returns>client data object</returns>
         public object ClientContext => new ClientContext<T>(this.userContext, this.CustomData, this.policies);
 
         /// <summary>
-        /// Initializes a new instance of the AuthZyinContext class
+        /// Initializes a new instance of the AuthZyinContext class. This constructor is for DI purpose.
         /// </summary>
         /// <param name="policyList">policy list</param>
         /// <param name="contextAccessor">httpContextAccessor</param>
@@ -67,7 +70,7 @@ namespace AuthZyin.Authorization
         /// Initializes a new instance of the AuthZyinContext class
         /// </summary>
         /// <param name="policies">list of policies</param>
-        /// <param name="contextAccessor">httpContextAccessor</param>
+        /// <param name="claimsAccessor">claimsAccessor</param>
         public AuthZyinContext(
             IEnumerable<(string name, AuthorizationPolicy policy)> policies,
             AadClaimsAccessor claimsAccessor)

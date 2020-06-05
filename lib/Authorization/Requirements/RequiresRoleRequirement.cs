@@ -16,7 +16,7 @@ namespace AuthZyin.Authorization.Client
         /// <summary>
         /// Requirement type override
         /// </summary>
-        public sealed override string Type => "RequiresRole";
+        public sealed override string RequirementType => "RequiresRole";
 
         /// <summary>
         /// Get allowed roles.

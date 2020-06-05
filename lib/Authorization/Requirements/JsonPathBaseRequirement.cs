@@ -1,6 +1,7 @@
 namespace AuthZyin.Authorization
 {
     using System;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Operation direction. For example, when direction == ContextToResource, the "Contains" operation means info extracted from context
@@ -41,5 +42,32 @@ namespace AuthZyin.Authorization
             this.ResourceJPath = resourcePath ?? throw new ArgumentNullException(nameof(resourcePath));
             this.Direction = direction;
         }
+
+        /// <summary>
+        // Evaluate current requirement against given user and typed resource.
+        /// </summary>
+        /// <param name="context">authorization data context</param>
+        /// <param name="typedResource">resource object</param>
+        /// <returns>true if allowed</returns>
+        protected sealed override bool Evaluate(AuthZyinContext<TContextCustomData> context, TResource resource)
+        {
+            var contextJObject = JObject.FromObject(context);
+            var resourceJObj = JObject.FromObject(context);
+
+            if (contextJObject == null || resourceJObj == null)
+            {
+                return false;
+            }
+
+            return this.EvaluateFromJObjects(contextJObject, resourceJObj);
+        }
+
+        /// <summary>
+        /// Evaluate two JObjects based on the JsonPaths configured with the intended operation
+        /// </summary>
+        /// <param name="contextJObject">JObject representing context</param>
+        /// <param name="resourceJObj">JObject representing resource</param>
+        /// <returns>true if requirement is satisfied</returns>
+        protected abstract bool EvaluateFromJObjects(JObject contextJObject, JObject resourceJObj);
     }
 }

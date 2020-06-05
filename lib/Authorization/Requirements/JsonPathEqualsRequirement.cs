@@ -14,7 +14,7 @@ namespace AuthZyin.Authorization
         /// <summary>
         /// RequirementType used by client lib
         /// </summary>
-        public sealed override string Type => "Equals";
+        public sealed override string RequirementType => "Equals";
 
         /// <summary>
         /// Initializes a new instance of ContainsRequirement which uses Json Path to check requirement satisfaction
@@ -24,16 +24,13 @@ namespace AuthZyin.Authorization
         public JsonPathEqualsRequirement(string contextPath, string resourcePath) : base (contextPath, resourcePath, Direction.ContextToResource) {}
 
         /// <summary>
-        // Evaluate current requirement against given user and typed resource.
+        /// Evaluate two JObjects based on the JsonPaths configured with the intended operation
         /// </summary>
-        /// <param name="context">authorization data context</param>
-        /// <param name="typedResource">resource object</param>
-        /// <returns>true if allowed</returns>
-        protected sealed override bool Evaluate(AuthZyinContext<TContextCustomData> context, TResource resource)
+        /// <param name="contextJObject">JObject representing context</param>
+        /// <param name="resourceJObj">JObject representing resource</param>
+        /// <returns>true if requirement is satisfied</returns>
+        protected sealed override bool EvaluateFromJObjects(JObject contextJObject, JObject resourceJObj)
         {
-            var contextJObject = JObject.FromObject(context);
-            var resourceJObj = JObject.FromObject(context);
-
             var left = contextJObject.SelectToken(this.ContextJPath);
             var right = resourceJObj.SelectToken(this.ResourceJPath);
 

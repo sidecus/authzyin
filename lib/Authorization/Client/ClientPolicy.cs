@@ -28,7 +28,7 @@ namespace AuthZyin.Authorization.Client
         /// to serialize all members in web api response.
         /// https://github.com/dotnet/runtime/issues/31742 & https://github.com/dotnet/runtime/issues/29937
         /// </summary>
-        public List<object> Requirements { get; }
+        public IEnumerable<object> Requirements => this.requirements;
 
         /// <summary>
         /// Initializes a new instance of AuthZyinClientPolicy class
@@ -38,8 +38,14 @@ namespace AuthZyin.Authorization.Client
         public ClientPolicy(string name, AuthorizationPolicy policy)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.Requirements = policy.Requirements
-                .Select(r => this.GetClientRequirement(r) as object)
+            
+            if (policy == null)
+            {
+                throw new ArgumentNullException(nameof(policy));
+            }
+
+            this.requirements = policy.Requirements
+                .Select(r => this.GetClientRequirement(r))
                 .Where(r => r != null)
                 .ToList();
         }

@@ -16,7 +16,7 @@ namespace AuthZyin.Authorization
         /// <summary>
         /// RequirementType used by client lib
         /// </summary>
-        public sealed override string Type => "Or";
+        public sealed override string RequirementType => "Or";
 
         /// <summary>
         /// Gets the children requirements for OrRequirement
