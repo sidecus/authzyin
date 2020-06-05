@@ -1,36 +1,22 @@
-import { acquireTokenAsync } from '../auth/MsalClient';
+import { acquireTokenAsync } from './MsalClient';
+import { policyApi, AuthZyinClientData } from '../authzyin/AuthZyinClientData';
 
 const userApi = '/api/user';
 const adminApi = '/api/admin';
-const policyApi = '/authzyin/policies';
 
 export interface AuthNResult {
     forRole: string;
     message: string;
 }
 
-export interface AuthPolicy {
-    name: string;
-    requirements: string[];
+interface Membership {
+    adminOf: {
+        regionId: number;
+        departmentId: number;
+    }[];
 }
 
-export interface Department {
-    regionId: number;
-    departmentId: number;
-}
-
-export interface Membership {
-    admins: Department[];
-}
-
-export interface AuthClientData {
-    userId: string;
-    userName: string;
-    tenantId: string;
-    roles: string[];
-    policies: AuthPolicy[];
-    customData: Membership;
-}
+export type AuthClientData = AuthZyinClientData<Membership>;
 
 const callApiAsync = async <T>(url: string):Promise<T> => {
     const tokenResponse = await acquireTokenAsync();
@@ -52,6 +38,6 @@ export const getAdminAsync = async () => {
     return await callApiAsync<AuthNResult>(adminApi);
 };
 
-export const getPolicies = async () => {
+export const getAuthClientDataAsync = async () => {
     return await callApiAsync<AuthClientData>(policyApi);
 }

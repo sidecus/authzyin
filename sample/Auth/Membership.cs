@@ -14,11 +14,11 @@ namespace sample.Auth
     {
         public static readonly string ClaimType = "authzyin.sample.membership";
 
-        public List<Department> Admins { get; set; }
+        public List<Department> AdminOf { get; set; }
 
         public Membership()
         {
-            this.Admins = new List<Department>
+            this.AdminOf = new List<Department>
             {
                 new Department { RegionId = 1, DepartmentId = 1 },
                 new Department { RegionId = 1, DepartmentId = 2},
@@ -26,9 +26,6 @@ namespace sample.Auth
             };
         }
 
-        public Claim GetClaim()
-        {
-            return new Claim(ClaimType, JsonSerializer.Serialize(this));
-        }
+        public Claim GetClaim() => new Claim(ClaimType, JsonSerializer.Serialize(this));
     }
 }

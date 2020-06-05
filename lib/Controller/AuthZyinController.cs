@@ -17,13 +17,13 @@ namespace AuthZyin.Controller
         /// <summary>
         /// client data manager via DI
         /// </summary>
-        private readonly IAuthZyinClientDataManager clientDataManager;
+        private readonly IAuthZyinDataManager clientDataManager;
 
         /// <summary>
         /// Initializes a new instance of AuthZyinController
         /// </summary>
         /// <param name="options">authorization options</param>
-        public AuthZyinController(IAuthZyinClientDataManager clientDataManager)
+        public AuthZyinController(IAuthZyinDataManager clientDataManager)
         {
             this.clientDataManager = clientDataManager ?? throw new ArgumentNullException(nameof(clientDataManager));
         }
@@ -36,7 +36,8 @@ namespace AuthZyin.Controller
         [Route("policies")]
         public async Task<IActionResult> GetPolicies()
         {
-            return await Task.FromResult(this.Ok(this.clientDataManager.GetClientData()));
+            var data = await Task.FromResult(this.clientDataManager.ClientData);
+            return this.Ok(data);
         }
     }
 }

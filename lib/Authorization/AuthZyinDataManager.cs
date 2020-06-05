@@ -8,21 +8,21 @@ namespace AuthZyin.Authorization
     using Microsoft.AspNetCore.Http;
 
     /// <summary>
-    /// Interface to construct required authorization data for client
+    /// Interface to construct required authorization data
     /// </summary>
-    public interface IAuthZyinClientDataManager
+    public interface IAuthZyinDataManager
     {
         /// <summary>
         /// Generate client data used for client authorization
         /// </summary>
-        /// <returns>data for client authorization</returns>
-        object GetClientData();
+        /// <returns>data can be used for client authorization</returns>
+        object ClientData { get; }
     }
 
     /// <summary>
-    /// DefaultClientAuthDataManager managing generation of client data used for client authorization
+    /// AuthZyinDataManager managing generation of data required during authorization
     /// </summary>
-    public class DefaultClientAuthDataManager<T> : IAuthZyinClientDataManager
+    public class AuthZyinDataManager<T> : IAuthZyinDataManager
         where T : class
     {
         /// <summary>
@@ -41,11 +41,17 @@ namespace AuthZyin.Authorization
         protected virtual string CustomClaimTypeToProcess => null;
 
         /// <summary>
+        /// Interface implementation, get an object representing the authorization data to send to client
+        /// </summary>
+        /// <returns>client data object</returns>
+        public object ClientData => this.GetClientData();
+
+        /// <summary>
         /// Initializes a new instance of the AuthZyinClientDataManager class
         /// </summary>
         /// <param name="policyList">policy list</param>
         /// <param name="contextAccessor">httpContextAccessor</param>
-        public DefaultClientAuthDataManager(IAuthorizationPolicyList policyList, IHttpContextAccessor contextAccessor)
+        public AuthZyinDataManager(IAuthorizationPolicyList policyList, IHttpContextAccessor contextAccessor)
         {
             this.policyList = policyList ?? throw new ArgumentNullException(nameof(policyList));
             var principal = contextAccessor?.HttpContext?.User ?? throw new ArgumentNullException(nameof(contextAccessor));
@@ -53,29 +59,12 @@ namespace AuthZyin.Authorization
         }
 
         /// <summary>
-        /// Interface implementation, get an object representing the authorization data to send to client
-        /// </summary>
-        /// <returns>client data object</returns>
-        public object GetClientData()
-        {
-            return this.GetTypedClientData();
-        }
-
-        /// <summary>
         /// Generate client data
         /// </summary>
-        /// <returns></returns>
-        protected AuthZyinClientData<T> GetTypedClientData()
+        /// <returns>AuthZyinClientData</returns>
+        protected AuthZyinClientData<T> GetClientData()
         {
-            return new AuthZyinClientData<T>()
-            {
-                UserId = this.claimsAccessor.UserId,
-                UserName = this.claimsAccessor.UserName,
-                TenantId = this.claimsAccessor.TenantId,
-                Roles = this.claimsAccessor.Roles.ToList(),
-                CustomData = this.GetCustomData(),
-                Policies = this.policyList.Policies.Select(x => this.CreateClientPolicyObject(x.name, x.policy)).ToList(),
-            };
+            return new AuthZyinClientData<T>(this.claimsAccessor, this.policyList.Policies, this.GetCustomData);
         }
 
         /// <summary>
@@ -91,16 +80,6 @@ namespace AuthZyin.Authorization
 
             var customClaimValue = this.claimsAccessor.GetClaimValue(this.CustomClaimTypeToProcess);
             return customClaimValue != null ? JsonSerializer.Deserialize<T>(customClaimValue) : null;
-        }
-
-        // Create a client policy object from name and policy
-        private AuthZyinClientPolicy CreateClientPolicyObject(string name, AuthorizationPolicy policy)
-        {
-            var policyItem = new AuthZyinClientPolicy() { Name = name, };
-
-            policyItem.Requirements = policy.Requirements.Select(x => x.GetType().Name).ToList();
-
-            return policyItem;
         }
     }
 }

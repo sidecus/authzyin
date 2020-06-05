@@ -11,15 +11,15 @@ namespace AuthZyin.Authentication
     public static class AadIssuerValidator
     {
         /// <summary>
-        /// Validate the issuer for multi-tenant applications of various audience (Work and School account, or Work and School accounts +
-        /// Personal accounts)
+        /// Validate the issuer for multi-tenant applications of various audience.
+        /// Support Work and School account (OrgId), or Personal accounts (MSA). Inspired by this:
+        /// https://github.com/Azure-Samples/active-directory-dotnet-native-aspnetcore-v2/tree/master/1.%20Desktop%20app%20calls%20Web%20API
         /// </summary>
         /// <param name="issuer">Issuer to validate (will be tenanted)</param>
         /// <param name="securityToken">Received Security Token</param>
         /// <param name="validationParameters">Token Validation parameters</param>
-        /// <remarks>The issuer is considered as valid if it has the same http scheme and authority as the
-        /// authority from the configuration file, has a tenant Id, and optionally v2.0 (this web api
-        /// accepts both V1 and V2 tokens).
+        /// <remarks>The issuer is considered as valid if it has the same http scheme and authority
+        ///  as the authority from the configuration file, has a tenant Id, and optionally v2.0.
         /// Authority aliasing is also taken into account</remarks>
         /// <returns>The <c>issuer</c> if it's valid, or otherwise <c>SecurityTokenInvalidIssuerException</c> is thrown</returns>
         public static string ValidateAadIssuer(string issuer, SecurityToken securityToken, TokenValidationParameters validationParameters)
@@ -28,7 +28,7 @@ namespace AuthZyin.Authentication
             var tenantId = (securityToken as JwtSecurityToken)?.Claims.FirstOrDefault(c => c.Type == "tid")?.Value;
             if (tenantId == null)
             {
-                throw new SecurityTokenInvalidIssuerException("Expecting a valid AAD JWT token with tid claim.");
+                throw new SecurityTokenInvalidIssuerException("No valid AAD JWT token with tid claim given.");
             }
 
             // Get all valid issuers and try to see whether current issuer is in the list
@@ -38,7 +38,7 @@ namespace AuthZyin.Authentication
                 return issuer;
             }
 
-            throw new SecurityTokenInvalidIssuerException("Issuer does not match the valid issuers");
+            throw new SecurityTokenInvalidIssuerException($"Unexpected issuer {issuer}");
         }
 
         /// <summary>

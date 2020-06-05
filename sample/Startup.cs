@@ -56,7 +56,7 @@ namespace sample
             });
 
             // Override default client data manager
-            services.AddTransient<IAuthZyinClientDataManager, SampleClientDataManager>();
+            services.AddTransient<IAuthZyinDataManager, SampleClientDataManager>();
 
             // Add other services
             services.AddSingleton<IClaimsTransformation, ClaimsTransformer>();

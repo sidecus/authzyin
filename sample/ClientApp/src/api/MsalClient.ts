@@ -33,8 +33,7 @@ export const msalClient = new PublicClientApplication(msalConfig);
 // sign in popup
 export const logInAsync = async () => {
     await msalClient.loginPopup(loginParams);
-    const account = msalClient.getAccount();
-    console.log(account);
+    return msalClient.getAccount();
 }
 
 export const acquireTokenAsync = async () => {

@@ -6,7 +6,7 @@ namespace sample.Auth
     /// <summary>
     /// Client data manager
     /// </summary>
-    public class SampleClientDataManager : DefaultClientAuthDataManager<Membership>
+    public class SampleClientDataManager : AuthZyinDataManager<Membership>
     {
         /// <summary>
         /// Custom claim to process
