@@ -14,10 +14,9 @@ namespace AuthZyin.Authorization
     public interface IAuthZyinContext
     {
         /// <summary>
-        /// Generate client data used for client authorization
+        /// Gets client context used for client authorization
         /// </summary>
-        /// <returns>data can be used for client authorization</returns>
-        object ClientData { get; }
+        object ClientContext { get; }
     }
 
     /// <summary>
@@ -47,10 +46,10 @@ namespace AuthZyin.Authorization
         protected virtual string CustomClaimTypeToProcess => null;
 
         /// <summary>
-        /// Interface implementation, get an object representing the authorization data to send to client
+        /// Gets an object representing the authorization context to send to client
         /// </summary>
         /// <returns>client data object</returns>
-        public object ClientData => new AuthZyinClientData<T>(this.userContext, this.CustomData, this.policies);
+        public object ClientContext => new ClientContext<T>(this.userContext, this.CustomData, this.policies);
 
         /// <summary>
         /// Initializes a new instance of the AuthZyinContext class

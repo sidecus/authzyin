@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { logInAsync } from '../api/MsalClient';
-import { getAuthClientDataAsync, AuthClientData } from '../api/api';
-import { ClientData } from './ClientData';
+import { GetAuthZyinClientContextAsync, SampleClientContext } from '../api/api';
+import { SampleContext } from './SampleContext';
 
 interface LoginState {
     loginSuccess: boolean,
@@ -11,7 +11,7 @@ interface LoginState {
 
 const Home = () => {
     const [loginState, setLoginState] = React.useState<LoginState>({ loginSuccess: false, loginError: '', });
-    const [authClientDataState, setAuthClientDataState] = React.useState<AuthClientData>();
+    const [authZClientContext, setAuthZClientContext] = React.useState<SampleClientContext>();
 
     // Effect to trigger log in during page load
     React.useEffect(() => {
@@ -36,25 +36,25 @@ const Home = () => {
 
     // Effect to call api after logging in
     React.useEffect(() => {
-        const fetchAuthClientData = async () => {
+        const fetchAuthZClientContext = async () => {
             if (loginState.loginSuccess) {
-                const authClientData = await getAuthClientDataAsync();
-                setAuthClientDataState(authClientData);
+                const clientContext = await GetAuthZyinClientContextAsync();
+                setAuthZClientContext(clientContext);
             }
         };
 
-        fetchAuthClientData();
+        fetchAuthZClientContext();
     },
-    [loginState.loginSuccess, setAuthClientDataState]);
+    [loginState.loginSuccess, setAuthZClientContext]);
 
     // main rendering based on state
-    if (loginState.loginSuccess && authClientDataState) {
-        return <ClientData data={authClientDataState} />;
+    if (loginState.loginSuccess && authZClientContext) {
+        return <SampleContext data={authZClientContext} />;
     } else if (loginState.loginError) {
         return <h3>Error: {loginState.loginError}</h3>;
+    } else {
+        return <></>;
     }
-
-    return <></>;
 };
 
 export default connect()(Home);

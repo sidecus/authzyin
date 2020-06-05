@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { AuthClientData } from "../api/api";
+import { SampleClientContext } from "../api/api";
 
-interface IClientDataProps {
-    data: AuthClientData;
+interface ISampleContextProps {
+    data: SampleClientContext;
 }
 
-export const ClientData = ({data}: IClientDataProps) => {
+export const SampleContext = ({data}: ISampleContextProps) => {
     return (
         <div>
             <h1>Welcome {data.userContext.userName}!</h1>

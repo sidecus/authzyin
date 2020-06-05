@@ -40,7 +40,7 @@ namespace AuthZyin.Authorization
         /// <returns>task</returns>
         public Task HandleAsync(AuthorizationHandlerContext context)
         {
-            var requirements = context.Requirements.OfType<AuthZyinRequirement>();
+            var requirements = context.Requirements.OfType<AbstractRequirement>();
 
             foreach (var requirement in requirements)
             {

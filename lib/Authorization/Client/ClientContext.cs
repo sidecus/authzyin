@@ -3,14 +3,13 @@ namespace AuthZyin.Authorization.Client
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using AuthZyin.Authentication;
     using Microsoft.AspNetCore.Authorization;
 
     /// <summary>
-    /// Interface to construct required authorization data for client
+    /// Interface to construct required authorization context data for client
     /// </summary>
     /// <typeparam name="T">Custom data type</typeparam>
-    public class AuthZyinClientData<T>
+    public class ClientContext<T>
     {
         /// <summary>
         /// Gets the user context, which will also be sent to client
@@ -21,7 +20,7 @@ namespace AuthZyin.Authorization.Client
         /// <summary>
         /// Gets the polices to be used by the client
         /// </summary>
-        public List<AuthZyinClientPolicy> Policies { get; }
+        public List<ClientPolicy> Policies { get; }
 
         /// <summary>
         /// Gets or sets custom data used to do "resource" based authorization on client. It's of type T.
@@ -34,7 +33,7 @@ namespace AuthZyin.Authorization.Client
         /// <param name="userContext">AuthZyin user context</param>
         /// <param name="customData">custom data</param>
         /// <param name="policies">policy list</param>
-        public AuthZyinClientData(
+        public ClientContext(
             AuthZyinUserContext userContext,
             T customData,
             IEnumerable<(string name, AuthorizationPolicy policy)> policies)
@@ -50,7 +49,7 @@ namespace AuthZyin.Authorization.Client
             }
 
             this.UserContext = userContext;
-            this.Policies = policies.Select(x => new AuthZyinClientPolicy(x.name, x.policy)).ToList();
+            this.Policies = policies.Select(x => new ClientPolicy(x.name, x.policy)).ToList();
             this.CustomData = customData;
         }
     }

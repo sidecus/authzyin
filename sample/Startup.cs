@@ -50,7 +50,11 @@ namespace sample
             services.AddAadJwtBearer(authConfig.Authority, authConfig.AadAppId);
             
             // AuthZyin[sidecus]: Add authorization
-            var userPolicy = new AuthorizationPolicyBuilder().RequireRole("user").AddRequirements(new AdminOfRequirement()).Build();
+            var userPolicy = new AuthorizationPolicyBuilder()
+                .RequireRole("user")
+                .AddRequirements(new AdminOfRequirement())
+                .AddRequirements(new OrRequirement(new AdminOfRequirement(), new AdminOfRequirement()))
+                .Build();
             services.AddAuthZyinAuthorization(options =>
             {
                 options.AddPolicy("user", userPolicy);

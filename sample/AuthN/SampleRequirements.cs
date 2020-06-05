@@ -2,7 +2,7 @@ namespace sample.AuthN
 {
     using AuthZyin.Authorization;
 
-    public class AdminOfRequirement: ContainsRequirement<Membership, Department>
+    public class AdminOfRequirement: JsonPathContainsRequirement<Membership, Department>
     {
         private static readonly string MembershipJsonPath = "$.AdminOf[*]";
         private static readonly string DepartmentJsonPath = "$";

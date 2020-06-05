@@ -38,7 +38,7 @@ namespace AuthZyin.Controller
         [Route("context")]
         public async Task<IActionResult> GetPolicies()
         {
-            var data = await Task.FromResult(this.authZyinContext.ClientData);
+            var data = await Task.FromResult(this.authZyinContext.ClientContext);
             return this.Ok(data);
         }
     }

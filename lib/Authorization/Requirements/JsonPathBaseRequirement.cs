@@ -19,7 +19,7 @@ namespace AuthZyin.Authorization
     /// </summary>
     /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
     /// <typeparam name="TResource">Type of Resource</typeparam>
-    public abstract class JsonPathRequirement<TContextCustomData, TResource> : AuthZyinRequirement<TContextCustomData, TResource>
+    public abstract class JsonPathBaseRequirement<TContextCustomData, TResource> : AbstractRequirement<TContextCustomData, TResource>
         where TContextCustomData: class
         where TResource: AuthZyinResource
     {
@@ -35,7 +35,7 @@ namespace AuthZyin.Authorization
         /// <param name="contextPath">jsonPath to context object</param>
         /// <param name="resourcePath">jsonPath to resource object</param>
         /// <param name="direction">operation direction</param>
-        public JsonPathRequirement(string contextPath, string resourcePath, Direction direction)
+        public JsonPathBaseRequirement(string contextPath, string resourcePath, Direction direction)
         {
             this.ContextJPath = contextPath ?? throw new ArgumentNullException(nameof(contextPath));
             this.ResourceJPath = resourcePath ?? throw new ArgumentNullException(nameof(resourcePath));

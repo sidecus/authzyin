@@ -6,23 +6,31 @@ namespace AuthZyin.Authorization
     /// Authorization requirement with OR condition among children requirements.
     /// The requirement is met if any of its children requirement is satisfied.
     /// </summary>
-    public sealed class OrRequirement: AuthZyinRequirement
+    public sealed class OrRequirement: AbstractRequirement
     {
-        /// <summary>
-        /// RequirementType used by client lib
-        /// </summary>
-        public override string RequirementType => "Or";
-
         /// <summary>
         /// children requirements
         /// </summary>
-        public AuthZyinRequirement[] children { get; }
+        private readonly AbstractRequirement[] children;
+
+        /// <summary>
+        /// RequirementType used by client lib
+        /// </summary>
+        public sealed override string Type => "Or";
+
+        /// <summary>
+        /// Gets the children requirements for OrRequirement
+        /// TODO[sidecus]: Workaround for new System.Text.Json serialization
+        /// https://github.com/dotnet/runtime/issues/31742
+        /// https://github.com/dotnet/runtime/issues/29937
+        /// </summary>
+        public object[] Children => this.children;
 
         /// <summary>
         /// Create a new instance of OrRequirement
         /// </summary>
         /// <param name="requirements">children requirements</param>
-        public OrRequirement(params OrRequirement[] requirements)
+        public OrRequirement(params AbstractRequirement[] requirements)
         {
             this.children = requirements ?? throw new ArgumentNullException(nameof(requirements));
         }
@@ -33,7 +41,7 @@ namespace AuthZyin.Authorization
         /// <param name="context">authorization data context</param>
         /// <param name="resource">resource object</param>
         /// <returns>true if allowed</returns>
-        public override bool Evaluate(IAuthZyinContext context, object resource)
+        public sealed override bool Evaluate(IAuthZyinContext context, object resource)
         {
             foreach (var child in this.children)
             {
