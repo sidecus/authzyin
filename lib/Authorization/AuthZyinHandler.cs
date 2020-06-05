@@ -7,12 +7,13 @@ namespace AuthZyin.Authorization
     using Microsoft.Extensions.Logging;
 
     /// <summary>
-    /// AuthZinHandler which handles our requirements - needs to be registered as scoped
+    /// AuthZinHandler which handles our requirements.
+    /// Must be registered as scoped since we depend on IAuthZyinContext.
     /// </summary>
     public class AuthZyinHandler: IAuthorizationHandler
     {
         /// <summary>
-        /// AuthZyin authorization context
+        /// AuthZyin context for authorization
         /// </summary>
         private readonly IAuthZyinContext authZyinContext;
 
@@ -23,9 +24,8 @@ namespace AuthZyin.Authorization
 
         /// <summary>
         /// Initializes a new intance of AuthZyinHandler
-        /// BUGBUG[zhezhu] - this can reference wrong authZyinContext.
         /// </summary>
-        /// <param name="authZyinContext">context</param>
+        /// <param name="authZyinContext">AuthZyin context for authorization</param>
         /// <param name="logger">logger instance</param>
         public AuthZyinHandler(IAuthZyinContext authZyinContext, ILogger<AuthZyinHandler> logger)
         {
@@ -41,11 +41,9 @@ namespace AuthZyin.Authorization
         /// <returns>task</returns>
         public Task HandleAsync(AuthorizationHandlerContext context)
         {
-            var requirements = context.Requirements.OfType<AbstractRequirement>();
-
-            foreach (var requirement in requirements)
+            foreach (var requirement in context.Requirements.OfType<AbstractRequirement>())
             {
-                if (requirement.Evaluate(this.authZyinContext, context.Resource))
+                if (requirement.Evaluate(authZyinContext, context.Resource))
                 {
                     context.Succeed(requirement);
                 }

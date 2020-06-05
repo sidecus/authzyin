@@ -11,7 +11,7 @@ namespace sample.AuthN
         /// <summary>
         /// Custom claim to process
         /// </summary>
-        protected override string CustomClaimTypeToProcess => Membership.ClaimType;
+        protected override string ClaimTypeForCustomData => Membership.ClaimType;
  
         /// <summary>
         /// Initializes a new instance of the SampleAuthZyinContext class

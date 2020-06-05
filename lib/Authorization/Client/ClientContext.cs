@@ -3,13 +3,12 @@ namespace AuthZyin.Authorization.Client
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.AspNetCore.Authorization;
 
     /// <summary>
-    /// Interface to construct required authorization context data for client
+    /// Class representing context data to send to the client for client authorization.
     /// </summary>
     /// <typeparam name="T">Custom data type</typeparam>
-    public class ClientContext<T>
+    public class ClientContext<T> where T : class
     {
         /// <summary>
         /// Gets the user context, which will also be sent to client
@@ -28,29 +27,19 @@ namespace AuthZyin.Authorization.Client
         public T CustomData { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the AuthZyinClientData class (initialized without CustomData)
+        /// Initializes a new instance of the ClientContext class to send to client
         /// </summary>
-        /// <param name="userContext">AuthZyin user context</param>
-        /// <param name="customData">custom data</param>
-        /// <param name="policies">policy list</param>
-        public ClientContext(
-            AuthZyinUserContext userContext,
-            T customData,
-            IEnumerable<(string name, AuthorizationPolicy policy)> policies)
+        /// <param name="context">AuthZyin context</param>
+        public ClientContext(AuthZyinContext<T> context)
         {
-            if (userContext == null)
+            if (context == null)
             {
-                throw new ArgumentNullException(nameof(userContext));
+                throw new ArgumentNullException(nameof(context));
             }
 
-            if (policies == null)
-            {
-                throw new ArgumentNullException(nameof(policies));
-            }
-
-            this.UserContext = userContext;
-            this.Policies = policies.Select(x => new ClientPolicy(x.name, x.policy)).ToList();
-            this.CustomData = customData;
+            this.UserContext = context.UserContext;
+            this.Policies = context.Policies.Select(x => new ClientPolicy(x.name, x.policy)).ToList();
+            this.CustomData = context.CustomData;
         }
     }
 }

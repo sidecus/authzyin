@@ -28,13 +28,17 @@
             // Add http context accessor - needed by AuthZyinContext registration
             services.AddHttpContextAccessor();
 
-            // Add authorization and register the policy list instance
+            // Configure authorization options. Use our own AuthZyinAuthorizationOptions to:
+            // 1. Expose the list of policies
+            // 2. Generate a new configue action to use against AuthorizationOptions.
             var authZyinOptions = new AuthZyinAuthorizationOptions();
             configure(authZyinOptions);
-            services.AddAuthorization(authZyinOptions.ConfigureAuthorizationOptions);
-            services.AddSingleton<IAuthorizationPolicyList>(authZyinOptions);
 
-            // Add scoped authorization handler
+            // Register IAuthorizationPolicyList and enable authoriztion
+            services.AddSingleton<IAuthorizationPolicyList>(authZyinOptions);
+            services.AddAuthorization(authZyinOptions.ConfigureAuthorizationOptions);
+
+            // Add authorization handler - must be registered as scoped
             services.AddScoped<IAuthorizationHandler, AuthZyinHandler>();
 
             return services;
