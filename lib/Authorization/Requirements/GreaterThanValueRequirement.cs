@@ -7,7 +7,7 @@ namespace AuthZyin.Authorization
     /// GreaterThanValueRequirement which compares properties from context with a constant
     /// </summary>
     /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
-    public sealed class GreaterThanValueRequirement<TContextCustomData> : AbstractRequirement<TContextCustomData, AuthZyinResource>
+    public sealed class GreaterThanValueRequirement<TContextCustomData> : Requirement<TContextCustomData, AuthZyinResource>
         where TContextCustomData: class
     {
         /// <summary>

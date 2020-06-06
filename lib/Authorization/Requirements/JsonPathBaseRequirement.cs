@@ -20,7 +20,7 @@ namespace AuthZyin.Authorization
     /// </summary>
     /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
     /// <typeparam name="TResource">Type of Resource</typeparam>
-    public abstract class JsonPathBaseRequirement<TContextCustomData, TResource> : AbstractRequirement<TContextCustomData, TResource>
+    public abstract class JsonPathBaseRequirement<TContextCustomData, TResource> : Requirement<TContextCustomData, TResource>
         where TContextCustomData: class
         where TResource: AuthZyinResource
     {
@@ -51,7 +51,7 @@ namespace AuthZyin.Authorization
         /// <returns>true if allowed</returns>
         protected sealed override bool Evaluate(AuthZyinContext<TContextCustomData> context, TResource resource)
         {
-            var contextJObject = JObject.FromObject(context);
+            var contextJObject = JObject.FromObject(context.CustomData);
             var resourceJObj = JObject.FromObject(resource);
 
             if (contextJObject == null || resourceJObj == null)

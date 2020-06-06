@@ -10,7 +10,7 @@ namespace sample.AuthN
         public int Credit { get; set; }
     }
 
-    public class PersonalData
+    public class CustomData
     {
         public static readonly string ClaimType = "authzyin.sample.personalinfo";
 
@@ -34,7 +34,7 @@ namespace sample.AuthN
         /// <summary>
         /// Initializes a new instance of personal data
         /// </summary>
-        public PersonalData()
+        public CustomData()
         {
             this.PaymentMethods = new List<PaymentMethod>
             {

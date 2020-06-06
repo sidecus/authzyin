@@ -14,7 +14,7 @@ namespace AuthZyin.Authorization.Client
         /// <summary>
         /// List of requirements
         /// </summary>
-        private readonly List<AbstractRequirement> requirements;
+        private readonly List<Requirement> requirements;
 
         /// <summary>
         /// Gets or sets policy name
@@ -55,14 +55,14 @@ namespace AuthZyin.Authorization.Client
         /// </summary>
         /// <param name="requirement">authorization requirement</param>
         /// <returns>AbstractRequirement to use, or null which means current requirement should be ignored</returns>
-        public AbstractRequirement GetClientRequirement(IAuthorizationRequirement requirement)
+        public Requirement GetClientRequirement(IAuthorizationRequirement requirement)
         {
             if (requirement is RolesAuthorizationRequirement roleRequirement)
             {
                 // special processing for RolesAuthorizationRequirement since it's one of the built in requirements
                 return new RequiresRoleRequirement(roleRequirement.AllowedRoles);
             }
-            else if (requirement is AbstractRequirement abstractRequirement)
+            else if (requirement is Requirement abstractRequirement)
             {
                 // for other AuthZyin requirements, pass through
                 return abstractRequirement;

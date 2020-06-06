@@ -40,7 +40,7 @@ namespace sample
         private void AddMembershipClaim(ClaimsIdentity ci)
         {
             // AuthZyin[sidecus]: add required "custom data" (Membership) in this case to claims
-            var membership = new PersonalData();
+            var membership = new CustomData();
             ci.AddClaim(membership.GetClaim());
         }
     }

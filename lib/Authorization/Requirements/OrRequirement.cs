@@ -6,12 +6,12 @@ namespace AuthZyin.Authorization
     /// Authorization requirement with OR condition among children requirements.
     /// The requirement is met if any of its children requirement is satisfied.
     /// </summary>
-    public sealed class OrRequirement: AbstractRequirement
+    public sealed class OrRequirement: Requirement
     {
         /// <summary>
         /// children requirements
         /// </summary>
-        private readonly AbstractRequirement[] children;
+        private readonly Requirement[] children;
 
         /// <summary>
         /// RequirementType used by client lib
@@ -30,7 +30,7 @@ namespace AuthZyin.Authorization
         /// Create a new instance of OrRequirement
         /// </summary>
         /// <param name="requirements">children requirements</param>
-        public OrRequirement(params AbstractRequirement[] requirements)
+        public OrRequirement(params Requirement[] requirements)
         {
             this.children = requirements ?? throw new ArgumentNullException(nameof(requirements));
         }

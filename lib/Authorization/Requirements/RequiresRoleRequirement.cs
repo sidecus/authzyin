@@ -6,7 +6,7 @@ namespace AuthZyin.Authorization.Client
     /// <summary>
     /// A special RequiresRole requirement - only used to deserialize to client. Don't use on the server.
     /// </summary>
-    public class RequiresRoleRequirement : AbstractRequirement
+    public class RequiresRoleRequirement : Requirement
     {
         /// <summary>
         /// The required role

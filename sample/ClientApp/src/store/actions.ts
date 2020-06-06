@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import { SignInInfo, SampleClientContext } from './store';
-import { callEnterBarApiAsync, callAuthZyinClientContextAsync } from '../api/api';
+import { callEnterBarApiAsync, callAuthZyinClientContextAsync } from '../api/Api';
 import { createActionCreator, useMemoizedBoundActionCreators } from 'roth.js';
 import { signInAsync } from '../api/MsalClient';
 
