@@ -52,7 +52,7 @@ namespace AuthZyin.Authorization
         protected sealed override bool Evaluate(AuthZyinContext<TContextCustomData> context, TResource resource)
         {
             var contextJObject = JObject.FromObject(context);
-            var resourceJObj = JObject.FromObject(context);
+            var resourceJObj = JObject.FromObject(resource);
 
             if (contextJObject == null || resourceJObj == null)
             {
@@ -66,8 +66,8 @@ namespace AuthZyin.Authorization
         /// Evaluate two JObjects based on the JsonPaths configured with the intended operation
         /// </summary>
         /// <param name="contextJObject">JObject representing context</param>
-        /// <param name="resourceJObj">JObject representing resource</param>
+        /// <param name="resourceJObject">JObject representing resource</param>
         /// <returns>true if requirement is satisfied</returns>
-        protected abstract bool EvaluateFromJObjects(JObject contextJObject, JObject resourceJObj);
+        protected abstract bool EvaluateFromJObjects(JObject contextJObject, JObject resourceJObject);
     }
 }

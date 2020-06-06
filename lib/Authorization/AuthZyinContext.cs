@@ -24,14 +24,14 @@ namespace AuthZyin.Authorization
 
     /// <summary>
     /// AuthZyinContext managing generation of data required during authorization.
-    /// This is used by the server. For client, there is a special ClientContext class used to serialize required info.
+    /// <typeparam name="T">CustomData type which can be used during authorization. Loaded from claims using ClaimTypeForCustomData</typeparam>
     /// </summary>
     public class AuthZyinContext<T> : IAuthZyinContext where T : class
     {
         /// <summary>
         /// Authorization user context
         /// </summary>
-        public AuthZyinUserContext UserContext { get; }
+        public UserContext UserContext { get; }
 
         /// <summary>
         // Authorization policy list
@@ -67,7 +67,7 @@ namespace AuthZyin.Authorization
             }
 
             var claimsAccessor = new AadClaimsAccessor(contextAccessor?.HttpContext?.User);
-            this.UserContext = new AuthZyinUserContext(claimsAccessor);
+            this.UserContext = new UserContext(claimsAccessor);
 
             // Retrieve the custom data json string from claims as well (if any).
             // It's denoted by a virtual member CustomClaimTypeToProcess.

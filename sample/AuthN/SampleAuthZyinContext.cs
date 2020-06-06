@@ -6,12 +6,12 @@ namespace sample.AuthN
     /// <summary>
     /// Authorization context for the sample project
     /// </summary>
-    public class SampleAuthZyinContext : AuthZyinContext<Membership>
+    public class SampleAuthZyinContext : AuthZyinContext<PersonalData>
     {
         /// <summary>
         /// Custom claim to process
         /// </summary>
-        protected override string ClaimTypeForCustomData => Membership.ClaimType;
+        protected override string ClaimTypeForCustomData => PersonalData.ClaimType;
  
         /// <summary>
         /// Initializes a new instance of the SampleAuthZyinContext class

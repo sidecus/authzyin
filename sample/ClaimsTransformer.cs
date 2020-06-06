@@ -30,7 +30,7 @@ namespace sample
         /// <param name="ci">claims identity</param>
         private void AddRoleClaim(ClaimsIdentity ci)
         {
-            ci.AddClaim(new Claim(ci.RoleClaimType, "user"));
+            ci.AddClaim(new Claim(ci.RoleClaimType, "customer"));
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace sample
         private void AddMembershipClaim(ClaimsIdentity ci)
         {
             // AuthZyin[sidecus]: add required "custom data" (Membership) in this case to claims
-            var membership = new Membership();
+            var membership = new PersonalData();
             ci.AddClaim(membership.GetClaim());
         }
     }

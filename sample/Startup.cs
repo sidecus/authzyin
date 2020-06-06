@@ -49,15 +49,12 @@ namespace sample
             // Add jwt bearer token authentication for web apis
             services.AddAadJwtBearer(authConfig.Authority, authConfig.AadAppId);
             
-            // AuthZyin[sidecus]: Add authorization
-            var userPolicy = new AuthorizationPolicyBuilder()
-                .RequireRole("user")
-                .AddRequirements(new AdminOfRequirement())
-                .AddRequirements(new OrRequirement(new AdminOfRequirement(), new AdminOfRequirement()))
-                .Build();
             services.AddAuthZyinAuthorization(options =>
             {
-                options.AddPolicy("user", userPolicy);
+                foreach (var kvp in SamplePolicies.Policies)
+                {
+                    options.AddPolicy(kvp.Key, kvp.Value);
+                }
             });
 
             // AuthZyin[sidecus]: Add scoped context, used for authorization on both server and client

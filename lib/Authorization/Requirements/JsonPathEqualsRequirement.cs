@@ -7,7 +7,7 @@ namespace AuthZyin.Authorization
     /// </summary>
     /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
     /// <typeparam name="TResource">Type of Resource</typeparam>
-    public class JsonPathEqualsRequirement<TContextCustomData, TResource> : JsonPathBaseRequirement<TContextCustomData, TResource>
+    public sealed class JsonPathEqualsRequirement<TContextCustomData, TResource> : JsonPathBaseRequirement<TContextCustomData, TResource>
         where TContextCustomData: class
         where TResource: AuthZyinResource
     {
@@ -27,12 +27,12 @@ namespace AuthZyin.Authorization
         /// Evaluate two JObjects based on the JsonPaths configured with the intended operation
         /// </summary>
         /// <param name="contextJObject">JObject representing context</param>
-        /// <param name="resourceJObj">JObject representing resource</param>
+        /// <param name="resourceJObject">JObject representing resource</param>
         /// <returns>true if requirement is satisfied</returns>
-        protected sealed override bool EvaluateFromJObjects(JObject contextJObject, JObject resourceJObj)
+        protected sealed override bool EvaluateFromJObjects(JObject contextJObject, JObject resourceJObject)
         {
             var left = contextJObject.SelectToken(this.ContextJPath);
-            var right = resourceJObj.SelectToken(this.ResourceJPath);
+            var right = resourceJObject.SelectToken(this.ResourceJPath);
 
             if (left == null || right == null)
             {

@@ -11,7 +11,7 @@ namespace AuthZyin.Authorization
         /// <summary>
         /// Requirement type used by client lib.
         /// Type should be overriden when there is special evaluation logic.
-        /// This helps ensure the same valuate logic can be safely coded on the client.
+        /// This helps ensure the same evaluation logic can be safely coded on the client.
         /// If a derived class from AbstractRequirement (or its derived classes) only changes
         /// some data not evaluation logic, it should bet on its base type's Type member.
         /// </summary>
@@ -45,10 +45,8 @@ namespace AuthZyin.Authorization
         {
             var typedContext = context as AuthZyinContext<TContextCustomData> ??
                 throw new InvalidOperationException($"IAuthZyinContext type is unexpected. expected: {typeof(AuthZyinContext<TContextCustomData>).Name}, actual: {context.GetType().Name}");
-            var typedResource = resource as TResource ??
-                throw new InvalidOperationException($"resource type is unexpected. expected: {typeof(TResource).Name}, actual: {resource.GetType().Name}");
 
-            return this.Evaluate(typedContext, typedResource);
+            return this.Evaluate(typedContext, resource as TResource);
         }
 
         /// <summary>

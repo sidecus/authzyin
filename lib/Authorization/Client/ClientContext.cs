@@ -14,7 +14,7 @@ namespace AuthZyin.Authorization.Client
         /// Gets the user context, which will also be sent to client
         /// </summary>
         /// <value></value>
-        public AuthZyinUserContext UserContext { get; }
+        public UserContext UserContext { get; }
 
         /// <summary>
         /// Gets the polices to be used by the client

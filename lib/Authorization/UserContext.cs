@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using AuthZyin.Authentication;
-
 namespace AuthZyin.Authorization
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using AuthZyin.Authentication;
+
     /// <summary>
-    /// AuthZyinContext class contains core user claim values to use for authorization purpose.
+    /// UserContext class contains core user claim values to use for authorization purpose.
     /// This is used by both server authorization and client authorization
     /// </summary>
-    public class AuthZyinUserContext
+    public class UserContext
     {
         /// <summary>
         /// Gets user id
@@ -32,10 +32,10 @@ namespace AuthZyin.Authorization
         public List<string> Roles { get; }
 
         /// <summary>
-        /// Initializes a new AuthZyinUserContext from an AadClaimsAccessor object
+        /// Initializes a new UserContext from an AadClaimsAccessor object
         /// </summary>
         /// <param name="claimsAccessor">claims accessor</param>
-        public AuthZyinUserContext(AadClaimsAccessor claimsAccessor)
+        public UserContext(AadClaimsAccessor claimsAccessor)
         {
             if (claimsAccessor == null)
             {

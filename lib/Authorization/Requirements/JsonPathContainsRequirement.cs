@@ -9,7 +9,7 @@ namespace AuthZyin.Authorization
     /// </summary>
     /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
     /// <typeparam name="TResource">Type of Resource</typeparam>
-    public class JsonPathContainsRequirement<TContextCustomData, TResource> : JsonPathBaseRequirement<TContextCustomData, TResource>
+    public sealed class JsonPathContainsRequirement<TContextCustomData, TResource> : JsonPathBaseRequirement<TContextCustomData, TResource>
         where TContextCustomData: class
         where TResource: AuthZyinResource
     {
@@ -19,7 +19,7 @@ namespace AuthZyin.Authorization
         public sealed override string RequirementType => "Contains";
 
         /// <summary>
-        /// Initializes a new instance of ContainsRequirement which uses Json Path to check requirement satisfaction
+        /// Initializes a new instance of JsonPathContainsRequirement which uses Json Path to check requirement satisfaction
         /// </summary>
         /// <param name="contextPath">jsonPath to context object</param>
         /// <param name="resourcePath">jsonPath to resource object</param>
@@ -30,9 +30,9 @@ namespace AuthZyin.Authorization
         /// Evaluate two JObjects based on the JsonPaths configured with the intended operation
         /// </summary>
         /// <param name="contextJObject">JObject representing context</param>
-        /// <param name="resourceJObj">JObject representing resource</param>
+        /// <param name="resourceJObject">JObject representing resource</param>
         /// <returns>true if requirement is satisfied</returns>
-        protected sealed override bool EvaluateFromJObjects(JObject contextJObject, JObject resourceJObj)
+        protected sealed override bool EvaluateFromJObjects(JObject contextJObject, JObject resourceJObject)
         {
             // Select the left and right operands based on direction.
             // As this is a contains peration, we expect left to be an IEnumerable (SelectTokens) and right to be a single token (SelectToken).
@@ -42,11 +42,11 @@ namespace AuthZyin.Authorization
             if (this.Direction == Direction.ContextToResource)
             {
                 collection = contextJObject.SelectTokens(this.ContextJPath);
-                element = resourceJObj.SelectToken(this.ResourceJPath);
+                element = resourceJObject.SelectToken(this.ResourceJPath);
             }
             else
             {
-                collection = resourceJObj.SelectTokens(this.ResourceJPath);
+                collection = resourceJObject.SelectTokens(this.ResourceJPath);
                 element = contextJObject.SelectToken(this.ContextJPath);
             }
 
