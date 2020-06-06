@@ -29,9 +29,8 @@ const tokenParams = {
 // msal client
 export const msalClient = new PublicClientApplication(msalConfig);
 
-// TODO[sidecus]: make it hooks?
 // sign in popup
-export const logInAsync = async () => {
+export const signInAsync = async () => {
     await msalClient.loginPopup(loginParams);
     return msalClient.getAccount();
 }

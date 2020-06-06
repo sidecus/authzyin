@@ -1,8 +1,9 @@
 import { acquireTokenAsync } from './MsalClient';
-import { contextApiUrl, ClientContext } from '../authzyin/ClientContext';
+import { contextApiUrl } from '../authzyin/ClientContext';
+import { SampleClientContext } from '../store/store';
 
-const userApi = '/api/user';
-const adminApi = '/api/admin';
+const enterBarApi = '/api/enterbar';
+const buyDrinkApi = '/api/buydrink';
 
 const callApiAsync = async <T>(url: string):Promise<T> => {
     const tokenResponse = await acquireTokenAsync();
@@ -15,30 +16,14 @@ const callApiAsync = async <T>(url: string):Promise<T> => {
     return response.json();
 };
 
-interface AuthNResult {
-    forRole: string;
-    message: string;
-}
-
-interface Membership {
-    adminOf: {
-        regionId: number;
-        departmentId: number;
-    }[];
-}
-
-export type SampleClientContext = ClientContext<Membership>;
-
-
-export const getUserAsync = async () => {
-    const ret = await callApiAsync<AuthNResult>(userApi);
-    return ret;
+export const callEnterBarApiAsync = async () => {
+    return await callApiAsync<boolean>(enterBarApi);
 };
 
-export const getAdminAsync = async () => {
-    return await callApiAsync<AuthNResult>(adminApi);
+export const callBuyDrinkAsync = async () => {
+    return await callApiAsync<boolean>(buyDrinkApi);
 };
 
-export const GetAuthZyinClientContextAsync = async () => {
+export const callAuthZyinClientContextAsync = async () => {
     return await callApiAsync<SampleClientContext>(contextApiUrl);
 }

@@ -9,4 +9,9 @@ namespace sample.AuthN
         /// </summary>
         public string AcceptedPaymentMethod { get; set; }
     }
+
+    public class Beer : AuthZyinResource
+    {
+        public int Price { get; set; }
+    }
 }

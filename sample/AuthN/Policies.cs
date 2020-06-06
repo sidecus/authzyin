@@ -5,21 +5,24 @@ namespace sample.AuthN
 
     public class SamplePolicies
     {
-        public static Dictionary<string, AuthorizationPolicy> Policies = new Dictionary<string, AuthorizationPolicy>();
+        public static readonly Dictionary<string, AuthorizationPolicy> Policies = new Dictionary<string, AuthorizationPolicy>();
+
+        public static readonly AuthorizationPolicy CanEnterBar = new AuthorizationPolicyBuilder()
+            .RequireRole(Requirements.CustomerRole)
+            .AddRequirements(Requirements.AgeAbove21Requirement)
+            .Build();
+
+        public static readonly AuthorizationPolicy CanBuyDrink = new AuthorizationPolicyBuilder()
+            .RequireRole(Requirements.CustomerRole)
+            .AddRequirements(
+                Requirements.AgeAbove21Requirement,
+                Requirements.HasAcceptedPaymentMethodRequirement
+            ).Build();
 
         static SamplePolicies()
         {
-            var canEnterBar = new AuthorizationPolicyBuilder()
-                .RequireRole(Requirements.CustomerRole)
-                .AddRequirements(Requirements.AgeAbove21Requirement)
-                .Build();
-            Policies.Add(nameof(canEnterBar), canEnterBar);
-
-            var canBuyDrink = new AuthorizationPolicyBuilder()
-                .RequireRole(Requirements.CustomerRole)
-                .AddRequirements(Requirements.AgeAbove21Requirement, Requirements.HasAcceptedPaymentMethodRequirement)
-                .Build();
-            Policies.Add(nameof(canBuyDrink), canBuyDrink);
+            Policies.Add(nameof(CanEnterBar), CanEnterBar);
+            Policies.Add(nameof(CanBuyDrink), CanBuyDrink);
         }
     }
 }

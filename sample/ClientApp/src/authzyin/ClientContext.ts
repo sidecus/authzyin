@@ -52,7 +52,7 @@ export interface OrRequiremet extends BaseRequirement {
     children: Requirement[];
 }
 
-export type Requirement = JsonRequiremet & OrRequiremet;
+export type Requirement = JsonRequiremet | OrRequiremet;
 
 /*
 * Requirement type guards for easy type manipulation.

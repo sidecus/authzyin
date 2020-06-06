@@ -78,9 +78,7 @@ namespace AuthZyin.Authentication
         /// Initializes a new instance of AadClaimsAccessor
         /// </summary>
         /// <param name="principal">claims principal</param>
-        public AadClaimsAccessor(ClaimsPrincipal principal) : this(principal?.Identity as ClaimsIdentity)
-        {
-        }
+        public AadClaimsAccessor(ClaimsPrincipal principal) : this(principal?.Identity as ClaimsIdentity) {}
 
         /// <summary>
         /// Does cliams contains the specified role claim
