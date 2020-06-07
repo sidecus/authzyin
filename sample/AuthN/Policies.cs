@@ -9,15 +9,18 @@ namespace sample.AuthN
 
         public static readonly AuthorizationPolicy CanEnterBar = new AuthorizationPolicyBuilder()
             .RequireRole(Requirements.CustomerRole)
-            .AddRequirements(Requirements.AgeAbove21Requirement)
+            .AddRequirements(
+                Requirements.HasValidId,
+                Requirements.AgeAbove21)
             .Build();
 
         public static readonly AuthorizationPolicy CanBuyDrink = new AuthorizationPolicyBuilder()
             .RequireRole(Requirements.CustomerRole)
             .AddRequirements(
-                Requirements.AgeAbove21Requirement,
-                Requirements.HasAcceptedPaymentMethodRequirement
-            ).Build();
+                Requirements.HasValidId,
+                Requirements.AgeAbove21,
+                Requirements.HasAcceptedPaymentMethod)
+            .Build();
 
         static SamplePolicies()
         {

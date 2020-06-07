@@ -2,7 +2,7 @@ namespace sample.AuthN
 {
     using AuthZyin.Authorization;
 
-    public class Bar : AuthZyinResource
+    public class Bar : Resource
     {
         /// <summary>
         /// Accepted payment method
@@ -10,7 +10,7 @@ namespace sample.AuthN
         public string AcceptedPaymentMethod { get; set; }
     }
 
-    public class Beer : AuthZyinResource
+    public class Beer : Resource
     {
         public int Price { get; set; }
     }

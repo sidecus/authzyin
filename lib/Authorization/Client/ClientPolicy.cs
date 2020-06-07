@@ -5,6 +5,7 @@ namespace AuthZyin.Authorization.Client
     using System.Linq;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Authorization.Infrastructure;
+    using AuthZyin.Authorization.Requirements;
 
     /// <summary>
     /// Policy object for client to process

@@ -5,6 +5,7 @@ namespace AuthZyin.Authorization
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.Extensions.Logging;
+    using AuthZyin.Authorization.Requirements;
 
     /// <summary>
     /// AuthZinHandler which handles our requirements.

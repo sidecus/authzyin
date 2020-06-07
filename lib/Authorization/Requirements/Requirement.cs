@@ -1,7 +1,37 @@
-namespace AuthZyin.Authorization
+namespace AuthZyin.Authorization.Requirements
 {
     using System;
     using Microsoft.AspNetCore.Authorization;
+
+    /// <summary>
+    /// Supported requirement type. Anything less than 0 is for built in asp.net requirements,
+    /// and cannot be built using RequirementBuilder.
+    /// </summary>
+    public enum RequirementOperatorType
+    {
+        Invalid = -100,
+
+        // For asp.net core built in requirement serialization only
+        RequiresRole = -1,
+
+        // Direction agnostic requirements
+        Or = 1,
+        Equals = 2,
+
+        // Below operators can have direction applied
+        GreaterThan = 3,
+        Contains = 4,
+    }
+
+    /// <summary>
+    /// Operation direction. For example, when direction == ContextToResource, the "Contains" operation means info extracted from context
+    /// contains info extracted from resource. And vice versa.
+    /// </summary>
+    public enum Direction
+    {
+        ContextToResource = 1,
+        ResourceToContext = 2,
+    }
 
     /// <summary>
     /// Authorization requirement
@@ -9,13 +39,9 @@ namespace AuthZyin.Authorization
     public abstract class Requirement: IAuthorizationRequirement
     {
         /// <summary>
-        /// Requirement type used by client lib.
-        /// Type should be overriden when there is special evaluation logic.
-        /// This helps ensure the same evaluation logic can be safely coded on the client.
-        /// If a derived class from AbstractRequirement (or its derived classes) only changes
-        /// some data not evaluation logic, it should bet on its base type's Type member.
+        /// Gets the operator type for the requirement
         /// </summary>
-        public virtual string RequirementType => "Unknown";
+        public virtual RequirementOperatorType Operator => RequirementOperatorType.Invalid;
 
         /// <summary>
         // Evaluate current requirement against given user and resource
@@ -30,16 +56,16 @@ namespace AuthZyin.Authorization
     /// Authorization requirement with context type
     /// </summary>
     /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
-    /// <typeparam name="TResource">Type of Resource</typeparam>
+    /// <typeparam name="TResource">Type of Resource - can be set to DummyResource if not needed</typeparam>
     public abstract class Requirement<TContextCustomData, TResource> : Requirement
         where TContextCustomData: class
-        where TResource: AuthZyinResource
+        where TResource: Resource
     {
         /// <summary>
-        /// If typeof(TResource) == typeof(AuthZyinResource) then we take it as no resource needed.
+        /// Gets a value indicationg whether the requirement requires a resource to evaluate on?
+        /// Check <see cref="JsonPathConstantRequirement" /> for scenarios where resource is not needed (e.g. declarative requirements).
         /// </summary>
-        /// <returns></returns>
-        protected bool NeedResource => typeof(TResource) != typeof(AuthZyinResource);
+        protected virtual bool NeedResource => true;
 
         /// <summary>
         // Evaluate current requirement against given user and resource

@@ -20,6 +20,16 @@ namespace sample.AuthN
         public int Age => 30;
 
         /// <summary>
+        /// Have driver's license with you?
+        /// </summary>
+        public bool WithDriversLicense => false;
+
+        /// <summary>
+        /// Have passport with you?
+        /// </summary>
+        public bool WithPassport => true;
+
+        /// <summary>
         /// Available payment methods
         /// </summary>
         /// <value></value>

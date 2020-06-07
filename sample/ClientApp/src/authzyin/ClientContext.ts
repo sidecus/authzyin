@@ -31,10 +31,29 @@ export interface ClientPolicy {
 }
 
 /*
+* AuthZyin client policy definition. Serialized from server and will be used in client authorization.
+*/
+enum RequirementOperatorType
+{
+    Invalid = -100,
+
+    // For asp.net core built in requirement serialization only
+    RequiresRole = -1,
+
+    // Direction agnostic requirements
+    Or = 1,
+    Equals = 2,
+
+    // Below operators can have direction applied
+    GreaterThan = 3,
+    Contains = 4,
+}
+
+/*
 * AuthZyin client requirement definition. Serialized from server and will be used in client authorization.
 */
 interface BaseRequirement {
-    requirementType: string;
+    operator: RequirementOperatorType;
 }
 
 export enum JsonRequirementDirection {
@@ -42,17 +61,18 @@ export enum JsonRequirementDirection {
     ResourceToContext = 2,
 }
 
-export interface JsonRequiremet extends BaseRequirement {
-    direction: JsonRequirementDirection;
-    contextJPath: string;
+export interface JsonPathRequiremet extends BaseRequirement {
+    customDataJPath: string;
     resourceJPath: string;
+    direction: JsonRequirementDirection;
+    constValue: unknown;    // only available when we are comparing with a const value instead of real resource
 }
 
 export interface OrRequiremet extends BaseRequirement {
     children: Requirement[];
 }
 
-export type Requirement = JsonRequiremet | OrRequiremet;
+export type Requirement = JsonPathRequiremet | OrRequiremet;
 
 /*
 * Requirement type guards for easy type manipulation.

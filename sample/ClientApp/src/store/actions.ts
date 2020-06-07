@@ -12,7 +12,6 @@ import { signInAsync } from '../api/MsalClient';
 export enum SampleActions {
     SetSignInInfo = 'SetSignInInfo',
     SetAuthZyinContext = 'SetAuthZyinContext',
-    EnterBar = 'EnterBar',
     BuyDrink = 'BuyDrink',
 }
 
@@ -64,9 +63,21 @@ const getAuthZyinContext = () => {
     return async (dispatch: Dispatch<any>) => {
         const context = await callAuthZyinClientContextAsync();
         dispatch(setAuthZyinContext(context));
+
+        // TODO[sidecus] - Invoke the user api for testing purpose
+        dispatch(enterBar());
     }
 };
 
+/**
+ * This is a thunk action creator used to call enter bar
+ */
+const enterBar = () => {
+    return async (dispatch: Dispatch<any>) => {
+        const ret = await callEnterBarApiAsync();
+        console.log("Entering bar: " + ret);
+    }
+}
 
 /* named dispatchers (bound action creators) */
 const namedActionCreators = {

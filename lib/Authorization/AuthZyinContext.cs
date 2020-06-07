@@ -53,6 +53,7 @@ namespace AuthZyin.Authorization
         /// Implementing IAuthZyinContext.
         /// </summary>
         public object ClientContext => new ClientContext<T>(this);
+
         /// <summary>
         /// Initializes a new instance of the AuthZyinContext class. This constructor is for DI purpose.
         /// </summary>
@@ -69,7 +70,7 @@ namespace AuthZyin.Authorization
             var claimsAccessor = new AadClaimsAccessor(contextAccessor?.HttpContext?.User);
             this.UserContext = new UserContext(claimsAccessor);
 
-            // Retrieve the custom data json string from claims as well (if any).
+            // Retrieves the custom data json string from claims (if any).
             // It's denoted by a virtual member CustomClaimTypeToProcess.
             // Usually it's not safe to call virtual member in the constructor, but it's safe
             // here since CustomClaimTypeToProcess is just meant to return a string constant.

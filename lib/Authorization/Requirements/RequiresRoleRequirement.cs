@@ -1,30 +1,23 @@
-namespace AuthZyin.Authorization.Client
+namespace AuthZyin.Authorization.Requirements
 {
     using System;
     using System.Collections.Generic;
 
     /// <summary>
-    /// A special RequiresRole requirement - only used to deserialize to client. Don't use on the server.
+    /// A special RequiresRole requirement - only used to deserialize to client.
+    /// !!!Don't use this to build policies!!!
     /// </summary>
-    public class RequiresRoleRequirement : Requirement
+    public sealed class RequiresRoleRequirement : Requirement
     {
-        /// <summary>
-        /// The required role
-        /// </summary>
-        private readonly IEnumerable<string> allowedRoles;
-
         /// <summary>
         /// Requirement type override
         /// </summary>
-        public sealed override string RequirementType => "RequiresRole";
+        public override RequirementOperatorType Operator => RequirementOperatorType.RequiresRole;
 
         /// <summary>
         /// Get allowed roles.
-        /// TODO[sidecus]: Workaround for new System.Text.Json serialization
-        /// https://github.com/dotnet/runtime/issues/31742
-        /// https://github.com/dotnet/runtime/issues/29937
         /// </summary>
-        public IEnumerable<object> AllowedRoles => this.allowedRoles;
+        public IEnumerable<object> AllowedRoles { get; }
 
         /// <summary>
         /// Initializes a new ClientReuqiresRoleRequirement from RolesAuthorizationRequirement
@@ -32,7 +25,7 @@ namespace AuthZyin.Authorization.Client
         /// <param name="allowedRoles">allowed roles - user must have at least one role from this list</param>
         public RequiresRoleRequirement(IEnumerable<string> allowedRoles)
         {
-            this.allowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
+            this.AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
         }
 
         /// <summary>

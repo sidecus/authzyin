@@ -30,7 +30,7 @@ namespace sample
         /// <param name="ci">claims identity</param>
         private void AddRoleClaim(ClaimsIdentity ci)
         {
-            ci.AddClaim(new Claim(ci.RoleClaimType, "customer"));
+            ci.AddClaim(new Claim(ci.RoleClaimType, Requirements.CustomerRole));
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-namespace AuthZyin.Authorization
+namespace AuthZyin.Authorization.Requirements
 {
     using System;
 
@@ -14,9 +14,9 @@ namespace AuthZyin.Authorization
         private readonly Requirement[] children;
 
         /// <summary>
-        /// RequirementType used by client lib
+        /// Gets the operator type for the requirement
         /// </summary>
-        public sealed override string RequirementType => "Or";
+        public override RequirementOperatorType Operator => RequirementOperatorType.Or;
 
         /// <summary>
         /// Gets the children requirements for OrRequirement
@@ -41,7 +41,7 @@ namespace AuthZyin.Authorization
         /// <param name="context">authorization data context</param>
         /// <param name="resource">resource object</param>
         /// <returns>true if allowed</returns>
-        public sealed override bool Evaluate(IAuthZyinContext context, object resource)
+        public override bool Evaluate(IAuthZyinContext context, object resource)
         {
             foreach (var child in this.children)
             {
