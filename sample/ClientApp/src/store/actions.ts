@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
-import { SignInInfo, SampleClientContext } from './store';
-import { callEnterBarApiAsync, callAuthZyinClientContextAsync } from '../api/Api';
+import { SignInState } from './store';
+import { callEnterBarApiAsync, callAuthZyinClientContextAsync, SampleClientContext, Bar, callGetBarInfo } from '../api/Api';
 import { createActionCreator, useMemoizedBoundActionCreators } from 'roth.js';
 import { signInAsync } from '../api/MsalClient';
 
@@ -12,13 +12,15 @@ import { signInAsync } from '../api/MsalClient';
 export enum SampleActions {
     SetSignInInfo = 'SetSignInInfo',
     SetAuthZyinContext = 'SetAuthZyinContext',
+    SetBars = "SetBarInfo",
+    SetCurrentBar = "SetCurrentBar",
     BuyDrink = 'BuyDrink',
 }
 
 /**
  * set sign info action creator
  */
-const setSignInInfo = createActionCreator<SignInInfo>(SampleActions.SetSignInInfo);
+const setSignInInfo = createActionCreator<SignInState>(SampleActions.SetSignInInfo);
 export type SetSignInInfoAction = ReturnType<typeof setSignInInfo>
 
 /**
@@ -27,7 +29,20 @@ export type SetSignInInfoAction = ReturnType<typeof setSignInInfo>
 const setAuthZyinContext = createActionCreator<SampleClientContext>(SampleActions.SetAuthZyinContext);
 export type SetAuthZyinContextAction = ReturnType<typeof setAuthZyinContext>
 
-/* thunk action creators */
+/**
+ * set bar info action creator
+ */
+const setBars = createActionCreator<Bar[]>(SampleActions.SetBars);
+export type SetBarsAction = ReturnType<typeof setBars>
+
+
+/**
+ * set curernt bar action creator
+ */
+const setCurrentBar = createActionCreator<number>(SampleActions.SetCurrentBar);
+export type SetCurrentBarAction = ReturnType<typeof setCurrentBar>
+
+/* ===============================thunk action creators============================ */
 
 /**
  * This is a thunk action creator used to trigger sign in
@@ -63,9 +78,17 @@ const getAuthZyinContext = () => {
     return async (dispatch: Dispatch<any>) => {
         const context = await callAuthZyinClientContextAsync();
         dispatch(setAuthZyinContext(context));
+        dispatch(getBars());
+    }
+};
 
-        // TODO[sidecus] - Invoke the user api for testing purpose
-        dispatch(enterBar(1));
+/**
+ * This is a thunk action creator used to get authorization context
+ */
+const getBars = () => {
+    return async (dispatch: Dispatch<any>) => {
+        const barInfo = await callGetBarInfo();
+        dispatch(setBars(barInfo));
     }
 };
 
@@ -75,13 +98,16 @@ const getAuthZyinContext = () => {
 const enterBar = (id: number) => {
     return async (dispatch: Dispatch<any>) => {
         const ret = await callEnterBarApiAsync(id);
-        console.log("Entering bar: " + ret);
+        alert(`Entering bar ${id}: ${ret.name}`);
     }
 }
 
 /* named dispatchers (bound action creators) */
 const namedActionCreators = {
     signIn: signIn,
+    getAuthZyinContext: getAuthZyinContext,
+    getBars: getBars,
+    enterBar: enterBar,
 }
 
 /**

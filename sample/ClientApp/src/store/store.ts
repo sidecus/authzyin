@@ -2,30 +2,26 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { createSlicedReducer } from 'roth.js';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
-import { SampleActions, SetSignInInfoAction, SetAuthZyinContextAction } from './actions';
-import { AuthZyinContext } from '../authzyin/AuthZyinContext';
+import { SampleActions, SetSignInInfoAction, SetAuthZyinContextAction, SetBarsAction, SetCurrentBarAction } from './actions';
+import { SampleClientContext, Bar } from '../api/Api';
 
-export interface SignInInfo {
+/* ====================== State definition =============================*/
+export interface SignInState {
     success: boolean;
     signInError: string;
 }
 
-export interface PaymentMethod{
-    type: string;
-    credit: number;
+export interface BarState {
+    bars: Bar[];
+    currentBar: number;
 }
 
-export interface PersonalData {
-    age: number;
-    paymentMethods: PaymentMethod[];
-}
-
-export type SampleClientContext = AuthZyinContext<PersonalData>;
+/* ====================== Reducer definition =============================*/
 
 /**
  * SetSignInfo reducer
  */
-const setSignInInfoReducer = (state: SignInInfo, action: SetSignInInfoAction) => {
+const setSignInInfoReducer = (state: SignInState, action: SetSignInInfoAction) => {
     return {...state, ...action.payload};
 };
 
@@ -37,30 +33,51 @@ const setAuthZyinContextReducer = (state: SampleClientContext, action: SetAuthZy
 };
 
 /**
- * SignInInfo reducer
- * @param state signin info state
- * @param action signin info action to dispatch
+ * set bar info reducer
  */
-const signInInfoReducer = createSlicedReducer({} as SignInInfo, {
+const setBarInfoReducer = (state: BarState, action: SetBarsAction) => {
+    return {...state, bars: action.payload, currentBar: 0};
+}
+
+/**
+ * set current bar reducer
+ */
+const setCurrentBarReducer = (state: BarState, action: SetCurrentBarAction) => {
+    return {...state, currentBar: action.payload};
+}
+
+/**
+ * SignInInfo reducer
+ */
+const signInInfoReducer = createSlicedReducer({} as SignInState, {
     [SampleActions.SetSignInInfo]: [setSignInInfoReducer],
 });
 
 /**
  * AuthZyin context reducer
- * @param state AuthZyin context state
- * @param action set AuthZyin context action to dispatch
  */
 const authZyinContextReducer = createSlicedReducer({} as SampleClientContext, {
     [SampleActions.SetAuthZyinContext]: [setAuthZyinContextReducer],
 });
 
 /**
- * todo app root reducer
+ * bar info reducer,handles two actions
  */
-const rootReducer = combineReducers({signinInfo: signInInfoReducer, authZyinContext: authZyinContextReducer});
+const barInfoReducer = createSlicedReducer({currentBar: -1} as BarState, {
+    [SampleActions.SetBars]: [setBarInfoReducer],
+    [SampleActions.SetCurrentBar]: [setCurrentBarReducer],
+});
 
 /**
- * todo app store, created with thunk middleware and redux dev tools
+ * root reducer
+ */
+const rootReducer = combineReducers({
+    signinInfo: signInInfoReducer,
+    authZyinContext: authZyinContextReducer,
+    barInfo: barInfoReducer});
+
+/**
+ * store, created with thunk middleware and redux dev tools
  */
 export const sampleStore = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 

@@ -1,6 +1,28 @@
 namespace sample.AuthN
 {
     using AuthZyin.Authorization.Requirements;
+    using Microsoft.AspNetCore.Authorization;
+
+    public class Policies
+    {
+        // Declarative policy without using resource - CanDrink
+        public static readonly AuthorizationPolicy AlchoholReady = new AuthorizationPolicyBuilder()
+            .RequireRole(Requirements.CustomerRole)
+            .AddRequirements(
+                Requirements.HasValidId,
+                Requirements.AgeAbove21)
+            .Build();
+
+        // Imperative policy on top of CanDrink - need Bar object as resource
+        public static readonly AuthorizationPolicy CanEnterBar = new AuthorizationPolicyBuilder()
+            .AddRequirements(Requirements.HasAcceptedPaymentMethod)
+            .Build();
+
+        // Imperative policy on top of CanEnterBar - need Bar object as resource
+        public static readonly AuthorizationPolicy CanBuyDrink = new AuthorizationPolicyBuilder()
+            .RequireRole(Requirements.CustomerRole)
+            .Build();
+    }
 
     public class Requirements
     {

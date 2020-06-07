@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { SampleContext } from './SampleContext';
 import { useSampleAppBoundActionCreators } from '../store/actions';
-import { getSignInInfo, getAuthZyinContext } from '../store/selectors';
+import { signInfoSelector, authZyinContextSelector } from '../store/selectors';
+import { User } from './User';
+import { BarList } from './BarList';
 
-const Home = () => {
+export const Home = () => {
     const { signIn } = useSampleAppBoundActionCreators();
-    const signInInfo = useSelector(getSignInInfo);
-    const clientContext = useSelector(getAuthZyinContext);
+    const signInInfo = useSelector(signInfoSelector);
+    const clientContext = useSelector(authZyinContextSelector);
 
     // Effect to trigger log in during page load
     React.useEffect(() => {
@@ -16,12 +18,16 @@ const Home = () => {
 
     // main rendering based on state
     if (signInInfo.success && clientContext.userContext) {
-        return <SampleContext data={clientContext} />;
+        return (
+            <div>
+                <User />
+                <BarList />
+                <SampleContext data={clientContext} />
+            </div>
+        );
     } else if (signInInfo.signInError) {
         return <h3>Error: {signInInfo.signInError}</h3>;
     } else {
         return <></>;
     }
 };
-
-export default connect()(Home);

@@ -1,6 +1,7 @@
 ﻿namespace sample.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
@@ -27,9 +28,18 @@
         }
 
         [HttpGet]
+        [Route("bars")]
+        [Authorize(nameof(Policies.AlchoholReady))]
+        public async Task<ActionResult<IEnumerable<Bar>>> GetBarInfo()
+        {
+            // Sucessfully entered the bar
+            return await Task.FromResult(Bar.Bars.ToList());
+        }
+
+        [HttpGet]
         [Route("enterbar/{id}")]
-        [Authorize(nameof(SamplePolicies.CanDrink))]
-        public async Task<ActionResult<bool>> EnterBar([FromRoute, BindRequired] int id)
+        [Authorize(nameof(Policies.AlchoholReady))]
+        public async Task<ActionResult<Bar>> EnterBar([FromRoute, BindRequired] int id)
         {
             var targetBar = Bar.Bars.FirstOrDefault(x => x.Id == id);
             if (targetBar == null)
@@ -40,7 +50,7 @@
             var authResult = this.authorizationService.AuthorizeAsync(
                 this.httpContextAccessor.HttpContext.User,
                 targetBar,
-                nameof(SamplePolicies.CanEnterBar));
+                nameof(Policies.CanEnterBar));
 
             if (!authResult.IsCompletedSuccessfully)
             {
@@ -48,12 +58,12 @@
             }
 
             // Sucessfully entered the bar
-            return await Task.FromResult(true);
+            return await Task.FromResult(targetBar);
         }
 
         [HttpGet]
         [Route("buydrink")]
-        [Authorize(nameof(SamplePolicies.CanBuyDrink))]
+        [Authorize(nameof(Policies.AlchoholReady))]
         public async Task<ActionResult<bool>> BuyDrink()
         {
             // Sucessfully entered the bar

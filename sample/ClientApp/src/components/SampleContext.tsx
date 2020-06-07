@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SampleClientContext } from '../store/store';
+import { SampleClientContext } from '../api/Api';
 
 interface ISampleContextProps {
     data: SampleClientContext;

@@ -51,10 +51,9 @@ namespace sample
             
             services.AddAuthZyinAuthorization(options =>
             {
-                foreach (var kvp in SamplePolicies.Policies)
-                {
-                    options.AddPolicy(kvp.Key, kvp.Value);
-                }
+                options.AddPolicy(nameof(Policies.AlchoholReady), Policies.AlchoholReady);
+                options.AddPolicy(nameof(Policies.CanEnterBar), Policies.CanEnterBar);
+                options.AddPolicy(nameof(Policies.CanBuyDrink), Policies.CanBuyDrink);
             });
 
             // AuthZyin[sidecus]: Add scoped context, used for authorization on both server and client

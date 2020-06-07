@@ -23,7 +23,7 @@ namespace sample.AuthN
         {
             new Bar
             {
-                Id = 1,
+                Id = 0,
                 Name = "Dark Ravern",
                 AcceptedPaymentMethods = new List<string>
                 {
@@ -32,7 +32,7 @@ namespace sample.AuthN
             },
             new Bar
             {
-                Id = 2,
+                Id = 1,
                 Name = "Blue Sky",
                 AcceptedPaymentMethods = new List<string>
                 {

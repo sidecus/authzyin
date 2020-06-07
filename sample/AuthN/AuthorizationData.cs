@@ -55,7 +55,6 @@ namespace sample.AuthN
             {
                 new PaymentMethod { Type = PaymentMethod.Cash, Credit = 20 },
                 new PaymentMethod { Type = PaymentMethod.Visa, Credit = 20 },
-                new PaymentMethod { Type = PaymentMethod.MasterCard, Credit = 100 },
             };
         }
 
