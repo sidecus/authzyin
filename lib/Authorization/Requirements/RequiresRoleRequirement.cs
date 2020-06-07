@@ -17,7 +17,7 @@ namespace AuthZyin.Authorization.Requirements
         /// <summary>
         /// Get allowed roles.
         /// </summary>
-        public IEnumerable<object> AllowedRoles { get; }
+        public IEnumerable<string> AllowedRoles { get; }
 
         /// <summary>
         /// Initializes a new ClientReuqiresRoleRequirement from RolesAuthorizationRequirement

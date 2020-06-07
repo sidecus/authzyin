@@ -19,7 +19,7 @@ namespace sample
         {
             var ci = principal.Identity as ClaimsIdentity;
             this.AddRoleClaim(ci);
-            this.AddMembershipClaim(ci);
+            this.AddCustomDataClaim(ci);
 
             return Task.FromResult(principal);
         }
@@ -34,14 +34,13 @@ namespace sample
         }
 
         /// <summary>
-        /// Add custom membership claim
+        /// Load and add custom data as part of the claim
         /// </summary>
         /// <param name="ci">claims identity</param>
-        private void AddMembershipClaim(ClaimsIdentity ci)
+        private void AddCustomDataClaim(ClaimsIdentity ci)
         {
-            // AuthZyin[sidecus]: add required "custom data" (Membership) in this case to claims
-            var membership = new CustomData();
-            ci.AddClaim(membership.GetClaim());
+            var data = new AuthorizationData();
+            ci.AddClaim(data.ToClaim());
         }
     }
 }

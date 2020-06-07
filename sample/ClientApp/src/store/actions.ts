@@ -65,16 +65,16 @@ const getAuthZyinContext = () => {
         dispatch(setAuthZyinContext(context));
 
         // TODO[sidecus] - Invoke the user api for testing purpose
-        dispatch(enterBar());
+        dispatch(enterBar(1));
     }
 };
 
 /**
  * This is a thunk action creator used to call enter bar
  */
-const enterBar = () => {
+const enterBar = (id: number) => {
     return async (dispatch: Dispatch<any>) => {
-        const ret = await callEnterBarApiAsync();
+        const ret = await callEnterBarApiAsync(id);
         console.log("Entering bar: " + ret);
     }
 }

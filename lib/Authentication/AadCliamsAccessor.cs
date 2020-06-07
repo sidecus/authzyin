@@ -96,18 +96,28 @@ namespace AuthZyin.Authentication
         }
 
         /// <summary>
-        /// Get a claim value given the claim type
+        /// Get a claim given the claim type
         /// </summary>
         /// <param name="type">claim type</param>
-        /// <returns>claim value or null</returns>
-        public string GetClaimValue(string type)
+        /// <returns>claim</returns>
+        public Claim GetClaim(string type)
         {
             if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
             
-            return this.claimsIdentity.FindFirst(type)?.Value;
+            return this.claimsIdentity.FindFirst(type);
+        }
+
+        /// <summary>
+        /// Get a claim value given the claim type
+        /// </summary>
+        /// <param name="type">claim type</param>
+        /// <returns>claim value or null</returns>
+        public string GetClaimValue(string type)
+        {
+            return this.GetClaim(type)?.Value;
         }
     }
 }

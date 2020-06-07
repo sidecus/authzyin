@@ -3,7 +3,7 @@ import { createSlicedReducer } from 'roth.js';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import { SampleActions, SetSignInInfoAction, SetAuthZyinContextAction } from './actions';
-import { ClientContext } from '../authzyin/ClientContext';
+import { AuthZyinContext } from '../authzyin/AuthZyinContext';
 
 export interface SignInInfo {
     success: boolean;
@@ -20,7 +20,7 @@ export interface PersonalData {
     paymentMethods: PaymentMethod[];
 }
 
-export type SampleClientContext = ClientContext<PersonalData>;
+export type SampleClientContext = AuthZyinContext<PersonalData>;
 
 /**
  * SetSignInfo reducer

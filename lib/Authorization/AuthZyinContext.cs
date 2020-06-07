@@ -29,6 +29,11 @@ namespace AuthZyin.Authorization
     public class AuthZyinContext<T> : IAuthZyinContext where T : class
     {
         /// <summary>
+        /// Claims accessor
+        /// </summary>
+        protected AadClaimsAccessor claimsAccessor { get ;}
+
+        /// <summary>
         /// Authorization user context
         /// </summary>
         public UserContext UserContext { get; }
@@ -44,11 +49,6 @@ namespace AuthZyin.Authorization
         public T CustomData { get; }
 
         /// <summary>
-        /// Custom claim type to process. This will be used to construct JsonData member in the return
-        /// </summary>
-        protected virtual string ClaimTypeForCustomData => null;
-
-        /// <summary>
         /// Gets an object representing the authorization context to send to client
         /// Implementing IAuthZyinContext.
         /// </summary>
@@ -58,24 +58,31 @@ namespace AuthZyin.Authorization
         /// Initializes a new instance of the AuthZyinContext class. This constructor is for DI purpose.
         /// </summary>
         /// <param name="policyList">policy list</param>
-        /// <param name="contextAccessor">httpContextAccessor</param>
-        public AuthZyinContext(IAuthorizationPolicyList policyList, IHttpContextAccessor contextAccessor)
+        /// <param name="httpContextAccessor">httpContextAccessor</param>
+        public AuthZyinContext(IAuthorizationPolicyList policyList, IHttpContextAccessor httpContextAccessor)
         {
             this.Policies = policyList?.Policies ?? throw new ArgumentNullException(nameof(policyList));
-            if (contextAccessor?.HttpContext?.User == null)
+            if (httpContextAccessor?.HttpContext?.User == null)
             {
-                throw new ArgumentNullException(nameof(contextAccessor));
+                throw new ArgumentNullException(nameof(httpContextAccessor));
             }
 
-            var claimsAccessor = new AadClaimsAccessor(contextAccessor?.HttpContext?.User);
+            this.claimsAccessor = new AadClaimsAccessor(httpContextAccessor?.HttpContext?.User);
             this.UserContext = new UserContext(claimsAccessor);
 
-            // Retrieves the custom data json string from claims (if any).
-            // It's denoted by a virtual member CustomClaimTypeToProcess.
-            // Usually it's not safe to call virtual member in the constructor, but it's safe
-            // here since CustomClaimTypeToProcess is just meant to return a string constant.
-            var customDataJsonString = this.ClaimTypeForCustomData != null ? claimsAccessor.GetClaimValue(this.ClaimTypeForCustomData) : null;
-            this.CustomData = customDataJsonString != null ? JsonSerializer.Deserialize<T>(customDataJsonString) : null;
+            // Usually it's not safe to call virtual member in the constructor, but it's relatively safe
+            // here since GetCustomData is not supposed to reference anything from the current object being constructed.
+            this.CustomData = this.CreateCustomData();
+        }
+
+        /// <summary>
+        /// Get custom data to be associated with the context object.
+        /// Can be overriden to add additional data for authorization purpose.
+        /// </summary>
+        /// <returns>CustomData of type T</returns>
+        protected virtual T CreateCustomData()
+        {
+            return null;
         }
     }
 }

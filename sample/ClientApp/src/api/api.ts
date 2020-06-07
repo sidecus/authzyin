@@ -1,5 +1,5 @@
 import { acquireTokenAsync } from './MsalClient';
-import { contextApiUrl } from '../authzyin/ClientContext';
+import { AuthZyinContextApiUrl } from '../authzyin/AuthZyinContext';
 import { SampleClientContext } from '../store/store';
 
 const enterBarApi = '/api/enterbar';
@@ -16,8 +16,9 @@ const callApiAsync = async <T>(url: string):Promise<T> => {
     return response.json();
 };
 
-export const callEnterBarApiAsync = async () => {
-    return await callApiAsync<boolean>(enterBarApi);
+export const callEnterBarApiAsync = async (id: number) => {
+    const uri = enterBarApi + '/' + id;
+    return await callApiAsync<boolean>(uri);
 };
 
 export const callBuyDrinkAsync = async () => {
@@ -25,5 +26,5 @@ export const callBuyDrinkAsync = async () => {
 };
 
 export const callAuthZyinClientContextAsync = async () => {
-    return await callApiAsync<SampleClientContext>(contextApiUrl);
+    return await callApiAsync<SampleClientContext>(AuthZyinContextApiUrl);
 }
