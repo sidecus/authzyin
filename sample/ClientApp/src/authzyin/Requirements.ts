@@ -58,17 +58,18 @@ export type Requirement = OrRequiremet | RequiresRoleRequiremet | JsonPathRequir
 * https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types
 */
 export function IsOrRequirement(requirement: Requirement): requirement is OrRequiremet {
-    return requirement.operator == RequirementOperatorType.Or;
+    return requirement.operator === RequirementOperatorType.Or;
 }
 
 export function IsRequiresRoleRequirement(requirement: Requirement): requirement is RequiresRoleRequiremet {
-    return requirement.operator == RequirementOperatorType.RequiresRole;
+    return requirement.operator === RequirementOperatorType.RequiresRole;
 }
 
 export function IsJsonPathRequirement(requirement: Requirement): requirement is JsonPathRequiremet {
-    return requirement.operator != RequirementOperatorType.Invalid &&
-           requirement.operator != RequirementOperatorType.Or &&
-           requirement.operator != RequirementOperatorType.RequiresRole &&
+    // White listing the operator types for json requirement
+    return (requirement.operator === RequirementOperatorType.Equals ||
+            requirement.operator === RequirementOperatorType.Contains ||
+            requirement.operator === RequirementOperatorType.GreaterThan) &&
            (requirement as JsonPathRequiremet).dataJPath !== undefined;
 }
 

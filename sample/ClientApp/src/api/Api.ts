@@ -1,5 +1,6 @@
 import { acquireTokenAsync } from './MsalClient';
 import { AuthZyinContextApiUrl, AuthZyinContext } from '../authzyin/AuthZyinContext';
+import { Resource } from '../authzyin/Resource';
 
 const barInfoApi = '/api/bars';
 const enterBarApi = '/api/enterbar';
@@ -16,7 +17,6 @@ const callHttpGetAsync = async <T>(url: string):Promise<T> => {
     if (response.ok) {
         return await response.json() as T;
     } else {
-        console.log(`HTTP Get failed ${url} with status code ${response.status}`);
         // Throw error with HTTP status code
         throw new Error(response.status.toString());
     }
@@ -57,7 +57,7 @@ export interface AuthorizationData {
 export type SampleClientContext = AuthZyinContext<AuthorizationData>;
 
 /* ====================== Resource definition =============================*/
-export interface Bar
+export interface Bar extends Resource
 {
     id: number;
     name: string;

@@ -101,7 +101,7 @@ const enterBar = (id: number) => {
             const ret = await callEnterBarApiAsync(id);
             dispatch(setCurrentBar(ret.id))
         } catch (error) {
-            alert(`Enering bar failed. ${error.message}`);
+            alert(`Enering bar rejected by server: ${error.message}`);
         }
     }
 }

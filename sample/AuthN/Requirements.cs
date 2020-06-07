@@ -15,6 +15,7 @@ namespace sample.AuthN
 
         // Imperative policy on top of CanDrink - need Bar object as resource
         public static readonly AuthorizationPolicy CanEnterBar = new AuthorizationPolicyBuilder()
+            .Combine(Policies.AlchoholReady)
             .AddRequirements(Requirements.HasAcceptedPaymentMethod)
             .Build();
 
