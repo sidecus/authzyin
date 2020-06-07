@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { userInfoSelector } from '../store/selectors';
+import { Typography } from '@material-ui/core';
 
 export const User = () => {
     const userInfo = useSelector(userInfoSelector);
@@ -8,7 +9,9 @@ export const User = () => {
     // main rendering based on state
     if (userInfo) {
         return (
-            <h1>Welcome {userInfo.userName}!</h1>
+            <Typography variant="h2" component="h1">
+                Welcome {userInfo.userName}!
+            </Typography>
         );
     }
 

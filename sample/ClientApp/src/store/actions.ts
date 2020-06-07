@@ -97,8 +97,12 @@ const getBars = () => {
  */
 const enterBar = (id: number) => {
     return async (dispatch: Dispatch<any>) => {
-        const ret = await callEnterBarApiAsync(id);
-        alert(`Entering bar ${id}: ${ret.name}`);
+        try {
+            const ret = await callEnterBarApiAsync(id);
+            dispatch(setCurrentBar(ret.id))
+        } catch (error) {
+            alert(`Enering bar failed. ${error.message}`);
+        }
     }
 }
 

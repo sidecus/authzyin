@@ -24,11 +24,22 @@ export const userInfoSelector = createSelector(
 );
 
 /**
+ * Bar info selector
+ */
+export const barStateSelector = (store: ISampleStore) => store.barState;
+
+/**
  * Bars selector
  */
-export const barsSelector = (store: ISampleStore) => store.barInfo.bars;
+export const barsSelector = createSelector(
+    [barStateSelector],
+    x => x.bars
+);
 
 /**
  * Current bars selector
  */
-export const currentBarSelector = (store: ISampleStore) => store.barInfo.currentBar;
+export const currentBarSelector = createSelector(
+    [barStateSelector],
+    x => x.currentBar
+);

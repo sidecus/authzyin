@@ -5,7 +5,7 @@ const barInfoApi = '/api/bars';
 const enterBarApi = '/api/enterbar';
 const buyDrinkApi = '/api/buydrink';
 
-const callApiAsync = async <T>(url: string):Promise<T> => {
+const callHttpGetAsync = async <T>(url: string):Promise<T> => {
     const tokenResponse = await acquireTokenAsync();
     const response = await fetch(url, {
         headers: {
@@ -13,26 +13,32 @@ const callApiAsync = async <T>(url: string):Promise<T> => {
         }
     });
 
-    return response.json();
+    if (response.ok) {
+        return await response.json() as T;
+    } else {
+        console.log(`HTTP Get failed ${url} with status code ${response.status}`);
+        // Throw error with HTTP status code
+        throw new Error(response.status.toString());
+    }
 };
 
 /* ====================== Api definition =============================*/
 
 export const callAuthZyinClientContextAsync = async () => {
-    return await callApiAsync<SampleClientContext>(AuthZyinContextApiUrl);
+    return await callHttpGetAsync<SampleClientContext>(AuthZyinContextApiUrl);
 }
 
 export const callGetBarInfo = async () => {
-    return await callApiAsync<Bar[]>(barInfoApi);
+    return await callHttpGetAsync<Bar[]>(barInfoApi);
 }
 
 export const callEnterBarApiAsync = async (id: number) => {
     const uri = enterBarApi + '/' + id;
-    return await callApiAsync<Bar>(uri);
+    return await callHttpGetAsync<Bar>(uri);
 };
 
 export const callBuyDrinkAsync = async () => {
-    return await callApiAsync<boolean>(buyDrinkApi);
+    return await callHttpGetAsync<boolean>(buyDrinkApi);
 };
 
 /* ====================== Api contract definition =============================*/

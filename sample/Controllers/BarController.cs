@@ -47,14 +47,14 @@
                 return this.NotFound($"Bar {id} not found");
             }
 
-            var authResult = this.authorizationService.AuthorizeAsync(
+            var authResult = await this.authorizationService.AuthorizeAsync(
                 this.httpContextAccessor.HttpContext.User,
                 targetBar,
                 nameof(Policies.CanEnterBar));
 
-            if (!authResult.IsCompletedSuccessfully)
+            if (!authResult.Succeeded)
             {
-                return this.Unauthorized($"Not allowed to enter bar {id}");
+                return this.Forbid();
             }
 
             // Sucessfully entered the bar

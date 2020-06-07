@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { makeStyles, FormControl, Radio, FormLabel, RadioGroup, FormControlLabel } from '@material-ui/core';
+import { makeStyles, FormControl, Radio, RadioGroup, FormControlLabel, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { useSampleAppBoundActionCreators } from '../store/actions';
 import { barsSelector, currentBarSelector } from '../store/selectors';
@@ -32,18 +32,23 @@ export const BarList = () => {
 
     return (
         <div>
+            <Typography variant="h4" component="h2">
+                Select one of the bars below:
+            </Typography>
             <FormControl className={classes.formControl}>
-                <FormLabel component="legend">Select one nearby bar:</FormLabel>
                 <RadioGroup row aria-label="bars" name="bars" value={currentBar === -1 ? '' : `${currentBar}`} onChange={handleChange}>
                 {
                     bars.map((bar: Bar) => {
                         return (
-                            <FormControlLabel key={bar.id} label={bar.name} value={bar.id} control={<Radio />} />
+                            <FormControlLabel key={bar.id} label={bar.name} value={`${bar.id}`} control={<Radio />} />
                         );
                     })
                 }
                 </RadioGroup>
             </FormControl>
+            <Typography variant="h5" component="h3">
+                {currentBar === -1 ? 'You are not in any bar.' : `You've walked into ${bars[currentBar].name}`}
+            </Typography>
         </div>
     );
 };

@@ -35,8 +35,8 @@ const setAuthZyinContextReducer = (state: SampleClientContext, action: SetAuthZy
 /**
  * set bar info reducer
  */
-const setBarInfoReducer = (state: BarState, action: SetBarsAction) => {
-    return {...state, bars: action.payload, currentBar: 0};
+const setBarsReducer = (state: BarState, action: SetBarsAction) => {
+    return {...state, bars: action.payload, currentBar: -1};
 }
 
 /**
@@ -49,7 +49,7 @@ const setCurrentBarReducer = (state: BarState, action: SetCurrentBarAction) => {
 /**
  * SignInInfo reducer
  */
-const signInInfoReducer = createSlicedReducer({} as SignInState, {
+const signInStateReducer = createSlicedReducer({} as SignInState, {
     [SampleActions.SetSignInInfo]: [setSignInInfoReducer],
 });
 
@@ -63,8 +63,8 @@ const authZyinContextReducer = createSlicedReducer({} as SampleClientContext, {
 /**
  * bar info reducer,handles two actions
  */
-const barInfoReducer = createSlicedReducer({currentBar: -1} as BarState, {
-    [SampleActions.SetBars]: [setBarInfoReducer],
+const barStateReducer = createSlicedReducer({currentBar: -1} as BarState, {
+    [SampleActions.SetBars]: [setBarsReducer],
     [SampleActions.SetCurrentBar]: [setCurrentBarReducer],
 });
 
@@ -72,9 +72,9 @@ const barInfoReducer = createSlicedReducer({currentBar: -1} as BarState, {
  * root reducer
  */
 const rootReducer = combineReducers({
-    signinInfo: signInInfoReducer,
+    signinInfo: signInStateReducer,
     authZyinContext: authZyinContextReducer,
-    barInfo: barInfoReducer});
+    barState: barStateReducer});
 
 /**
  * store, created with thunk middleware and redux dev tools
