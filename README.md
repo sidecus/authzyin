@@ -6,7 +6,7 @@ Often we need to have proper authorization to protect server apis, and at the sa
 The common practice is to write certain authorization logic twice, once on the server (asp.net core in my case), and once on the client (e.g. in React).
 
 If there are only a few authoriztaion policies/requirements, this is relatively easy and no big deal.
-But as our application grows complex, the work required to maintain and make sure they are in sync also grows, and it's no longer a simple task.
+But as our application grows, the work required to maintain and make sure both sides in sync also grows dramatically, and it's likely no longer a simple task.
 
 I was thinking different options to see whether we can have some libraries to enable the same authorization on both server and client. Aka, write once, use in both places.
 
@@ -17,7 +17,8 @@ I haven't got time to move the client library to a seprate project so it's just 
 The server utilities are all in the standalone lib folder.
 
 Currently supported requirement evaluation operations: RquiresRole, Or condition with multiple children requirements, value comparison (equals, greater than etc.).
+Kindly note - you might have more complex authorization to handle. This doesn't replace that - you can mix this with the native asp.net core requirement/handler behaviors.
 
-Any feedback welcome.
+Any feedback welcome - please just open an issue.
 
 Happy coding. Peace.

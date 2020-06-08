@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SampleClientContext } from '../api/Api';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { makeStyles, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Typography } from '@material-ui/core';
+import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Typography } from '@material-ui/core';
 
 interface ISampleContextProps {
     data: SampleClientContext;
