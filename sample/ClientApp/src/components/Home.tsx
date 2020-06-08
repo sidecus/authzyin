@@ -1,40 +1,34 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { SampleContext } from './SampleContext';
-import { useSampleAppBoundActionCreators } from '../store/actions';
-import { signInfoSelector, authZyinContextSelector } from '../store/selectors';
+import { AuthContext } from './AuthContext';
+import { signInfoSelector, authZyinContextSelector, userInfoSelector } from '../store/selectors';
 import { User } from './User';
 import { BarList } from './BarList';
-import { AlertBanner } from './Alert';
-import { makeStyles } from '@material-ui/core';
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-    },
-  }));
+import { Grid, Typography } from '@material-ui/core';
 
 export const Home = () => {
-    const classes  = useStyles();
-    const { signIn } = useSampleAppBoundActionCreators();
     const signInInfo = useSelector(signInfoSelector);
+    const userInfo = useSelector(userInfoSelector);
     const clientContext = useSelector(authZyinContextSelector);
 
-    // Effect to trigger log in during page load
-    React.useEffect(() => {
-        signIn();
-      }, [signIn]);
-
     // main rendering based on state
-    if (signInInfo.success && clientContext.userContext) {
+    if (clientContext.userContext) {
         return (
-            <div className = {classes.root}>
-                <User />
-                <BarList />
-                <AlertBanner />
-                <SampleContext data={clientContext} />
+            <div>
+                <Typography variant="h2" component="h2">
+                    Welcome {userInfo.userName}!
+                </Typography>
+                <Grid container direction='column' justify='center' alignItems='stretch'>
+                    <Grid item xl={12}>
+                        <BarList />
+                    </Grid>
+                    <Grid item xl={12}>
+                        <User />
+                    </Grid>
+                    <Grid item xl={12}>
+                        <AuthContext data={clientContext} />
+                    </Grid>
+                </Grid>
             </div>
         );
     } else if (signInInfo.signInError) {

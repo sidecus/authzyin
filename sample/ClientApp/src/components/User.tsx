@@ -1,17 +1,33 @@
 import * as React from 'react';
+import { authZyinContextSelector } from '../store/selectors';
+import { Typography, Card, CardContent, CardHeader } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import { userInfoSelector } from '../store/selectors';
-import { Typography } from '@material-ui/core';
 
 export const User = () => {
-    const userInfo = useSelector(userInfoSelector);
+    const authorizationInfo = useSelector(authZyinContextSelector);
 
     // main rendering based on state
-    if (userInfo) {
+    if (authorizationInfo) {
         return (
-            <Typography variant="h2" component="h1">
-                Welcome {userInfo.userName}!
-            </Typography>
+            <div>
+                <Card variant="outlined">
+                    <CardHeader title='User information' />
+                    <CardContent>
+                        <Typography variant="body1" component="div">
+                            Age: {authorizationInfo.customData.age}
+                        </Typography>
+                        <Typography variant="body1" component="div">
+                            Has driver's license: {String(authorizationInfo.customData.withDriversLicense)}
+                        </Typography>
+                        <Typography variant="body1" component="div">
+                            Has passport: {String(authorizationInfo.customData.withPassport)}
+                            </Typography>
+                        <Typography variant="body1" component="div">
+                            PaymentMethods: {JSON.stringify(authorizationInfo.customData.paymentMethods.map(x => x.type))}
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </div>
         );
     }
 

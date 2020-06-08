@@ -6,6 +6,8 @@ import { barsSelector, currentBarSelector, authZyinContextSelector, sneakInSelec
 import { Bar } from '../api/Api';
 import { useAuthorize } from '../authzyin/Authorize';
 import { Severity } from '../store/store';
+import { LightTooltip } from './LightTooltip';
+import { AlertBanner } from './Alert';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -43,30 +45,33 @@ export const BarList = () => {
         setSneakIn(checked);
     }
 
-    if (!bars || bars.length === 0) {
-        return <></>;
-    } else {
+    if (bars && bars.length >= 0) {
+        const barInfo = bars.map((bar: Bar) => {
+            return (
+                <LightTooltip key={bar.id} title={`accepts ${bar.acceptedPaymentMethods[0].toString()}`} placement='top' arrow>
+                    <FormControlLabel key={bar.id} label={bar.name} value={`${bar.id}`} control={<Radio />} />
+                </LightTooltip>
+            );
+        });
+    
         return (
             <Card variant="outlined">
-                <CardHeader component='h4' title='Local bars nearby you' />
+                <CardHeader title='Local bars nearby you' />
                 <CardContent>
                     <FormControl className={classes.formControl}>
                         <RadioGroup row aria-label="bars" name="bars" value={currentBar === -1 ? '' : `${currentBar}`} onChange={handleBarChange}>
-                        {
-                            bars.map((bar: Bar) => {
-                                return (
-                                    <FormControlLabel key={bar.id} label={bar.name} value={`${bar.id}`} control={<Radio />} />
-                                );
-                            })
-                        }
+                            {barInfo}
                         </RadioGroup>
                         <FormControlLabel
                             control={<Switch checked={sneakIn} onChange={handleSneakInChange} name="sneakIn" />}
                             label="Try to sneak in"
                         />
+                        <AlertBanner />
                     </FormControl>
                 </CardContent>
             </Card>
         );
-    }
+    };
+
+    return <></>;
 };
