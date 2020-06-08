@@ -45,6 +45,14 @@ export const currentBarSelector = createSelector(
 );
 
 /**
+ * Current bars selector
+ */
+export const sneakInSelector = createSelector(
+    [barStateSelector],
+    x => x.sneakIn
+);
+
+/**
  * Alert selector selector
  */
 export const alertSelector = (store: ISampleStore) => store.alertInfo;

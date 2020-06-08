@@ -6,8 +6,18 @@ import { signInfoSelector, authZyinContextSelector } from '../store/selectors';
 import { User } from './User';
 import { BarList } from './BarList';
 import { AlertBanner } from './Alert';
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+    },
+  }));
 
 export const Home = () => {
+    const classes  = useStyles();
     const { signIn } = useSampleAppBoundActionCreators();
     const signInInfo = useSelector(signInfoSelector);
     const clientContext = useSelector(authZyinContextSelector);
@@ -20,7 +30,7 @@ export const Home = () => {
     // main rendering based on state
     if (signInInfo.success && clientContext.userContext) {
         return (
-            <div>
+            <div className = {classes.root}>
                 <User />
                 <BarList />
                 <AlertBanner />

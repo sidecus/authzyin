@@ -14,6 +14,7 @@ export enum SampleActions {
     SetAuthZyinContext = 'SetAuthZyinContext',
     SetBars = "SetBarInfo",
     SetCurrentBar = "SetCurrentBar",
+    SetSneakIn = "SetSneakIn",
     SetAlert = "SetAlert",
     BuyDrink = 'BuyDrink',
 }
@@ -42,6 +43,12 @@ export type SetBarsAction = ReturnType<typeof setBars>
  */
 const setCurrentBar = createActionCreator<number>(SampleActions.SetCurrentBar);
 export type SetCurrentBarAction = ReturnType<typeof setCurrentBar>
+
+/**
+ * set current bar action creator
+ */
+const setSneakIn = createActionCreator<boolean>(SampleActions.SetSneakIn);
+export type SetSneakInAction = ReturnType<typeof setSneakIn>
 
 /**
  * set error
@@ -117,7 +124,7 @@ const enterBar = (id: number) => {
             console.error(`Server authorization failed for bar ${id}: ${error.message}`);
             dispatch(setAlert({
                 severity: Severity.Error,
-                message: `Entering bar ${id} rejected by server`,
+                message: `You tried to sneak into bar ${id} but got rejected by server`,
             }));
         }
     }
@@ -128,9 +135,10 @@ const namedActionCreators = {
     signIn: signIn,
     getAuthZyinContext: getAuthZyinContext,
     getBars: getBars,
-    enterBar: enterBar,
-    setCurrentBar: setCurrentBar,
     setAlert: setAlert,
+    setCurrentBar: setCurrentBar,
+    setSneakIn: setSneakIn,
+    enterBar: enterBar,
 }
 
 /**

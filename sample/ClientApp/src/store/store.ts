@@ -2,7 +2,15 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { createSlicedReducer } from 'roth.js';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
-import { SampleActions, SetSignInInfoAction, SetAuthZyinContextAction, SetBarsAction, SetCurrentBarAction, SetAlertAction } from './actions';
+import {
+    SampleActions,
+    SetSignInInfoAction,
+    SetAuthZyinContextAction,
+    SetBarsAction,
+    SetCurrentBarAction,
+    SetAlertAction,
+    SetSneakInAction
+} from './actions';
 import { SampleClientContext, Bar } from '../api/Api';
 
 /* ====================== State definition =============================*/
@@ -14,7 +22,7 @@ export interface SignInState {
 export interface BarState {
     bars: Bar[];
     currentBar: number;
-    barError: string;
+    sneakIn: boolean;
 }
 
 export enum Severity {
@@ -58,6 +66,13 @@ const setCurrentBarReducer = (state: BarState, action: SetCurrentBarAction) => {
 }
 
 /**
+ * set sneak in status
+ */
+const setSneakInReducer = (state: BarState, action: SetSneakInAction) => {
+    return {...state, sneakIn: action.payload};
+}
+
+/**
  * set alert reducer
  */
 const setAlertReducer = (state: AlertState, action: SetAlertAction) => {
@@ -81,9 +96,10 @@ const authZyinContextReducer = createSlicedReducer({} as SampleClientContext, {
 /**
  * bar info reducer,handles two actions
  */
-const barStateReducer = createSlicedReducer({currentBar: -1} as BarState, {
+const barStateReducer = createSlicedReducer({currentBar: -1, sneakIn: false} as BarState, {
     [SampleActions.SetBars]: [setBarsReducer],
     [SampleActions.SetCurrentBar]: [setCurrentBarReducer],
+    [SampleActions.SetSneakIn]: [setSneakInReducer],
 });
 
 /**
