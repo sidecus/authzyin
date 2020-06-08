@@ -24,10 +24,12 @@ export const BarList = () => {
     const handleBarChange = (event: React.ChangeEvent<HTMLInputElement>, value: string) => {
         const selectedBarId = parseInt(value);
 
+        // Reset current bar
         setCurrentBar(-1);
 
-        // Authorize on client first
+        // Authorize on client
         if (sneakIn || authorize("CanEnterBar", bars[selectedBarId])) {
+            // invoke server api
             enterBar(selectedBarId);
         } else {
             setAlert({
