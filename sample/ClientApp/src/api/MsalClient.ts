@@ -35,6 +35,7 @@ export const signInAsync = async () => {
     return msalClient.getAccount();
 }
 
+// acquire token - this needs to be called each time before an api call is made
 export const acquireTokenAsync = async () => {
     let tokenResponse: TokenResponse;
     try {
@@ -42,7 +43,7 @@ export const acquireTokenAsync = async () => {
         tokenResponse = await msalClient.acquireTokenSilent(tokenParams);
     } catch (error) {
         // If acquire silent fails, we might need user consent. Try to use popup.
-        console.log(error.message);
+        console.warn(error.message);
         tokenResponse = await msalClient.acquireTokenPopup(tokenParams);
     };
 

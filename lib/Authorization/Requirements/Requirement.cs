@@ -56,7 +56,7 @@ namespace AuthZyin.Authorization.Requirements
     /// Authorization requirement with context type
     /// </summary>
     /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
-    /// <typeparam name="TResource">Type of Resource - can be set to DummyResource if not needed</typeparam>
+    /// <typeparam name="TResource">Type of Resource</typeparam>
     public abstract class Requirement<TContextCustomData, TResource> : Requirement
         where TContextCustomData: class
         where TResource: Resource

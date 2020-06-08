@@ -2,7 +2,7 @@
 /*
 * Requirement operator type
 */
-enum RequirementOperatorType
+export enum RequirementOperatorType
 {
     Invalid = -100,
 

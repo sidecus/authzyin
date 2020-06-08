@@ -10,13 +10,13 @@ namespace AuthZyin.Authorization.Requirements
     /// </summary>
     /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
     /// <typeparam name="TConst">Type of constant</typeparam>
-    public class JsonPathConstantRequirement<TContextCustomData, TConst> : JsonPathRequirement<TContextCustomData, DummyResource<TConst>>
+    public class JsonPathConstantRequirement<TContextCustomData, TConst> : JsonPathRequirement<TContextCustomData, ConstantWrapperResource<TConst>>
         where TContextCustomData : class
     {
         /// <summary>
-        /// JPath to select the const value out of the dummy resource
+        /// JPath to select the const value out of the dummy resource wrapping the constant
         /// </summary>
-        private static readonly string DummyResourceValueJPath = "$.Value";
+        private static readonly string ConstResourceValueJPath = "$.Value";
 
         /// <summary>
         /// This needs a const value so doesn't need a resource.
@@ -40,24 +40,24 @@ namespace AuthZyin.Authorization.Requirements
             string dataPath,
             TConst constValue,
             Direction direction)
-            : base(operatorType, dataPath, DummyResourceValueJPath, direction)
+            : base(operatorType, dataPath, ConstResourceValueJPath, direction)
         {
             this.ConstValue = constValue;
         }
 
         /// <summary>
-        /// Get the dummy resource with the const value. The passed in resource is ignored
+        /// Get a const value resource with the const value. The passed in resource will be replaced by this.
         /// </summary>
         /// <param name="resource">JObject representing resource - always null in this case</param>
-        /// <returns>a dummy resource object wrapping the const value in JObject format</returns>
-        protected override JObject GetResourceJObject(DummyResource<TConst> resource)
+        /// <returns>a resource object wrapping the const value in JObject format</returns>
+        protected override JObject GetResourceJObject(ConstantWrapperResource<TConst> resource)
         {
             if (resource != null)
             {
                 throw new InvalidOperationException("Unexpected resource passed to JsonPathConstantRequirement evaluation");
             }
 
-            return JObject.FromObject(new DummyResource<TConst>(this.ConstValue));
+            return JObject.FromObject(new ConstantWrapperResource<TConst>(this.ConstValue));
         }
     }
 }

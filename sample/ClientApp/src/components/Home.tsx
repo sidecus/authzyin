@@ -5,6 +5,7 @@ import { useSampleAppBoundActionCreators } from '../store/actions';
 import { signInfoSelector, authZyinContextSelector } from '../store/selectors';
 import { User } from './User';
 import { BarList } from './BarList';
+import { AlertBanner } from './Alert';
 
 export const Home = () => {
     const { signIn } = useSampleAppBoundActionCreators();
@@ -22,6 +23,7 @@ export const Home = () => {
             <div>
                 <User />
                 <BarList />
+                <AlertBanner />
                 <SampleContext data={clientContext} />
             </div>
         );

@@ -8,7 +8,7 @@ export const AuthZyinContextApiUrl = '/authzyin/context';
 /*
 * AuthZyin client context definition, used by client authorization
 */
-export interface AuthZyinContext<TCustomData> {
+export interface AuthZyinContext<TCustomData extends object> {
     userContext: UserContext;
     policies: ClientPolicy[];
     customData: TCustomData;

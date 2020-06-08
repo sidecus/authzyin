@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { SignInState } from './store';
+import { SignInState, AlertState, Severity } from './store';
 import { callEnterBarApiAsync, callAuthZyinClientContextAsync, SampleClientContext, Bar, callGetBarInfo } from '../api/Api';
 import { createActionCreator, useMemoizedBoundActionCreators } from 'roth.js';
 import { signInAsync } from '../api/MsalClient';
@@ -14,6 +14,7 @@ export enum SampleActions {
     SetAuthZyinContext = 'SetAuthZyinContext',
     SetBars = "SetBarInfo",
     SetCurrentBar = "SetCurrentBar",
+    SetAlert = "SetAlert",
     BuyDrink = 'BuyDrink',
 }
 
@@ -37,10 +38,17 @@ export type SetBarsAction = ReturnType<typeof setBars>
 
 
 /**
- * set curernt bar action creator
+ * set current bar action creator
  */
 const setCurrentBar = createActionCreator<number>(SampleActions.SetCurrentBar);
 export type SetCurrentBarAction = ReturnType<typeof setCurrentBar>
+
+/**
+ * set error
+ */
+const setAlert = createActionCreator<AlertState>(SampleActions.SetAlert);
+export type SetAlertAction = ReturnType<typeof setAlert>
+
 
 /* ===============================thunk action creators============================ */
 
@@ -99,9 +107,18 @@ const enterBar = (id: number) => {
     return async (dispatch: Dispatch<any>) => {
         try {
             const ret = await callEnterBarApiAsync(id);
+            console.log(`Entered bar ${id}: server call succeeded`);
             dispatch(setCurrentBar(ret.id))
+            dispatch(setAlert({
+                severity: Severity.Info,
+                message: `You just walked int the bar: ${ret.name}`,
+            }));
         } catch (error) {
-            alert(`Enering bar rejected by server: ${error.message}`);
+            console.error(`Server authorization failed for bar ${id}: ${error.message}`);
+            dispatch(setAlert({
+                severity: Severity.Error,
+                message: `Entering bar ${id} rejected by server`,
+            }));
         }
     }
 }
@@ -112,6 +129,8 @@ const namedActionCreators = {
     getAuthZyinContext: getAuthZyinContext,
     getBars: getBars,
     enterBar: enterBar,
+    setCurrentBar: setCurrentBar,
+    setAlert: setAlert,
 }
 
 /**

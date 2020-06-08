@@ -2,7 +2,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { createSlicedReducer } from 'roth.js';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
-import { SampleActions, SetSignInInfoAction, SetAuthZyinContextAction, SetBarsAction, SetCurrentBarAction } from './actions';
+import { SampleActions, SetSignInInfoAction, SetAuthZyinContextAction, SetBarsAction, SetCurrentBarAction, SetAlertAction } from './actions';
 import { SampleClientContext, Bar } from '../api/Api';
 
 /* ====================== State definition =============================*/
@@ -14,6 +14,17 @@ export interface SignInState {
 export interface BarState {
     bars: Bar[];
     currentBar: number;
+    barError: string;
+}
+
+export enum Severity {
+    Info = 'info',
+    Error = 'error',
+}
+
+export interface AlertState {
+    severity: Severity,
+    message: string,
 }
 
 /* ====================== Reducer definition =============================*/
@@ -47,6 +58,13 @@ const setCurrentBarReducer = (state: BarState, action: SetCurrentBarAction) => {
 }
 
 /**
+ * set alert reducer
+ */
+const setAlertReducer = (state: AlertState, action: SetAlertAction) => {
+    return {...state, ...action.payload};
+}
+
+/**
  * SignInInfo reducer
  */
 const signInStateReducer = createSlicedReducer({} as SignInState, {
@@ -69,12 +87,21 @@ const barStateReducer = createSlicedReducer({currentBar: -1} as BarState, {
 });
 
 /**
+ * Alert reducer
+ */
+const alertReducer = createSlicedReducer({severity: Severity.Info, message: 'Which bar do you want to go?'} as AlertState, {
+    [SampleActions.SetAlert]: [setAlertReducer],
+});
+
+/**
  * root reducer
  */
 const rootReducer = combineReducers({
     signinInfo: signInStateReducer,
     authZyinContext: authZyinContextReducer,
-    barState: barStateReducer});
+    barInfo: barStateReducer,
+    alertInfo: alertReducer,
+});
 
 /**
  * store, created with thunk middleware and redux dev tools
@@ -82,6 +109,6 @@ const rootReducer = combineReducers({
 export const sampleStore = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 
 /**
- * Todo app store type
+ * app store type
  */
 export type ISampleStore = ReturnType<typeof rootReducer>;

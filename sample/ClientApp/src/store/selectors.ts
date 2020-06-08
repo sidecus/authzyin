@@ -26,7 +26,7 @@ export const userInfoSelector = createSelector(
 /**
  * Bar info selector
  */
-export const barStateSelector = (store: ISampleStore) => store.barState;
+export const barStateSelector = (store: ISampleStore) => store.barInfo;
 
 /**
  * Bars selector
@@ -43,3 +43,8 @@ export const currentBarSelector = createSelector(
     [barStateSelector],
     x => x.currentBar
 );
+
+/**
+ * Alert selector selector
+ */
+export const alertSelector = (store: ISampleStore) => store.alertInfo;

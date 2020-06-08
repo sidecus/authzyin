@@ -93,8 +93,19 @@ namespace AuthZyin.Authorization.Requirements
                 return false;
             }
 
-            // TODO[sidecus] Do we want to enforce JValue here?
-            return JToken.DeepEquals(left, right);
+            if (!(left is JValue leftValue))
+            {
+                // The left token is not a primitive value
+                return false;
+            }
+
+            if (!(right is JValue rightValue))
+            {
+                // The right token is not a primitive value
+                return false;
+            }
+
+            return leftValue.CompareTo(rightValue) == 0;
         }
     }
 

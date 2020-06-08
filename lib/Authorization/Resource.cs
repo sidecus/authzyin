@@ -8,20 +8,20 @@ namespace AuthZyin.Authorization
     }
 
     /// <summary>
-    /// Dummy resource to handle constant processing in requirement instead of real resource
+    /// Resource type to handle constant processing in requirement instead of real resource
     /// </summary>
     /// <typeparam name="T">constant type</typeparam>
-    public sealed class DummyResource<T> : Resource
+    public sealed class ConstantWrapperResource<T> : Resource
     {
         /// <summary>
-        /// constant value. The member name must match JsonPathConstantRequirement.DummyResourceValueJPath
+        /// constant value. The member name must match <see cref="ConstResourceValueJPath"/> defined in <see cref="JsonPathConstantRequirement."/>
         /// </summary>
         public T Value { get; }
 
         /// <summary>
-        /// Initializes a new instance of DummyResource
+        /// Initializes a new instance of <see cref="ConstantWrapperResource" /> the class
         /// </summary>
-        public DummyResource(T value)
+        public ConstantWrapperResource(T value)
         {
             this.Value = value;
         }

@@ -5,6 +5,7 @@ import { useSampleAppBoundActionCreators } from '../store/actions';
 import { barsSelector, currentBarSelector, authZyinContextSelector } from '../store/selectors';
 import { Bar } from '../api/Api';
 import { useAuthorize } from '../authzyin/Authorize';
+import { Severity } from '../store/store';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -20,17 +21,21 @@ export const BarList = () => {
     const classes = useStyles();
     const bars = useSelector(barsSelector);
     const currentBar = useSelector(currentBarSelector);
-    const { enterBar } = useSampleAppBoundActionCreators();
+    const { enterBar, setAlert, setCurrentBar } = useSampleAppBoundActionCreators();
     const authorize = useAuthorize(authZyinContextSelector);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>, value: string) => {
         const selectedBarId = parseInt(value);
 
         // Authorize on client first
+        setCurrentBar(-1);
         if (authorize("CanEnterBar", bars[selectedBarId])) {
             enterBar(selectedBarId);
         } else {
-            alert('Client authorizatio failed');
+            setAlert({
+                severity: Severity.Error,
+                message: `Client authorizatio failed - not allowed to go to ${selectedBarId}:${bars[selectedBarId].name}`,
+            });
         }
     }
 
@@ -39,10 +44,10 @@ export const BarList = () => {
     } else {
         return (
             <div>
-                <Typography variant="h4" component="h2">
-                    Select one of the bars below:
-                </Typography>
                 <FormControl className={classes.formControl}>
+                    <Typography variant="h4" component="h2">
+                        Local bars available:
+                    </Typography>
                     <RadioGroup row aria-label="bars" name="bars" value={currentBar === -1 ? '' : `${currentBar}`} onChange={handleChange}>
                     {
                         bars.map((bar: Bar) => {
@@ -53,9 +58,6 @@ export const BarList = () => {
                     }
                     </RadioGroup>
                 </FormControl>
-                <Typography variant="h5" component="h3">
-                    {currentBar === -1 ? 'You are not in any bar.' : `You've walked into ${bars[currentBar].name}`}
-                </Typography>
             </div>
         );
     }
