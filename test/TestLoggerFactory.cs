@@ -14,7 +14,7 @@ namespace test
             });
         }
 
-        public static ILogger<T> CreateLogger<T>() where T:ILogger
+        public static ILogger<T> CreateLogger<T>()
         {
             return factory.CreateLogger<T>();
         }

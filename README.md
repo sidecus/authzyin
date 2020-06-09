@@ -1,5 +1,7 @@
 # authzyin
-asp.net core authorization library enables both server/client requirement check by defining once and code less
+asp.net core and javascript authorization libraries to enable server/client authorization by defining policies/requirements just once.
+
+![.NET Core](https://github.com/sidecus/authzyin/workflows/.NET%20Core/badge.svg)
 
 Authorization is both simple and complex.
 Often we need to have proper authorization to protect server apis, and at the same time, provide similar authorization on the UI to make our experience more user firendly.

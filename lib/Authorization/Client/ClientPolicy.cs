@@ -61,12 +61,12 @@ namespace AuthZyin.Authorization.Client
             if (requirement is RolesAuthorizationRequirement roleRequirement)
             {
                 // special processing for RolesAuthorizationRequirement since it's one of the built in requirements
-                return new RequiresRoleRequirement(roleRequirement.AllowedRoles);
+                return new ClientRoleRequirement(roleRequirement.AllowedRoles);
             }
-            else if (requirement is Requirement abstractRequirement)
+            else if (requirement is Requirement authZyinRequirement)
             {
                 // for other AuthZyin requirements, pass through
-                return abstractRequirement;
+                return authZyinRequirement;
             }
 
             // ignore all other requirements for now

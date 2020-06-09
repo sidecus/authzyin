@@ -1,13 +1,14 @@
-namespace AuthZyin.Authorization.Requirements
+namespace AuthZyin.Authorization.Client
 {
     using System;
     using System.Collections.Generic;
+    using AuthZyin.Authorization.Requirements;
 
     /// <summary>
     /// A special RequiresRole requirement - only used to deserialize to client.
     /// !!!Don't use this to build policies!!!
     /// </summary>
-    public sealed class RequiresRoleRequirement : Requirement
+    public sealed class ClientRoleRequirement : Requirement
     {
         /// <summary>
         /// Requirement type override
@@ -23,7 +24,7 @@ namespace AuthZyin.Authorization.Requirements
         /// Initializes a new ClientReuqiresRoleRequirement from RolesAuthorizationRequirement
         /// </summary>
         /// <param name="allowedRoles">allowed roles - user must have at least one role from this list</param>
-        public RequiresRoleRequirement(IEnumerable<string> allowedRoles)
+        public ClientRoleRequirement(IEnumerable<string> allowedRoles)
         {
             this.AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
         }
