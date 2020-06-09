@@ -86,12 +86,12 @@ namespace AuthZyin.Authorization.Requirements
             }
 
             var typedContext = context as AuthZyinContext<TContextCustomData> ??
-                throw new InvalidOperationException($"context type is unexpected. expected: {typeof(AuthZyinContext<TContextCustomData>).Name}, actual: {context.GetType().Name}");
+                throw new InvalidCastException($"context type is unexpected. expected: {typeof(AuthZyinContext<TContextCustomData>).Name}, actual: {context.GetType().Name}");
 
             var typedResource = resource as TResource;
             if (this.NeedResource && typedResource == null)
             {
-                throw new InvalidOperationException($"resource type is unexpected. expected: {typeof(TResource).Name}, actual: {resource.GetType().Name}");
+                throw new InvalidCastException($"resource type is unexpected. expected: {typeof(TResource).Name}, actual: {resource.GetType().Name}");
             }
 
             return this.Evaluate(typedContext, typedResource);

@@ -16,7 +16,7 @@ namespace AuthZyin.Authorization.Requirements
         /// <summary>
         /// JPath to select the const value out of the dummy resource wrapping the constant
         /// </summary>
-        private static readonly string ConstResourceValueJPath = "$.Value";
+        public static readonly string ConstResourceValueJPath = "$.Value";
 
         /// <summary>
         /// This needs a const value so doesn't need a resource.
@@ -50,7 +50,7 @@ namespace AuthZyin.Authorization.Requirements
         /// </summary>
         /// <param name="resource">JObject representing resource - always null in this case</param>
         /// <returns>a resource object wrapping the const value in JObject format</returns>
-        protected override JObject GetResourceJObject(ConstantWrapperResource<TConst> resource)
+        protected sealed override JObject GetResourceJObject(ConstantWrapperResource<TConst> resource)
         {
             if (resource != null)
             {

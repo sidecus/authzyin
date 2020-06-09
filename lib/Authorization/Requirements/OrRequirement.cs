@@ -32,7 +32,12 @@ namespace AuthZyin.Authorization.Requirements
         /// <param name="requirements">children requirements</param>
         public OrRequirement(params Requirement[] requirements)
         {
-            this.children = requirements ?? throw new ArgumentNullException(nameof(requirements));
+            if (requirements == null || requirements.Length == 0)
+            {
+                throw new ArgumentNullException(nameof(requirements));
+            }
+
+            this.children = requirements;
         }
 
         /// <summary>

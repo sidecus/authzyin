@@ -1,15 +1,16 @@
 namespace AuthZyin.Authorization
 {
     using System;
-    using System.Text.Json;
-    using AuthZyin.Authentication;
-    using Microsoft.AspNetCore.Http;
-    using AuthZyin.Authorization.Client;
     using System.Collections.Generic;
+    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using AuthZyin.Authentication;
+    using AuthZyin.Authorization.Client;
 
     /// <summary>
-    /// Interface to construct required authorization data
+    /// Interface to construct required authorization data.
+    /// !!!Must be registered as scoped!!!
     /// </summary>
     public interface IAuthZyinContext
     {
@@ -23,15 +24,27 @@ namespace AuthZyin.Authorization
     }
 
     /// <summary>
-    /// AuthZyinContext managing generation of data required during authorization.
+    /// AuthZyinContext managing data required during authorization.
+    /// !!!Must be registered as scoped!!!
     /// <typeparam name="T">CustomData type which can be used during authorization. Loaded from claims using ClaimTypeForCustomData</typeparam>
     /// </summary>
     public class AuthZyinContext<T> : IAuthZyinContext where T : class
     {
         /// <summary>
+        /// private instance of the customDataInstance
+        /// </summary>
+        private T customDataInstance;
+
+        /// <summary>
+        /// Gets the custom data factory. Override this to extend the custom data loading behavior.
+        // For example your own AuthZyinContext derived calss can depend on other services.
+        /// </summary>
+        protected virtual Func<T> customDataFactory { get; }
+
+        /// <summary>
         /// Claims accessor
         /// </summary>
-        protected AadClaimsAccessor claimsAccessor { get ;}
+        protected AadClaimsAccessor claimsAccessor { get; }
 
         /// <summary>
         /// Authorization user context
@@ -44,9 +57,23 @@ namespace AuthZyin.Authorization
         public IEnumerable<(string name, AuthorizationPolicy policy)> Policies { get; }
 
         /// <summary>
-        /// custom data for authorization purpose
+        /// Custom data for authorization purpose.
+        /// Retrieved via the custom data factory set in construtor.
+        /// This is not thread safe so your factory method might be called multiple times.
         /// </summary>
-        public T CustomData { get; }
+        public T CustomData
+        {
+            get
+            {
+                if (this.customDataInstance == null &&
+                    this.customDataFactory != null)
+                {
+                    this.customDataInstance = this.customDataFactory();
+                }
+
+                return this.customDataInstance;
+            }
+        }
 
         /// <summary>
         /// Gets an object representing the authorization context to send to client
@@ -59,30 +86,27 @@ namespace AuthZyin.Authorization
         /// </summary>
         /// <param name="policyList">policy list</param>
         /// <param name="httpContextAccessor">httpContextAccessor</param>
-        public AuthZyinContext(IAuthorizationPolicyList policyList, IHttpContextAccessor httpContextAccessor)
+        public AuthZyinContext(
+            IAuthorizationPolicyList policyList,
+            IHttpContextAccessor httpContextAccessor)
+            : this(policyList?.Policies, httpContextAccessor?.HttpContext?.User)
         {
-            this.Policies = policyList?.Policies ?? throw new ArgumentNullException(nameof(policyList));
-            if (httpContextAccessor?.HttpContext?.User == null)
-            {
-                throw new ArgumentNullException(nameof(httpContextAccessor));
-            }
-
-            this.claimsAccessor = new AadClaimsAccessor(httpContextAccessor?.HttpContext?.User);
-            this.UserContext = new UserContext(claimsAccessor);
-
-            // Usually it's not safe to call virtual member in the constructor, but it's relatively safe
-            // here since GetCustomData is not supposed to reference anything from the current object being constructed.
-            this.CustomData = this.CreateCustomData();
         }
 
         /// <summary>
-        /// Get custom data to be associated with the context object.
-        /// Can be overriden to add additional data for authorization purpose.
+        /// Initializes a new instance of AuthZyinContext for current user
         /// </summary>
-        /// <returns>CustomData of type T</returns>
-        protected virtual T CreateCustomData()
+        /// <param name="policies">policies defined</param>
+        /// <param name="claimsPrincipal">claims principal</param>
+        public AuthZyinContext(
+            IEnumerable<(string name, AuthorizationPolicy policy)> policies,
+            ClaimsPrincipal claimsPrincipal)
         {
-            return null;
+            this.Policies = policies ?? throw new ArgumentNullException(nameof(policies));
+            claimsPrincipal = claimsPrincipal ?? throw new ArgumentNullException(nameof(claimsPrincipal));
+
+            this.claimsAccessor = new AadClaimsAccessor(claimsPrincipal);
+            this.UserContext = new UserContext(claimsAccessor);
         }
     }
 }

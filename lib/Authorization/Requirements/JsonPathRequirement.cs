@@ -64,11 +64,11 @@ namespace AuthZyin.Authorization.Requirements
         /// <param name="direction">operation direction</param>
         public JsonPathRequirement(RequirementOperatorType operatorType, string dataPath, string resourcePath, Direction direction)
         {
-            this.ValidateOperatorType(operatorType);
-
-            this.operatorType = operatorType;
             this.DataJPath = dataPath ?? throw new ArgumentNullException(nameof(dataPath));
             this.ResourceJPath = resourcePath ?? throw new ArgumentNullException(nameof(resourcePath));
+
+            this.ValidateOperatorType(operatorType);
+            this.operatorType = operatorType;
             this.Direction = direction;
         }
 
