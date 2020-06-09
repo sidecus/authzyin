@@ -8,6 +8,7 @@ namespace test
     using AuthZyin.Authorization.Requirements;
     using AuthZyin.Authorization;
     using AuthZyin.Authentication;
+    using Newtonsoft.Json.Linq;
 
     public class TestRequirement<T> : Requirement<TestCustomData, T> where T: Resource
     {
@@ -41,13 +42,40 @@ namespace test
 
     public class TestCustomData
     {
-        public int IntMember { get; set; }
-        public string StringMember { get; set; }
+        public static readonly int IntConst = 98873452;
+        public static readonly string StringConst = "#%\t^$\r\n%^\"\\.$^@#@sdfsdf";
+        public static readonly DateTime DateConst = DateTime.UtcNow;
+        public static readonly Guid GuidConst = Guid.NewGuid();
+
+        public int IntValue { get; set; } = IntConst;
+        public int BiggerIntValue { get; set; } = IntConst + 1;
+        public int SmallerIntValue { get; set; } = IntConst - 1;
+        public string IntValueInString { get; set; } = IntConst.ToString();
+        public string StringValue { get; set; } = StringConst;
+        public Guid GuidValue { get; set; } = GuidConst;
+        public DateTime DateValue { get; set; } = DateConst;
+        public string[] ArrayValue { get; set; } = new [] { StringConst + "abcd", StringConst };
+
+        public string JPathIntValue => $"$.{nameof(this.IntValue)}";
+        public string JPathStringValue => $"$.{nameof(this.StringValue)}";
+        public string JPathDateValue => $"$.{nameof(this.DateValue)}";
+        public string JPathArrayValue => $"$.{nameof(this.ArrayValue)}";
+        public string JPathGuidValue => $"$.{nameof(this.GuidValue)}";
     }
 
-    public class TestResource : Resource {};
+    public class TestResource : Resource
+    {
+        public TestCustomData NestedData { get; set; } = new TestCustomData();
+        public int IntValue { get; set; } = TestCustomData.IntConst;
 
-    public class TestResource2 : Resource {};
+        public string JPathIntValue => $"$.{nameof(this.IntValue)}";
+        public string JPathNestedDataBiggerIntValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.BiggerIntValue)}";
+        public string JPathNestedDataSmallerIntValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.SmallerIntValue)}";
+        public string JPathNestedDataStringArrayValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.ArrayValue)}";
+        public string JPathNestedDateValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.DateValue)}";
+        public string JPathNestedIntValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.IntValue)}";
+        public string JPathNestedGuidValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.GuidValue)}";
+    }
 
     public class TestContext : AuthZyinContext<TestCustomData>
     {
@@ -87,7 +115,7 @@ namespace test
             var roles = new string[] { "role1", "role2" };
             var testCustomData = new TestCustomData
             {
-                IntMember = -2342546,
+                IntValue = -2342546,
             };
             var policyBuilder = new AuthorizationPolicyBuilder();
             roles.ToList().ForEach(r => policyBuilder.RequireRole(r));

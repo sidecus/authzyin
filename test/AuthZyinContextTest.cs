@@ -29,7 +29,7 @@ namespace test
             var roles = new string[] { "role1", "role2" };
             var testCustomData = new TestCustomData
             {
-                IntMember = 234226546,
+                IntValue = 234226546,
             };
             var policyBuilder = new AuthorizationPolicyBuilder();
             roles.ToList().ForEach(r => policyBuilder.RequireRole(r));

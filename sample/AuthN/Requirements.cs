@@ -33,15 +33,13 @@ namespace sample.AuthN
         public static readonly JsonPathConstantRequirement<AuthorizationData, bool> HasDriversLicense = new JsonPathConstantRequirement<AuthorizationData, bool>(
             operatorType: RequirementOperatorType.Equals,
             dataPath: "$.WithDriversLicense",
-            constValue: true,
-            direction: Direction.ContextToResource);
+            constValue: true);
 
         // Has Passport
         public static readonly JsonPathConstantRequirement<AuthorizationData, bool> HasPassport = new JsonPathConstantRequirement<AuthorizationData, bool>(
             operatorType: RequirementOperatorType.Equals,
             dataPath: "$.WithPassport",
-            constValue: true,
-            direction: Direction.ContextToResource);
+            constValue: true);
 
         // Has valid ID
         public static readonly OrRequirement HasValidId = new OrRequirement(HasDriversLicense, HasPassport);
@@ -50,8 +48,7 @@ namespace sample.AuthN
         public static readonly JsonPathConstantRequirement<AuthorizationData, int> AgeAbove21 = new JsonPathConstantRequirement<AuthorizationData, int>(
             operatorType: RequirementOperatorType.GreaterThan,
             dataPath: "$.Age",
-            constValue: 21,
-            direction: Direction.ContextToResource);
+            constValue: 21);
 
         // Has a payment method which the bar accepts
         public static readonly JsonPathRequirement<AuthorizationData, Bar> HasAcceptedPaymentMethod = new JsonPathRequirement<AuthorizationData, Bar>(

@@ -8,13 +8,16 @@ namespace test
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Authorization;
 
+    public class TestResourceInvalid : Resource {};
+
+
     public class RequirementTest
     {
         private List<(string name, AuthorizationPolicy policy)> policies = new List<(string name, AuthorizationPolicy policy)>{ ("nullpolicy", null), };
         private ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity());
         private AuthZyinContext<TestCustomData> context;
         private TestResource resource = new TestResource();
-        private TestResource2 invalidResource = new TestResource2();
+        private TestResourceInvalid invalidResource = new TestResourceInvalid();
 
         public RequirementTest()
         {

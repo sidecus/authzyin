@@ -14,11 +14,6 @@ namespace AuthZyin.Authorization.Requirements
         where TContextCustomData : class
     {
         /// <summary>
-        /// JPath to select the const value out of the dummy resource wrapping the constant
-        /// </summary>
-        public static readonly string ConstResourceValueJPath = "$.Value";
-
-        /// <summary>
         /// This needs a const value so doesn't need a resource.
         /// </summary>
         protected override bool NeedResource => false;
@@ -34,15 +29,22 @@ namespace AuthZyin.Authorization.Requirements
         /// <param name="operatorType">Requirement operator type</param>
         /// <param name="dataPath">jsonPath to context object</param>
         /// <param name="constValue">const to compare with</param>
-        /// <param name="direction">operation direction</param>
         public JsonPathConstantRequirement(
             RequirementOperatorType operatorType,
             string dataPath,
-            TConst constValue,
-            Direction direction)
-            : base(operatorType, dataPath, ConstResourceValueJPath, direction)
+            TConst constValue)
+            : base(operatorType, dataPath, GetResourceJsonPathForValue(), Direction.ContextToResource)
         {
             this.ConstValue = constValue;
+        }
+
+        /// <summary>
+        /// Get the json path to retrieve the const value from the wrapper resource
+        /// </summary>
+        /// <returns></returns>
+        public static string GetResourceJsonPathForValue()
+        {
+            return ConstantWrapperResource<TConst>.GetValueMemberJPath();
         }
 
         /// <summary>

@@ -25,5 +25,13 @@ namespace AuthZyin.Authorization
         {
             this.Value = value;
         }
+
+        /// <summary>
+        /// Return the name of the constant Value member. Used by 
+        /// </summary>
+        public static string GetValueMemberJPath()
+        {
+            return $"$.{nameof(Value)}";
+        }
     }
 }

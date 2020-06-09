@@ -61,6 +61,12 @@ namespace AuthZyin.Authorization.Requirements
                 throw new ArgumentNullException(nameof(context.Resource));
             }
 
+            if (context.Direction != Direction.ContextToResource &&
+                context.Direction != Direction.ResourceToContext)
+            {
+                throw new ArgumentOutOfRangeException(nameof(context.Direction));
+            }
+
             if (string.IsNullOrWhiteSpace(context.CustomDataPath))
             {
                 throw new ArgumentNullException(nameof(context.CustomDataPath));
@@ -93,19 +99,13 @@ namespace AuthZyin.Authorization.Requirements
                 return false;
             }
 
-            if (!(left is JValue leftValue))
+            if (!(left is JValue leftValue) || !(right is JValue rightValue))
             {
-                // The left token is not a primitive value
+                // The left token or right token is not a primitive value
                 return false;
             }
 
-            if (!(right is JValue rightValue))
-            {
-                // The right token is not a primitive value
-                return false;
-            }
-
-            return leftValue.CompareTo(rightValue) == 0;
+            return leftValue.Type == rightValue.Type && leftValue.CompareTo(rightValue) == 0;
         }
     }
 
@@ -129,22 +129,16 @@ namespace AuthZyin.Authorization.Requirements
                 return false;
             }
 
-            if (!(contextToken is JValue contextValue))
+            if (!(contextToken is JValue contextValue) || !(resourceToken is JValue resourceValue))
             {
                 // The context token is not a primitive value
-                return false;
-            }
-
-            if (!(resourceToken is JValue resourceValue))
-            {
-                // The resource token is not a primitive value
                 return false;
             }
 
             var left = (context.Direction == Direction.ContextToResource) ? contextValue : resourceValue;
             var right = (context.Direction == Direction.ContextToResource) ? resourceValue : contextValue;
 
-            return contextValue.CompareTo(resourceValue) > 0;
+            return left.Type == right.Type && left.CompareTo(right) > 0;
         }
     }
 
@@ -174,12 +168,26 @@ namespace AuthZyin.Authorization.Requirements
                 right = context.CustomData.SelectToken(context.CustomDataPath);
             }
 
-            if (left == null || right == null)
+            if (left == null || left.Count() == 0 || right == null)
             {
                 return false;
             }
 
-            return left.Any(x => JToken.DeepEquals(x, right));
+            // Left must be an array of JValue
+            if (!left.All(x => x is JValue))
+            {
+                return false;
+            }
+
+            // Right must be a JValue
+            if (!(right is JValue rightValue))
+            {
+                return false;
+            }
+
+            return left.Any(
+                x => x.Type == right.Type &&
+                (x as JValue).CompareTo(rightValue) == 0);
         }
     }
 }

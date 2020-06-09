@@ -73,7 +73,8 @@ namespace test
 
             var handler = new AuthZyinHandler(this.context, this.logger);
             await handler.HandleAsync(authorizationContext);
-            Assert.Equal(1, authorizationContext.PendingRequirements.Count());
+            Assert.Single(authorizationContext.PendingRequirements);
+            Assert.All(authorizationContext.PendingRequirements, r => object.ReferenceEquals(r, TestRequirement.FalseRequirement));
         }
     }
 }
