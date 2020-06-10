@@ -3,51 +3,27 @@ namespace sample.AuthN
     using System.Collections.Generic;
     using AuthZyin.Authorization;
 
+    public class Place: Resource
+    {
+        public virtual string Policy => nameof(Policies.IsCustomer);
 
-    public class Drink : Resource
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int Price { get; set; }
-    }
-    
-    public class Bar : Resource
-    {
         public int Id { get; set; }
 
         public string Name { get; set; }
 
         public IEnumerable<string> AcceptedPaymentMethods { get; set; }
+    }
 
-        public static IEnumerable<Bar> Bars = new List<Bar>
-        {
-            new Bar
-            {
-                Id = 0,
-                Name = "Dark Ravern",
-                AcceptedPaymentMethods = new List<string>
-                {
-                    PaymentMethod.Visa,
-                },
-            },
-            new Bar
-            {
-                Id = 1,
-                Name = "Blue Sky",
-                AcceptedPaymentMethods = new List<string>
-                {
-                    PaymentMethod.Cash,
-                },
-            },
-            new Bar
-            {
-                Id = 2,
-                Name = "One World",
-                AcceptedPaymentMethods = new List<string>
-                {
-                    PaymentMethod.MasterCard,
-                },
-            }
-        };
+    public class Bar: Place
+    {
+        public override string Policy => nameof(Policies.CanEnterBar);
+        public bool HasHappyHour => true;
+    }
+
+    public class AgeLimitedPlace: Place
+    {
+        public override string Policy => nameof(Policies.MeetsAgeRangeLimit);
+        public int MinAge { get; set; }
+        public int MaxAge { get; set; }
     }
 }

@@ -3,7 +3,6 @@ namespace test
     using System;
     using Xunit;
     using AuthZyin.Authorization.Requirements;
-    using Newtonsoft.Json.Linq;
 
     public class JsonPathRequirementTest
     {
@@ -63,21 +62,21 @@ namespace test
 
             var greaterThanRequirement = new JsonPathRequirement<TestCustomData, TestResource>(
                 RequirementOperatorType.GreaterThan,
-                context.CustomData.JPathIntValue,
+                context.Data.JPathIntValue,
                 resource.JPathNestedDataSmallerIntValue,
                 Direction.ContextToResource);
             Assert.True(greaterThanRequirement.Evaluate(context, resource));
 
             var containsRequirement = new JsonPathRequirement<TestCustomData, TestResource>(
                 RequirementOperatorType.GreaterThan,
-                context.CustomData.JPathIntValue,
+                context.Data.JPathIntValue,
                 resource.JPathNestedDataSmallerIntValue,
                 Direction.ContextToResource);
             Assert.True(containsRequirement.Evaluate(context, resource));
 
             var equalsRequirement = new JsonPathRequirement<TestCustomData, TestResource>(
                 RequirementOperatorType.Equals,
-                context.CustomData.JPathIntValue,
+                context.Data.JPathIntValue,
                 resource.JPathNestedIntValue,
                 Direction.ContextToResource);
             Assert.True(equalsRequirement.Evaluate(context, resource));

@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import { SignInState, AlertState, Severity } from './store';
-import { callEnterBarApiAsync, callAuthZyinClientContextAsync, SampleClientContext, Bar, callGetBarInfo } from '../api/Api';
+import { callEnterPlaceApiAsync, callAuthZyinClientContextAsync, SampleClientContext, Place, callGetPlaces } from '../api/Api';
 import { createActionCreator, useMemoizedBoundActionCreators } from 'roth.js';
 import { signInAsync } from '../api/MsalClient';
 
@@ -12,8 +12,8 @@ import { signInAsync } from '../api/MsalClient';
 export enum SampleActions {
     SetSignInInfo = 'SetSignInInfo',
     SetAuthZyinContext = 'SetAuthZyinContext',
-    SetBars = "SetBarInfo",
-    SetCurrentBar = "SetCurrentBar",
+    SetPlaces = "SetPlaces",
+    SetCurrentPlace = "SetCurrentPlace",
     SetSneakIn = "SetSneakIn",
     SetAlert = "SetAlert",
     BuyDrink = 'BuyDrink',
@@ -32,20 +32,20 @@ const setAuthZyinContext = createActionCreator<SampleClientContext>(SampleAction
 export type SetAuthZyinContextAction = ReturnType<typeof setAuthZyinContext>
 
 /**
- * set bar info action creator
+ * set places info action creator
  */
-const setBars = createActionCreator<Bar[]>(SampleActions.SetBars);
-export type SetBarsAction = ReturnType<typeof setBars>
+const setPlaces = createActionCreator<Place[]>(SampleActions.SetPlaces);
+export type SetPlacesAction = ReturnType<typeof setPlaces>
 
 
 /**
- * set current bar action creator
+ * set current place action creator
  */
-const setCurrentBar = createActionCreator<number>(SampleActions.SetCurrentBar);
-export type SetCurrentBarAction = ReturnType<typeof setCurrentBar>
+const setCurrentPlace = createActionCreator<number>(SampleActions.SetCurrentPlace);
+export type SetCurrentPlaceAction = ReturnType<typeof setCurrentPlace>
 
 /**
- * set current bar action creator
+ * set sneak in action creator
  */
 const setSneakIn = createActionCreator<boolean>(SampleActions.SetSneakIn);
 export type SetSneakInAction = ReturnType<typeof setSneakIn>
@@ -93,38 +93,38 @@ const getAuthZyinContext = () => {
     return async (dispatch: Dispatch<any>) => {
         const context = await callAuthZyinClientContextAsync();
         dispatch(setAuthZyinContext(context));
-        dispatch(getBars());
+        dispatch(getPlaces());
     }
 };
 
 /**
  * This is a thunk action creator used to get authorization context
  */
-const getBars = () => {
+const getPlaces = () => {
     return async (dispatch: Dispatch<any>) => {
-        const barInfo = await callGetBarInfo();
-        dispatch(setBars(barInfo));
+        const places = await callGetPlaces();
+        dispatch(setPlaces(places));
     }
 };
 
 /**
- * This is a thunk action creator used to call enter bar
+ * This is a thunk action creator used to call enter a place
  */
-const enterBar = (id: number) => {
+const enterPlace = (id: number) => {
     return async (dispatch: Dispatch<any>) => {
         try {
-            const ret = await callEnterBarApiAsync(id);
-            console.log(`Entered bar ${id}: server call succeeded`);
-            dispatch(setCurrentBar(ret.id))
+            const ret = await callEnterPlaceApiAsync(id);
+            console.log(`Entered place ${id}: server call succeeded`);
+            dispatch(setCurrentPlace(ret.id))
             dispatch(setAlert({
                 severity: Severity.Info,
-                message: `You just walked int the bar: ${ret.name}`,
+                message: `You just walked into: ${ret.name}`,
             }));
         } catch (error) {
-            console.error(`Server authorization failed for bar ${id}: ${error.message}`);
+            console.error(`Server authorization failed for place ${id}: ${error.message}`);
             dispatch(setAlert({
                 severity: Severity.Error,
-                message: `You tried to sneak into bar ${id} but got rejected by server`,
+                message: `You tried to sneak into the place ${id} but got rejected by server`,
             }));
         }
     }
@@ -134,11 +134,11 @@ const enterBar = (id: number) => {
 const namedActionCreators = {
     signIn: signIn,
     getAuthZyinContext: getAuthZyinContext,
-    getBars: getBars,
+    getPlaces: getPlaces,
     setAlert: setAlert,
-    setCurrentBar: setCurrentBar,
+    setCurrentPlace: setCurrentPlace,
     setSneakIn: setSneakIn,
-    enterBar: enterBar,
+    enterPlace: enterPlace,
 }
 
 /**

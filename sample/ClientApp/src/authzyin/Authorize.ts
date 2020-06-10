@@ -3,8 +3,8 @@ import { AuthZyinContext } from "./AuthZyinContext";
 import { useSelector } from "react-redux";
 import { evaluateRequirement } from "./RequirementEvaluator";
 
-const authorize = <TCustomData extends object>(
-    context: AuthZyinContext<TCustomData>,
+const authorize = <TData extends object>(
+    context: AuthZyinContext<TData>,
     policy: string,
     resource?: Resource
 ) => {
@@ -26,8 +26,8 @@ const authorize = <TCustomData extends object>(
 /*
 * Authorization hooks
 */
-export const useAuthorize = <TState, TCustomData extends object>(
-    selector: (state: TState) => AuthZyinContext<TCustomData>
+export const useAuthorize = <TState, TData extends object>(
+    selector: (state: TState) => AuthZyinContext<TData>
 ) => {
     const context = useSelector(selector);
 

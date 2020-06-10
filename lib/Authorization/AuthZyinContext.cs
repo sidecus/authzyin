@@ -17,7 +17,7 @@ namespace AuthZyin.Authorization
         /// <summary>
         /// Gets client context used for client authorization.
         /// Use object because:
-        /// 1. we don't know the exact type of CustomData here
+        /// 1. we don't know the exact type of Data here
         /// 2. object helps with System.Text.Json serialization to include all needed members.
         /// </summary>
         object ClientContext { get; }
@@ -26,20 +26,20 @@ namespace AuthZyin.Authorization
     /// <summary>
     /// AuthZyinContext managing data required during authorization.
     /// !!!Must be registered as scoped!!!
-    /// <typeparam name="T">CustomData type which can be used during authorization. Loaded from claims using ClaimTypeForCustomData</typeparam>
+    /// <typeparam name="T">Type of the custom Data which can be used during authorization.</typeparam>
     /// </summary>
     public class AuthZyinContext<T> : IAuthZyinContext where T : class
     {
         /// <summary>
-        /// private instance of the customDataInstance
+        /// private instance of the data T which will be used in JsonPath based requirements
         /// </summary>
-        private T customDataInstance;
+        private T dataInstance;
 
         /// <summary>
-        /// Gets the custom data factory. Override this to extend the custom data loading behavior.
+        /// Gets the data factory which produces the custom data. Override this to extend the custom data loading behavior.
         // For example your own AuthZyinContext derived calss can depend on other services.
         /// </summary>
-        protected virtual Func<T> customDataFactory { get; }
+        protected virtual Func<T> dataFactory { get; }
 
         /// <summary>
         /// Claims accessor
@@ -61,17 +61,17 @@ namespace AuthZyin.Authorization
         /// Retrieved via the custom data factory set in construtor.
         /// This is not thread safe so your factory method might be called multiple times.
         /// </summary>
-        public T CustomData
+        public T Data
         {
             get
             {
-                if (this.customDataInstance == null &&
-                    this.customDataFactory != null)
+                if (this.dataInstance == null &&
+                    this.dataFactory != null)
                 {
-                    this.customDataInstance = this.customDataFactory();
+                    this.dataInstance = this.dataFactory();
                 }
 
-                return this.customDataInstance;
+                return this.dataInstance;
             }
         }
 

@@ -55,10 +55,10 @@ namespace AuthZyin.Authorization.Requirements
     /// <summary>
     /// Authorization requirement with context type
     /// </summary>
-    /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
+    /// <typeparam name="TData">Type of custom data in AuthZyinContext</typeparam>
     /// <typeparam name="TResource">Type of Resource</typeparam>
-    public abstract class Requirement<TContextCustomData, TResource> : Requirement
-        where TContextCustomData: class
+    public abstract class Requirement<TData, TResource> : Requirement
+        where TData: class
         where TResource: Resource
     {
         /// <summary>
@@ -85,8 +85,8 @@ namespace AuthZyin.Authorization.Requirements
                 throw new ArgumentNullException(nameof(resource));
             }
 
-            var typedContext = context as AuthZyinContext<TContextCustomData> ??
-                throw new InvalidCastException($"context type is unexpected. expected: {typeof(AuthZyinContext<TContextCustomData>).Name}, actual: {context.GetType().Name}");
+            var typedContext = context as AuthZyinContext<TData> ??
+                throw new InvalidCastException($"context type is unexpected. expected: {typeof(AuthZyinContext<TData>).Name}, actual: {context.GetType().Name}");
 
             var typedResource = resource as TResource;
             if (this.NeedResource && typedResource == null)
@@ -103,6 +103,6 @@ namespace AuthZyin.Authorization.Requirements
         /// <param name="context">authorization data context</param>
         /// <param name="typedResource">resource object</param>
         /// <returns>true if allowed</returns>
-        protected abstract bool Evaluate(AuthZyinContext<TContextCustomData> context, TResource resource);
+        protected abstract bool Evaluate(AuthZyinContext<TData> context, TResource resource);
     }
 }

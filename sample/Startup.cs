@@ -51,8 +51,10 @@ namespace sample
             
             services.AddAuthZyinAuthorization(options =>
             {
-                options.AddPolicy(nameof(Policies.AlchoholReady), Policies.AlchoholReady);
+                options.AddPolicy(nameof(Policies.IsCustomer), Policies.IsCustomer);
+                options.AddPolicy(nameof(Policies.CanDrinkAlchohol), Policies.CanDrinkAlchohol);
                 options.AddPolicy(nameof(Policies.CanEnterBar), Policies.CanEnterBar);
+                options.AddPolicy(nameof(Policies.MeetsAgeRangeLimit), Policies.MeetsAgeRangeLimit);
                 options.AddPolicy(nameof(Policies.CanBuyDrink), Policies.CanBuyDrink);
             });
 

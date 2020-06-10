@@ -90,7 +90,7 @@ namespace test
             this.testCustomData = testCustomData;
         }
 
-        protected override Func<TestCustomData> customDataFactory => () => this.testCustomData;
+        protected override Func<TestCustomData> dataFactory => () => this.testCustomData;
 
         public static TestContext CreateTestContext(
             string userId,

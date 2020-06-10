@@ -26,7 +26,7 @@ Currently supported requirement evaluation operations:
 
 Each operator can be associated with a **Direction**. For example, you can check whether certain properties in the authorization context contains some values from a resource, or use a Contains with a reverse direction to check whether certain properties from the resource contains a value from the authorization context.
 
-Server library code is in the /lib folder. Client library code is now in the /sample/ClientApp/src/authzyin folder. To start, check ```Requirement.cs``` and ```Home.tsx``` from the sample project. I'll provide a tutorial later if people think this is useful.
+Server library code is in the /lib folder. Client library code is now in the /sample/ClientApp/src/authzyin folder. To start, check **Requirement.cs** and **PlaceComponent.tsx*** from the sample project. I'll provide a tutorial later if people think this is useful.
 *Kindly note* - you might have more complex authorization scenarios to handle. You don't have to be limited by this library and can mix this with the native asp.net core requirement/handler behaviors.
 
 Any feedback welcome - feel free open an issue.

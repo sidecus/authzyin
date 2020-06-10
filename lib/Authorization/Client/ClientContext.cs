@@ -24,7 +24,7 @@ namespace AuthZyin.Authorization.Client
         /// <summary>
         /// Gets or sets custom data used to do "resource" based authorization on client. It's of type T.
         /// </summary>
-        public T CustomData { get; set; }
+        public T Data { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the ClientContext class to send to client
@@ -39,7 +39,7 @@ namespace AuthZyin.Authorization.Client
 
             this.UserContext = context.UserContext;
             this.Policies = context.Policies.Select(x => new ClientPolicy(x.name, x.policy)).ToList();
-            this.CustomData = context.CustomData;
+            this.Data = context.Data;
         }
     }
 }

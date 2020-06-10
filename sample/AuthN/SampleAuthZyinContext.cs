@@ -16,7 +16,7 @@ namespace sample.AuthN
         // to produce the factory method.
         /// </summary>
         /// <returns>a factory method which generates the required custom data</returns>
-        protected override Func<AuthorizationData> customDataFactory => () =>
+        protected override Func<AuthorizationData> dataFactory => () =>
         {
             // Retrieves the custom data json string from claims (if any).
             // It's denoted by a virtual member CustomClaimTypeToProcess.

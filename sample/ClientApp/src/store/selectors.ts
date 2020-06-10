@@ -24,31 +24,31 @@ export const userInfoSelector = createSelector(
 );
 
 /**
- * Bar info selector
+ * places selector
  */
-export const barStateSelector = (store: ISampleStore) => store.barInfo;
+export const placesStateSelector = (store: ISampleStore) => store.places;
 
 /**
- * Bars selector
+ * Places selector
  */
-export const barsSelector = createSelector(
-    [barStateSelector],
-    x => x.bars
+export const placesSelector = createSelector(
+    [placesStateSelector],
+    x => x.places
 );
 
 /**
- * Current bars selector
+ * Current place selector
  */
-export const currentBarSelector = createSelector(
-    [barStateSelector],
-    x => x.currentBar
+export const currentPlaceSelector = createSelector(
+    [placesStateSelector],
+    x => x.currentPlace
 );
 
 /**
- * Current bars selector
+ * Sneak in selector
  */
 export const sneakInSelector = createSelector(
-    [barStateSelector],
+    [placesStateSelector],
     x => x.sneakIn
 );
 

@@ -9,10 +9,10 @@ namespace AuthZyin.Authorization.Requirements
     /// Server evaluation is done via Newtonsoft.Json.
     /// Client evaluation is done via JsonPath plus - https://github.com/s3u/JSONPath;
     /// </summary>
-    /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
+    /// <typeparam name="TData">Type of custom data in AuthZyinContext</typeparam>
     /// <typeparam name="TResource">Type of Resource</typeparam>
-    public class JsonPathRequirement<TContextCustomData, TResource> : Requirement<TContextCustomData, TResource>
-        where TContextCustomData: class
+    public class JsonPathRequirement<TData, TResource> : Requirement<TData, TResource>
+        where TData: class
         where TResource: Resource
     {
         /// <summary>
@@ -28,7 +28,7 @@ namespace AuthZyin.Authorization.Requirements
         };
 
         /// <summary>
-        /// Gets the Jpath to get JToken or IEnumerable<JToken> from context.CustomData object
+        /// Gets the Jpath to get JToken or IEnumerable<JToken> from context.Data object
         /// </summary>
         public string DataJPath { get; }
 
@@ -77,24 +77,24 @@ namespace AuthZyin.Authorization.Requirements
         /// <param name="context">authorization data context</param>
         /// <param name="typedResource">resource object</param>
         /// <returns>true if allowed</returns>
-        protected sealed override bool Evaluate(AuthZyinContext<TContextCustomData> context, TResource resource)
+        protected sealed override bool Evaluate(AuthZyinContext<TData> context, TResource resource)
         {
-            if (context.CustomData == null)
+            if (context.Data == null)
             {
-                throw new ArgumentNullException("JsonPath requirement needs the CustomData to be set in context");
+                throw new ArgumentNullException("JsonPath requirement needs the data to be set in context");
             }
 
-            var customDataJObject = this.GetCustomDataJObject(context);
+            var dataJObject = this.GetDataJObject(context);
             var resourceJObj = this.GetResourceJObject(resource);
 
-            if (customDataJObject == null || resourceJObj == null)
+            if (dataJObject == null || resourceJObj == null)
             {
                 return false;
             }
 
             // Create evluation context and delegate real evlauation to the evaluators
             var evaluatorContext = new EvaluatorContext(
-                customDataJObject,
+                dataJObject,
                 this.DataJPath,
                 resourceJObj,
                 this.ResourceJPath,
@@ -107,9 +107,9 @@ namespace AuthZyin.Authorization.Requirements
         /// </summary>
         /// <param name="context">AuthZyin context object</param>
         /// <returns>JObject for the custom data</returns>
-        protected JObject GetCustomDataJObject(AuthZyinContext<TContextCustomData> context)
+        protected JObject GetDataJObject(AuthZyinContext<TData> context)
         {
-            return JObject.FromObject(context.CustomData);
+            return JObject.FromObject(context.Data);
         }
 
         /// <summary>

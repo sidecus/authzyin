@@ -6,12 +6,12 @@ import {
     SampleActions,
     SetSignInInfoAction,
     SetAuthZyinContextAction,
-    SetBarsAction,
-    SetCurrentBarAction,
+    SetPlacesAction,
+    SetCurrentPlaceAction,
     SetAlertAction,
     SetSneakInAction
 } from './actions';
-import { SampleClientContext, Bar } from '../api/Api';
+import { SampleClientContext, Place } from '../api/Api';
 
 /* ====================== State definition =============================*/
 export interface SignInState {
@@ -19,9 +19,9 @@ export interface SignInState {
     signInError: string;
 }
 
-export interface BarState {
-    bars: Bar[];
-    currentBar: number;
+export interface PlaceState {
+    places: Place[];
+    currentPlace: number;
     sneakIn: boolean;
 }
 
@@ -38,75 +38,57 @@ export interface AlertState {
 /* ====================== Reducer definition =============================*/
 
 /**
- * SetSignInfo reducer
- */
-const setSignInInfoReducer = (state: SignInState, action: SetSignInInfoAction) => {
-    return {...state, ...action.payload};
-};
-
-/**
- * SetAuthZyinContext reducer
- */
-const setAuthZyinContextReducer = (state: SampleClientContext, action: SetAuthZyinContextAction) => {
-    return {...state, ...action.payload};
-};
-
-/**
- * set bar info reducer
- */
-const setBarsReducer = (state: BarState, action: SetBarsAction) => {
-    return {...state, bars: action.payload, currentBar: -1};
-}
-
-/**
- * set current bar reducer
- */
-const setCurrentBarReducer = (state: BarState, action: SetCurrentBarAction) => {
-    return {...state, currentBar: action.payload};
-}
-
-/**
- * set sneak in status
- */
-const setSneakInReducer = (state: BarState, action: SetSneakInAction) => {
-    return {...state, sneakIn: action.payload};
-}
-
-/**
- * set alert reducer
- */
-const setAlertReducer = (state: AlertState, action: SetAlertAction) => {
-    return {...state, ...action.payload};
-}
-
-/**
  * SignInInfo reducer
  */
 const signInStateReducer = createSlicedReducer({} as SignInState, {
-    [SampleActions.SetSignInInfo]: [setSignInInfoReducer],
+    [SampleActions.SetSignInInfo]: [
+        (state: SignInState, action: SetSignInInfoAction) => {
+            return {...state, ...action.payload};
+        }
+    ],
 });
 
 /**
  * AuthZyin context reducer
  */
 const authZyinContextReducer = createSlicedReducer({} as SampleClientContext, {
-    [SampleActions.SetAuthZyinContext]: [setAuthZyinContextReducer],
+    [SampleActions.SetAuthZyinContext]: [
+        (state: SampleClientContext, action: SetAuthZyinContextAction) => {
+            return {...state, ...action.payload};
+        }
+    ],
 });
 
 /**
- * bar info reducer,handles two actions
+ * place state reducer
  */
-const barStateReducer = createSlicedReducer({currentBar: -1, sneakIn: false} as BarState, {
-    [SampleActions.SetBars]: [setBarsReducer],
-    [SampleActions.SetCurrentBar]: [setCurrentBarReducer],
-    [SampleActions.SetSneakIn]: [setSneakInReducer],
+const placeStateReducer = createSlicedReducer({currentPlace: -1, sneakIn: false} as PlaceState, {
+    [SampleActions.SetPlaces]: [
+        (state: PlaceState, action: SetPlacesAction) => {
+            return {...state, places: action.payload, currentPlace: -1};
+        }
+    ],
+    [SampleActions.SetCurrentPlace]: [
+        (state: PlaceState, action: SetCurrentPlaceAction) => {
+            return {...state, currentPlace: action.payload};
+        }
+    ],
+    [SampleActions.SetSneakIn]: [
+        (state: PlaceState, action: SetSneakInAction) => {
+            return {...state, sneakIn: action.payload};
+        }
+    ],
 });
 
 /**
  * Alert reducer
  */
-const alertReducer = createSlicedReducer({severity: Severity.Info, message: 'Which bar do you want to go?'} as AlertState, {
-    [SampleActions.SetAlert]: [setAlertReducer],
+const alertReducer = createSlicedReducer({severity: Severity.Info, message: 'Which place do you want to go?'} as AlertState, {
+    [SampleActions.SetAlert]: [
+        (state: AlertState, action: SetAlertAction) => {
+            return {...state, ...action.payload};
+        }
+    ],
 });
 
 /**
@@ -115,7 +97,7 @@ const alertReducer = createSlicedReducer({severity: Severity.Info, message: 'Whi
 const rootReducer = combineReducers({
     signinInfo: signInStateReducer,
     authZyinContext: authZyinContextReducer,
-    barInfo: barStateReducer,
+    places: placeStateReducer,
     alertInfo: alertReducer,
 });
 

@@ -14,16 +14,16 @@ export const User = () => {
                     <CardHeader title='User information' />
                     <CardContent>
                         <Typography variant="body1" component="div">
-                            Age: {authorizationInfo.customData.age}
+                            Age: {authorizationInfo.data.age}
                         </Typography>
                         <Typography variant="body1" component="div">
-                            Has driver's license: {String(authorizationInfo.customData.withDriversLicense)}
+                            Has driver's license: {String(authorizationInfo.data.withDriversLicense)}
                         </Typography>
                         <Typography variant="body1" component="div">
-                            Has passport: {String(authorizationInfo.customData.withPassport)}
+                            Has passport: {String(authorizationInfo.data.withPassport)}
                             </Typography>
                         <Typography variant="body1" component="div">
-                            PaymentMethods: {JSON.stringify(authorizationInfo.customData.paymentMethods.map(x => x.type))}
+                            PaymentMethods: {JSON.stringify(authorizationInfo.data.paymentMethods.map(x => x.type))}
                         </Typography>
                     </CardContent>
                 </Card>

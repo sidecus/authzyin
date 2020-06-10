@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { AuthContext } from './AuthContext';
 import { signInfoSelector, authZyinContextSelector, userInfoSelector } from '../store/selectors';
 import { User } from './User';
-import { BarList } from './BarList';
+import { PlaceList } from './PlaceList';
 import { Grid, Typography } from '@material-ui/core';
 
 export const Home = () => {
@@ -20,7 +20,7 @@ export const Home = () => {
                 </Typography>
                 <Grid container direction='column' justify='center' alignItems='stretch'>
                     <Grid item xl={12}>
-                        <BarList />
+                        <PlaceList />
                     </Grid>
                     <Grid item xl={12}>
                         <User />

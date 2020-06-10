@@ -52,14 +52,14 @@ namespace test
             Assert.Same(context.UserContext.UserName, userName);
 
             // Make sure custom data factory is used
-            Assert.NotNull(context.CustomData);
-            Assert.Same(context.CustomData, testCustomData);
+            Assert.NotNull(context.Data);
+            Assert.Same(context.Data, testCustomData);
 
             // Check client context generation
             var clientContext = context.ClientContext as ClientContext<TestCustomData>;
             Assert.NotNull(clientContext);
             Assert.Same(clientContext.UserContext, context.UserContext);
-            Assert.Same(clientContext.CustomData, context.CustomData);
+            Assert.Same(clientContext.Data, context.Data);
         }
     }
 }

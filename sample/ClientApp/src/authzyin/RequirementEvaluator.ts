@@ -14,8 +14,8 @@ import {
 } from "./Requirements";
 import { Resource, ConstantWrapperResource } from "./Resource";
 
-export const evaluateRequirement = <TCustomData extends object>(
-    context: AuthZyinContext<TCustomData>,
+export const evaluateRequirement = <TData extends object>(
+    context: AuthZyinContext<TData>,
     requirement: Requirement,
     resource?: Resource
 ) => {
@@ -34,8 +34,8 @@ export const evaluateRequirement = <TCustomData extends object>(
     return result;
 }
 
-const evaluateRoleRequirement = <TCustomData extends object>(
-    context: AuthZyinContext<TCustomData>,
+const evaluateRoleRequirement = <TData extends object>(
+    context: AuthZyinContext<TData>,
     roleRequirement: RequiresRoleRequiremet
 ) => {
     const allowedRoles = roleRequirement.allowedRoles;
@@ -51,8 +51,8 @@ const evaluateRoleRequirement = <TCustomData extends object>(
     return false;
 }
 
-const evaluateOrRequirement = <TCustomData extends object>(
-    context: AuthZyinContext<TCustomData>,
+const evaluateOrRequirement = <TData extends object>(
+    context: AuthZyinContext<TData>,
     orRequirement: OrRequiremet,
     resource?: Resource
 ) => {
@@ -67,8 +67,8 @@ const evaluateOrRequirement = <TCustomData extends object>(
     return false;
 }
 
-const evaulateJsonPathRequirement = <TCustomData extends object>(
-    context: AuthZyinContext<TCustomData>,
+const evaulateJsonPathRequirement = <TData extends object>(
+    context: AuthZyinContext<TData>,
     jsonPathRequirement: JsonPathRequiremet,
     resource?: Resource
 ) => {
@@ -85,7 +85,7 @@ const evaulateJsonPathRequirement = <TCustomData extends object>(
     const camelCaseDataJPath = camelCasePropertyNames(jsonPathRequirement.dataJPath);
     const camelCaseResourceJPath = camelCasePropertyNames(jsonPathRequirement.resourceJPath);
 
-    const dataToken = JSONPath({path: camelCaseDataJPath, json: context.customData});
+    const dataToken = JSONPath({path: camelCaseDataJPath, json: context.data});
     const resourceToken = JSONPath({path: camelCaseResourceJPath, json: resource});
 
     const left = ((jsonPathRequirement.direction === Direction.ContextToResource) ? dataToken : resourceToken);

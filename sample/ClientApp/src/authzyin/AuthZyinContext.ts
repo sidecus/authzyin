@@ -6,12 +6,13 @@ import { Requirement } from "./Requirements";
 export const AuthZyinContextApiUrl = '/authzyin/context';
 
 /*
-* AuthZyin client context definition, used by client authorization
+* AuthZyin client context definition, used by client authorization.
+* This is the client contract for ClientContext class from the server.
 */
-export interface AuthZyinContext<TCustomData extends object> {
+export interface AuthZyinContext<TData extends object> {
     userContext: UserContext;
     policies: ClientPolicy[];
-    customData: TCustomData;
+    data: TData;
 }
 
 /*

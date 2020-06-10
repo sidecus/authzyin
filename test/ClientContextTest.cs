@@ -23,7 +23,7 @@ namespace test
 
             // Check client context generation
             Assert.Same(clientContext.UserContext, context.UserContext);
-            Assert.Same(clientContext.CustomData, context.CustomData);
+            Assert.Same(clientContext.Data, context.Data);
             Assert.Equal(context.Policies.Count(), context.Policies.Count());
             foreach (var policy in context.Policies)
             {

@@ -2,8 +2,8 @@ import { acquireTokenAsync } from './MsalClient';
 import { AuthZyinContextApiUrl, AuthZyinContext } from '../authzyin/AuthZyinContext';
 import { Resource } from '../authzyin/Resource';
 
-const barInfoApi = '/api/bars';
-const enterBarApi = '/api/enterbar';
+const placesApi = '/api/places';
+const enterPlaceApi = '/api/enterplace';
 const buyDrinkApi = '/api/buydrink';
 
 const callHttpGetAsync = async <T>(url: string):Promise<T> => {
@@ -20,7 +20,7 @@ const callHttpGetAsync = async <T>(url: string):Promise<T> => {
         // Throw error with HTTP status code
         throw new Error(response.status.toString());
     }
-};
+}
 
 /* ====================== Api definition =============================*/
 
@@ -28,13 +28,13 @@ export const callAuthZyinClientContextAsync = async () => {
     return await callHttpGetAsync<SampleClientContext>(AuthZyinContextApiUrl);
 }
 
-export const callGetBarInfo = async () => {
-    return await callHttpGetAsync<Bar[]>(barInfoApi);
+export const callGetPlaces = async () => {
+    return await callHttpGetAsync<Place[]>(placesApi);
 }
 
-export const callEnterBarApiAsync = async (id: number) => {
-    const uri = enterBarApi + '/' + id;
-    return await callHttpGetAsync<Bar>(uri);
+export const callEnterPlaceApiAsync = async (id: number) => {
+    const uri = enterPlaceApi + '/' + id;
+    return await callHttpGetAsync<Place>(uri);
 };
 
 export const callBuyDrinkAsync = async () => {
@@ -57,10 +57,31 @@ export interface AuthorizationData {
 export type SampleClientContext = AuthZyinContext<AuthorizationData>;
 
 /* ====================== Resource definition =============================*/
-export interface Bar extends Resource
+export interface Place extends Resource
 {
     id: number;
     name: string;
     acceptedPaymentMethods: string[];
+    policy: string;
 }
 
+export interface Bar extends Place
+{
+    hasHappyHour: boolean;
+}
+
+export interface AgeLimitedPlace extends Place
+{
+    minAge: number;
+    maxAge: number;
+}
+
+/* ==================== Contract type guards =======================*/
+
+export function IsBar(place: Place): place is Bar {
+    return (place as Bar).hasHappyHour !== undefined;
+}
+
+export function IsAgeLimitedPlace(place: Place): place is AgeLimitedPlace {
+    return (place as AgeLimitedPlace).maxAge !== undefined;
+}
