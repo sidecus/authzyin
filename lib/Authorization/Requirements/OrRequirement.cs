@@ -14,11 +14,6 @@ namespace AuthZyin.Authorization.Requirements
         private readonly Requirement[] children;
 
         /// <summary>
-        /// Gets the operator type for the requirement
-        /// </summary>
-        public override RequirementOperatorType Operator => RequirementOperatorType.Or;
-
-        /// <summary>
         /// Gets the children requirements for OrRequirement
         /// TODO[sidecus]: Workaround for new System.Text.Json serialization
         /// https://github.com/dotnet/runtime/issues/31742
@@ -37,6 +32,7 @@ namespace AuthZyin.Authorization.Requirements
                 throw new ArgumentNullException(nameof(requirements));
             }
 
+            this.Operator = RequirementOperatorType.Or;
             this.children = requirements;
         }
 

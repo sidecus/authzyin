@@ -1,20 +1,8 @@
 namespace AuthZyin.Authorization.Requirements
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Newtonsoft.Json.Linq;
-
-    /// <summary>
-    /// Context class for the evaluators
-    /// </summary>
-    public class EvaluatorContext
-    {
-        public JObject LeftJObject;
-        public string LeftJPath;
-        public JObject RightJObject;
-        public string RightJPath;
-    }
 
     /// <summary>
     /// interface for requirement evaluator
@@ -26,50 +14,7 @@ namespace AuthZyin.Authorization.Requirements
         /// </summary>
         /// <param name="context">evaluation context</param>
         /// <returns>true if success</returns>
-        public bool Evaluate(EvaluatorContext context)
-        {
-            this.ValidateArguments(context);
-            return this.EvaluateInternal(context);
-        }
-
-        /// <summary>
-        /// Evaluates the prameters based on the context/resource as well as the operator
-        /// </summary>
-        /// <param name="context">evaluation context</param>
-        /// <returns>true if success</returns>
-        protected abstract bool EvaluateInternal(EvaluatorContext context);
-
-        /// <summary>
-        /// Validates the evaluation context object
-        /// </summary>
-        /// <param name="context">evaluation context</param>
-        private void ValidateArguments(EvaluatorContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (context.LeftJObject == null)
-            {
-                throw new ArgumentNullException(nameof(context.LeftJObject));
-            }
-
-            if (context.RightJObject == null)
-            {
-                throw new ArgumentNullException(nameof(context.RightJObject));
-            }
-
-            if (string.IsNullOrWhiteSpace(context.LeftJPath))
-            {
-                throw new ArgumentNullException(nameof(context.LeftJPath));
-            }
-            
-            if (string.IsNullOrWhiteSpace(context.RightJPath))
-            {
-                throw new ArgumentNullException(nameof(context.RightJPath));
-            }
-        }
+        public abstract bool Evaluate(EvaluatorContext context);
     }
 
     /// <summary>
@@ -82,8 +27,13 @@ namespace AuthZyin.Authorization.Requirements
         /// </summary>
         /// <param name="context">evaluation context</param>
         /// <returns>true if success</returns>
-        protected sealed override bool EvaluateInternal(EvaluatorContext context)
+        public sealed override bool Evaluate(EvaluatorContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             var left = context.LeftJObject.SelectToken(context.LeftJPath);
             var right = context.RightJObject.SelectToken(context.RightJPath);
 
@@ -155,8 +105,13 @@ namespace AuthZyin.Authorization.Requirements
         /// </summary>
         /// <param name="context">evaluation context</param>
         /// <returns>true if success</returns>
-        protected override bool EvaluateInternal(EvaluatorContext context)
+        public override bool Evaluate(EvaluatorContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+            
             var left = context.LeftJObject.SelectTokens(context.LeftJPath);
             var right = context.RightJObject.SelectToken(context.RightJPath);
 

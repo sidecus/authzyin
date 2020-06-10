@@ -2,48 +2,42 @@ namespace test
 {
     using Xunit;
     using AuthZyin.Authorization.Requirements;
+    using System;
+    using Newtonsoft.Json.Linq;
+    using System.Collections.Generic;
 
     public class EqualsEvaluatorTest
     {
-        [Fact]
-        public void EqualsEvaluatorNegativeBehavior()
+        private static readonly TestCustomData data = new TestCustomData();
+        private static readonly TestResource resource = new TestResource();
+        private static readonly JObject dataJObj = JObject.FromObject(data);
+        private static readonly JObject resourceObj = JObject.FromObject(resource);
+
+        public static readonly IEnumerable<object[]> positiveCases = new List<object[]>
         {
-            var evaluator = new EqualsEvaluator();
+            new object[] { dataJObj, data.JPathIntValue, resourceObj, resource.JPathNestedIntValue },
+            new object[] { dataJObj, data.JPathStringValue, resourceObj, resource.JPathNestedDataStringValue },
+            new object[] { dataJObj, data.JPathGuidValue, resourceObj, resource.JPathNestedGuidValue },
+            new object[] { dataJObj, data.JPathDateValue, resourceObj, resource.JPathNestedDateValue },
+            new object[] { dataJObj, data.JPathArrayValue + "[1]", resourceObj, resource.JPathNestedDataStringArrayValue + "[1]" },
+        };
 
-            // RequirementEvaluatorTest.TestJValueCommonInvalidScenarios(evaluator);
-
-            // Value doesn't equal
-            var context = EvaluatorTestHelper.CreateEvaluatorContext().context;
-            context.LeftJPath = "$.StringValue";
-            context.RightJPath = "$.NestedData.ArrayValue[0]";
-            Assert.False(evaluator.Evaluate(context));
+        [Fact]
+        public void ConstructorThrowsOnInvalidArg()
+        {
+            Assert.Throws<ArgumentNullException>(() => new EqualsEvaluator().Evaluate(null));
         }
 
-        [Fact]
-        public void EqualsEvaluatorPositiveBehavior()
+        [Theory]
+        [MemberData(nameof(positiveCases))]
+        public void EqualsEvaluatorPositiveBehavior(
+            JObject dataJObj,
+            string dataJPath,
+            JObject resourceJObj,
+            string resourceJPath)
         {
             var evaluator = new EqualsEvaluator();
-            var (data, resource, context) = EvaluatorTestHelper.CreateEvaluatorContext();
-
-            context.LeftJPath = data.JPathIntValue;
-            context.RightJPath = resource.JPathNestedIntValue;
-            Assert.True(evaluator.Evaluate(context));
-
-            context.LeftJPath = data.JPathStringValue;
-            context.RightJPath = resource.JPathNestedDataStringValue;
-            Assert.True(evaluator.Evaluate(context));
-
-            context.LeftJPath = data.JPathGuidValue;
-            context.RightJPath = resource.JPathNestedGuidValue;
-            Assert.True(evaluator.Evaluate(context));
-
-            context.LeftJPath = data.JPathDateValue;
-            context.RightJPath = resource.JPathNestedDateValue;
-            Assert.True(evaluator.Evaluate(context));
-
-            // with array filter
-            context.LeftJPath = data.JPathArrayValue + "[1]";
-            context.RightJPath = resource.JPathNestedDataStringArrayValue + "[1]";
+            var context = new EvaluatorContext(dataJObj, dataJPath, resourceJObj, resourceJPath, Direction.ContextToResource);
             Assert.True(evaluator.Evaluate(context));
         }
     }

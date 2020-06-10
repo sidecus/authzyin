@@ -5,13 +5,12 @@ namespace AuthZyin.Authorization.Requirements
 
     /// <summary>
     /// Authorization requirement which uses JsonPath for filtering and comparison from custom AuthZData to a constant.
-    /// Server evaluation is done via Newtonsoft.Json.
-    /// Client evaluation is done via JsonPath plus - https://github.com/s3u/JSONPath;
     /// </summary>
-    /// <typeparam name="TContextCustomData">Type of custom data in AuthZyinContext</typeparam>
+    /// <typeparam name="TData">Type of custom data in AuthZyinContext</typeparam>
     /// <typeparam name="TConst">Type of constant</typeparam>
-    public class JsonPathConstantRequirement<TContextCustomData, TConst> : JsonPathRequirement<TContextCustomData, ConstantWrapperResource<TConst>>
-        where TContextCustomData : class
+    public class JsonPathConstantRequirement<TData, TConst> : JsonPathRequirement<TData, ConstantWrapperResource<TConst>>
+        where TData : class
+        where TConst: IConvertible
     {
         /// <summary>
         /// This needs a const value so doesn't need a resource.
@@ -24,7 +23,10 @@ namespace AuthZyin.Authorization.Requirements
         public TConst ConstValue { get; }
 
         /// <summary>
-        /// Initializes a new instance of JsonPathRequirement which uses Json Path to check requirement satisfaction
+        /// Initializes a new instance of JsonPathRequirement which uses Json Path to check requirement satisfaction.
+        /// 1. The Direction is always set to ContextToResource.
+        /// 2. The resource type is always ConstantWrapperResource<TConst>
+        /// 3. Passed in resource object will be ignored during evaluation and replaced by a on the fly instance of ConstantWrapperResource<TConst>
         /// </summary>
         /// <param name="operatorType">Requirement operator type</param>
         /// <param name="dataPath">jsonPath to context object</param>
@@ -33,18 +35,14 @@ namespace AuthZyin.Authorization.Requirements
             RequirementOperatorType operatorType,
             string dataPath,
             TConst constValue)
-            : base(operatorType, dataPath, GetResourceJsonPathForValue(), Direction.ContextToResource)
+            : base(
+                operatorType,
+                dataPath,
+                ConstantWrapperResource<TConst>.ValueJsonPath,
+                Direction.ContextToResource)
         {
+            // TODO[sidecus] - what if constValue is null? We need to make sure the client works fine.
             this.ConstValue = constValue;
-        }
-
-        /// <summary>
-        /// Get the json path to retrieve the const value from the wrapper resource
-        /// </summary>
-        /// <returns></returns>
-        public static string GetResourceJsonPathForValue()
-        {
-            return ConstantWrapperResource<TConst>.GetValueMemberJPath();
         }
 
         /// <summary>

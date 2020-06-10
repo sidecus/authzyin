@@ -11,11 +11,6 @@ namespace AuthZyin.Authorization.Client
     public sealed class ClientRoleRequirement : Requirement
     {
         /// <summary>
-        /// Requirement type override
-        /// </summary>
-        public override RequirementOperatorType Operator => RequirementOperatorType.RequiresRole;
-
-        /// <summary>
         /// Get allowed roles.
         /// </summary>
         public IEnumerable<string> AllowedRoles { get; }
@@ -27,6 +22,7 @@ namespace AuthZyin.Authorization.Client
         public ClientRoleRequirement(IEnumerable<string> allowedRoles)
         {
             this.AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
+            this.Operator = RequirementOperatorType.RequiresRole;
         }
 
         /// <summary>

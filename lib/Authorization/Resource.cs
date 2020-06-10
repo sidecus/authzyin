@@ -14,6 +14,12 @@ namespace AuthZyin.Authorization
     public sealed class ConstantWrapperResource<T> : Resource
     {
         /// <summary>
+        /// JsonPath to the value member
+        /// </summary>
+        /// <returns></returns>
+        public static readonly string ValueJsonPath = $"$.{nameof(Value)}";
+
+        /// <summary>
         /// constant value. The member name must match <see cref="ConstResourceValueJPath"/> defined in <see cref="JsonPathConstantRequirement."/>
         /// </summary>
         public T Value { get; }
@@ -24,14 +30,6 @@ namespace AuthZyin.Authorization
         public ConstantWrapperResource(T value)
         {
             this.Value = value;
-        }
-
-        /// <summary>
-        /// Return the name of the constant Value member. Used by 
-        /// </summary>
-        public static string GetValueMemberJPath()
-        {
-            return $"$.{nameof(Value)}";
         }
     }
 }

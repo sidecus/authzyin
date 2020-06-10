@@ -28,11 +28,6 @@ namespace AuthZyin.Authorization.Requirements
         };
 
         /// <summary>
-        /// Gets the operator type for the requirement - overrides base.
-        /// </summary>
-        public override RequirementOperatorType Operator { get; }
-
-        /// <summary>
         /// Gets the Jpath to get JToken or IEnumerable<JToken> from context.CustomData object
         /// </summary>
         public string DataJPath { get; }
@@ -61,8 +56,18 @@ namespace AuthZyin.Authorization.Requirements
             this.DataJPath = dataPath ?? throw new ArgumentNullException(nameof(dataPath));
             this.ResourceJPath = resourcePath ?? throw new ArgumentNullException(nameof(resourcePath));
 
-            this.ValidateOperatorType(operatorType);
+            if (!EvaluatorMap.ContainsKey(operatorType))
+            {
+                throw new ArgumentOutOfRangeException($"Operator not supported by JsonPathRequirement - {operatorType.ToString()}");
+            }
+
             this.Operator = operatorType;
+
+            if (direction != Direction.ContextToResource && direction != Direction.ResourceToContext)
+            {
+                throw new ArgumentOutOfRangeException(nameof(direction));
+            }
+
             this.Direction = direction;
         }
 
@@ -88,38 +93,13 @@ namespace AuthZyin.Authorization.Requirements
             }
 
             // Create evluation context and delegate real evlauation to the evaluators
-            var evaluatorContext = this.GetEvaluatorContext(customDataJObject, resourceJObj);
+            var evaluatorContext = new EvaluatorContext(
+                customDataJObject,
+                this.DataJPath,
+                resourceJObj,
+                this.ResourceJPath,
+                this.Direction);
             return EvaluatorMap[this.Operator].Evaluate(evaluatorContext);
-        }
-
-        /// <summary>
-        /// Generate a evlauator context to evaluate on
-        /// </summary>
-        /// <param name="dataJObject">JObject representing custom data</param>
-        /// <param name="resourceJObj">JObject representing resource</param>
-        /// <returns>evaluator context</returns>
-        protected EvaluatorContext GetEvaluatorContext(JObject dataJObject, JObject resourceJObj)
-        {
-            if (this.Direction == Direction.ContextToResource)
-            {
-                return new EvaluatorContext()
-                {
-                    LeftJObject = dataJObject,
-                    LeftJPath = this.DataJPath,
-                    RightJObject = resourceJObj,
-                    RightJPath = this.ResourceJPath,
-                };
-            }
-            else
-            {
-                return new EvaluatorContext()
-                {
-                    LeftJObject = resourceJObj,
-                    LeftJPath = this.ResourceJPath,
-                    RightJObject = dataJObject,
-                    RightJPath = this.DataJPath,
-                };
-            }
         }
 
         /// <summary>
@@ -140,18 +120,6 @@ namespace AuthZyin.Authorization.Requirements
         protected virtual JObject GetResourceJObject(TResource resource)
         {
             return JObject.FromObject(resource);
-        }
-
-        /// <summary>
-        /// Check whether operator type is supported by JsonPathRequirement
-        /// </summary>
-        /// <param name="operatorType">operator type</param>
-        private void ValidateOperatorType(RequirementOperatorType operatorType)
-        {
-            if (!EvaluatorMap.ContainsKey(operatorType))
-            {
-                throw new ArgumentOutOfRangeException($"Operator not supported by JsonPathRequirement - {operatorType.ToString()}");
-            }
         }
     }
 }

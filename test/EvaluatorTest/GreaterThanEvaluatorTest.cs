@@ -4,51 +4,65 @@ namespace test
     using Xunit;
     using AuthZyin.Authorization.Requirements;
     using Newtonsoft.Json.Linq;
+    using System.Collections.Generic;
 
     public class GreaterThanEvaluatorTest
     {
+        private static readonly TestCustomData data = new TestCustomData();
+        private static readonly TestResource resource = new TestResource();
+        private static readonly JObject dataJObj = JObject.FromObject(data);
+        private static readonly TestCustomData largerData = new TestCustomData()
+        {
+            DateValue = resource.NestedData.DateValue + new TimeSpan(1, 0, 0),
+        };
+        private static readonly JObject largerDataJObj = JObject.FromObject(largerData);
+
+        private static readonly JObject resourceObj = JObject.FromObject(resource);
+
+        public static readonly IEnumerable<object[]> negativeCases = new List<object[]>
+        {
+            new object[] { dataJObj, data.JPathIntValue, resourceObj, resource.JPathNestedIntValue },
+            new object[] { dataJObj, data.JPathIntValue, resourceObj, resource.JPathNestedDataBiggerIntValue },
+        };
+
+        public static readonly IEnumerable<object[]> positiveCases = new List<object[]>
+        {
+            new object[] { dataJObj, data.JPathIntValue, resourceObj, resource.JPathNestedDataSmallerIntValue },
+            new object[] { dataJObj, data.JPathStringValue, resourceObj, resource.JPathNestedDataStringArrayValue + "[-1:]" },
+            new object[] { largerDataJObj, largerData.JPathDateValue, resourceObj, resource.JPathNestedDateValue },
+        };
+
         [Fact]
-        public void GreaterThanEvaluatorNegativeBehavior()
+        public void ConstructorThrowsOnInvalidArg()
+        {
+            // context is null
+            Assert.Throws<ArgumentNullException>(() => new GreaterThanEvaluator().Evaluate(null));
+        }
+
+        [Theory]
+        [MemberData(nameof(negativeCases))]
+        public void GreaterThanEvaluatorNegativeBehavior(
+            JObject dataJObj,
+            string dataJPath,
+            JObject resourceJObj,
+            string resourceJPath)
         {
             var evaluator = new GreaterThanEvaluator();
-
-            // RequirementEvaluatorTest.TestJValueCommonInvalidScenarios(evaluator);
-
-            var (data, resource, context) = EvaluatorTestHelper.CreateEvaluatorContext();
-
-            // return false when value is equal instead of greater than
-            context.LeftJPath = data.JPathIntValue;
-            context.RightJPath = resource.JPathIntValue;
-            Assert.False(evaluator.Evaluate(context));
-
-            // return false when value is less than instead of greater than
-            context.LeftJPath = data.JPathIntValue;
-            context.RightJPath = resource.JPathNestedDataBiggerIntValue;
+            var context = new EvaluatorContext(dataJObj, dataJPath, resourceJObj, resourceJPath, Direction.ContextToResource);
             Assert.False(evaluator.Evaluate(context));
         }
 
-        [Fact]
-        public void GreaterThanEvaluatorPositiveBehavior()
+        [Theory]
+        [MemberData(nameof(positiveCases))]
+        public void GreaterThanEvaluatorPositiveBehavior(
+            JObject dataJObj,
+            string dataJPath,
+            JObject resourceJObj,
+            string resourceJPath)
         {
             var evaluator = new GreaterThanEvaluator();
-            var (data, resource, context) = EvaluatorTestHelper.CreateEvaluatorContext();
-
-            // context > resource
-            context.LeftJPath = data.JPathIntValue;
-            context.RightJPath = resource.JPathNestedDataSmallerIntValue;
+            var context = new EvaluatorContext(dataJObj, dataJPath, resourceJObj, resourceJPath, Direction.ContextToResource);
             Assert.True(evaluator.Evaluate(context));
-
-            // string comparison with with array filter
-            context.LeftJPath = data.JPathStringValue;
-            context.RightJPath = resource.JPathNestedDataStringArrayValue + "[-1:]"; // last value is smaller
-            Assert.True(evaluator.Evaluate(context));
-
-            // DateTime - note we need to reset CustomData in the context object
-            data.DateValue = resource.NestedData.DateValue + new TimeSpan(1, 0, 0);
-            context.LeftJObject = JObject.FromObject(data);
-            context.LeftJPath = data.JPathDateValue;
-            context.RightJPath = resource.JPathNestedDateValue;
-            Assert.True(evaluator.Evaluate(context));
-        }
-     }
+       }
+    }
 }

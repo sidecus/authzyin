@@ -5,21 +5,6 @@ namespace test
     using AuthZyin.Authorization.Requirements;
     using Newtonsoft.Json.Linq;
 
-    public class DummyJsonPathRequirement : JsonPathRequirement<TestCustomData, TestResource>
-    {
-        public static readonly string DataPath = "dummyDataPath";
-        public static readonly string ResourcePath = "dummyResourcePath";
-        public new EvaluatorContext GetEvaluatorContext(JObject dataJObject, JObject resourceJObj)
-        {
-            return base.GetEvaluatorContext(dataJObject, resourceJObj);
-        }
-
-        public DummyJsonPathRequirement(Direction direction)
-            : base(RequirementOperatorType.GreaterThan, DataPath, ResourcePath, direction)
-        {
-        }
-    }
-
     public class JsonPathRequirementTest
     {
         [Fact]
@@ -68,29 +53,6 @@ namespace test
 
             // Throws if no CustomData is provided - JsonPathRequirement needs custom data
             Assert.Throws<ArgumentNullException>(() => equalsRequirement.Evaluate(context, resource));
-        }
-
-        [Fact]
-        public void GetEvaluatorContextWorksAsExpected()
-        {
-            var dataJObject = JObject.FromObject(new { IntValue = 2});
-            var resourceJObject = JObject.FromObject(new { SomeOtherValue = "sdfsdf"});
-
-            // context to resource
-            var contextToResource = new DummyJsonPathRequirement(Direction.ContextToResource);
-            var evaluatorContext = contextToResource.GetEvaluatorContext(dataJObject, resourceJObject);
-            Assert.Same(evaluatorContext.LeftJObject, dataJObject);
-            Assert.Same(evaluatorContext.LeftJPath, DummyJsonPathRequirement.DataPath);
-            Assert.Same(evaluatorContext.RightJObject, resourceJObject);
-            Assert.Same(evaluatorContext.RightJPath, DummyJsonPathRequirement.ResourcePath);
-
-            // resource to context
-            var resourceToContext = new DummyJsonPathRequirement(Direction.ResourceToContext);
-            evaluatorContext = resourceToContext.GetEvaluatorContext(dataJObject, resourceJObject);
-            Assert.Same(evaluatorContext.LeftJObject, resourceJObject);
-            Assert.Same(evaluatorContext.LeftJPath, DummyJsonPathRequirement.ResourcePath);
-            Assert.Same(evaluatorContext.RightJObject, dataJObject);
-            Assert.Same(evaluatorContext.RightJPath, DummyJsonPathRequirement.DataPath);
         }
 
         [Fact]

@@ -41,7 +41,7 @@ namespace AuthZyin.Authorization.Requirements
         /// <summary>
         /// Gets the operator type for the requirement
         /// </summary>
-        public virtual RequirementOperatorType Operator => RequirementOperatorType.Invalid;
+        public RequirementOperatorType Operator { get; protected set; } = RequirementOperatorType.Invalid;
 
         /// <summary>
         // Evaluate current requirement against given user and resource
