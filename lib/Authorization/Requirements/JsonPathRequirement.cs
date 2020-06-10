@@ -20,7 +20,6 @@ namespace AuthZyin.Authorization.Requirements
         /// </summary>
         /// <typeparam name="RequirementOperatorType">operator type</typeparam>
         /// <typeparam name="RequirementEvaluator">evaluator</typeparam>
-        /// <returns></returns>
         private static readonly Dictionary<RequirementOperatorType, RequirementEvaluator> EvaluatorMap = new Dictionary<RequirementOperatorType, RequirementEvaluator>()
         {
             { RequirementOperatorType.Equals,       new EqualsEvaluator() },
@@ -29,14 +28,9 @@ namespace AuthZyin.Authorization.Requirements
         };
 
         /// <summary>
-        /// Operator type for this requirement
+        /// Gets the operator type for the requirement - overrides base.
         /// </summary>
-        protected RequirementOperatorType operatorType;
-
-        /// <summary>
-        /// Gets the operator type for the requirement
-        /// </summary>
-        public override RequirementOperatorType Operator => this.operatorType;
+        public override RequirementOperatorType Operator { get; }
 
         /// <summary>
         /// Gets the Jpath to get JToken or IEnumerable<JToken> from context.CustomData object
@@ -68,7 +62,7 @@ namespace AuthZyin.Authorization.Requirements
             this.ResourceJPath = resourcePath ?? throw new ArgumentNullException(nameof(resourcePath));
 
             this.ValidateOperatorType(operatorType);
-            this.operatorType = operatorType;
+            this.Operator = operatorType;
             this.Direction = direction;
         }
 
@@ -93,17 +87,39 @@ namespace AuthZyin.Authorization.Requirements
                 return false;
             }
 
-            var evaluatorContext = new EvaluatorContext
-            {
-                CustomData = customDataJObject,
-                CustomDataPath = this.DataJPath,
-                Resource = resourceJObj,
-                ResourcePath = this.ResourceJPath,
-                Direction = this.Direction,
-            };
+            // Create evluation context and delegate real evlauation to the evaluators
+            var evaluatorContext = this.GetEvaluatorContext(customDataJObject, resourceJObj);
+            return EvaluatorMap[this.Operator].Evaluate(evaluatorContext);
+        }
 
-            // Delegate real evlauation to the evaluators
-            return EvaluatorMap[this.operatorType].Evaluate(evaluatorContext);
+        /// <summary>
+        /// Generate a evlauator context to evaluate on
+        /// </summary>
+        /// <param name="dataJObject">JObject representing custom data</param>
+        /// <param name="resourceJObj">JObject representing resource</param>
+        /// <returns>evaluator context</returns>
+        protected EvaluatorContext GetEvaluatorContext(JObject dataJObject, JObject resourceJObj)
+        {
+            if (this.Direction == Direction.ContextToResource)
+            {
+                return new EvaluatorContext()
+                {
+                    LeftJObject = dataJObject,
+                    LeftJPath = this.DataJPath,
+                    RightJObject = resourceJObj,
+                    RightJPath = this.ResourceJPath,
+                };
+            }
+            else
+            {
+                return new EvaluatorContext()
+                {
+                    LeftJObject = resourceJObj,
+                    LeftJPath = this.ResourceJPath,
+                    RightJObject = dataJObject,
+                    RightJPath = this.DataJPath,
+                };
+            }
         }
 
         /// <summary>

@@ -14,8 +14,8 @@ namespace test
 
             // Value doesn't equal
             var context = EvaluatorTestHelper.CreateEvaluatorContext().context;
-            context.CustomDataPath = "$.StringValue";
-            context.ResourcePath = "$.NestedData.ArrayValue[0]";
+            context.LeftJPath = "$.StringValue";
+            context.RightJPath = "$.NestedData.ArrayValue[0]";
             Assert.False(evaluator.Evaluate(context));
         }
 
@@ -25,25 +25,25 @@ namespace test
             var evaluator = new EqualsEvaluator();
             var (data, resource, context) = EvaluatorTestHelper.CreateEvaluatorContext();
 
-            context.CustomDataPath = $"$.{nameof(data.IntValue)}";
-            context.ResourcePath = $"$.NestedData.{nameof(resource.NestedData.IntValue)}";
+            context.LeftJPath = data.JPathIntValue;
+            context.RightJPath = resource.JPathNestedIntValue;
             Assert.True(evaluator.Evaluate(context));
 
-            context.CustomDataPath = $"$.{nameof(data.StringValue)}";
-            context.ResourcePath = $"$.NestedData.{nameof(resource.NestedData.StringValue)}";
+            context.LeftJPath = data.JPathStringValue;
+            context.RightJPath = resource.JPathNestedDataStringValue;
             Assert.True(evaluator.Evaluate(context));
 
-            context.CustomDataPath = $"$.{nameof(data.GuidValue)}";
-            context.ResourcePath = $"$.NestedData.{nameof(resource.NestedData.GuidValue)}";
+            context.LeftJPath = data.JPathGuidValue;
+            context.RightJPath = resource.JPathNestedGuidValue;
             Assert.True(evaluator.Evaluate(context));
 
-            context.CustomDataPath = $"$.{nameof(data.DateValue)}";
-            context.ResourcePath = $"$.NestedData.{nameof(resource.NestedData.DateValue)}";
+            context.LeftJPath = data.JPathDateValue;
+            context.RightJPath = resource.JPathNestedDateValue;
             Assert.True(evaluator.Evaluate(context));
 
             // with array filter
-            context.CustomDataPath = $"$.{nameof(data.ArrayValue)}[1]";
-            context.ResourcePath = "$..ArrayValue[-1:]";
+            context.LeftJPath = data.JPathArrayValue + "[1]";
+            context.RightJPath = resource.JPathNestedDataStringArrayValue + "[1]";
             Assert.True(evaluator.Evaluate(context));
         }
     }

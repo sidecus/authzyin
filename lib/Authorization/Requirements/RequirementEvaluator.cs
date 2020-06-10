@@ -10,11 +10,10 @@ namespace AuthZyin.Authorization.Requirements
     /// </summary>
     public class EvaluatorContext
     {
-        public JObject CustomData;
-        public JObject Resource;
-        public Direction Direction;
-        public string CustomDataPath;
-        public string ResourcePath;
+        public JObject LeftJObject;
+        public string LeftJPath;
+        public JObject RightJObject;
+        public string RightJPath;
     }
 
     /// <summary>
@@ -41,7 +40,7 @@ namespace AuthZyin.Authorization.Requirements
         protected abstract bool EvaluateInternal(EvaluatorContext context);
 
         /// <summary>
-        /// Validates the context object
+        /// Validates the evaluation context object
         /// </summary>
         /// <param name="context">evaluation context</param>
         private void ValidateArguments(EvaluatorContext context)
@@ -51,48 +50,42 @@ namespace AuthZyin.Authorization.Requirements
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.CustomData == null)
+            if (context.LeftJObject == null)
             {
-                throw new ArgumentNullException(nameof(context.CustomData));
+                throw new ArgumentNullException(nameof(context.LeftJObject));
             }
 
-            if (context.Resource == null)
+            if (context.RightJObject == null)
             {
-                throw new ArgumentNullException(nameof(context.Resource));
+                throw new ArgumentNullException(nameof(context.RightJObject));
             }
 
-            if (context.Direction != Direction.ContextToResource &&
-                context.Direction != Direction.ResourceToContext)
+            if (string.IsNullOrWhiteSpace(context.LeftJPath))
             {
-                throw new ArgumentOutOfRangeException(nameof(context.Direction));
-            }
-
-            if (string.IsNullOrWhiteSpace(context.CustomDataPath))
-            {
-                throw new ArgumentNullException(nameof(context.CustomDataPath));
+                throw new ArgumentNullException(nameof(context.LeftJPath));
             }
             
-            if (string.IsNullOrWhiteSpace(context.ResourcePath))
+            if (string.IsNullOrWhiteSpace(context.RightJPath))
             {
-                throw new ArgumentNullException(nameof(context.ResourcePath));
+                throw new ArgumentNullException(nameof(context.RightJPath));
             }
         }
     }
 
     /// <summary>
-    /// Evaluates equals operation based on JToken deep equals
+    /// Class which evaluates when both left and right are expected to be values
     /// </summary>
-    public class EqualsEvaluator : RequirementEvaluator
+    public abstract class ValuesEvaluator : RequirementEvaluator
     {
         /// <summary>
         /// Evaluates the prameters based on the context/resource as well as the operator
         /// </summary>
         /// <param name="context">evaluation context</param>
         /// <returns>true if success</returns>
-        protected override bool EvaluateInternal(EvaluatorContext context)
+        protected sealed override bool EvaluateInternal(EvaluatorContext context)
         {
-            var left = context.CustomData.SelectToken(context.CustomDataPath);
-            var right = context.Resource.SelectToken(context.ResourcePath);
+            var left = context.LeftJObject.SelectToken(context.LeftJPath);
+            var right = context.RightJObject.SelectToken(context.RightJPath);
 
             if (left == null || right == null)
             {
@@ -105,40 +98,50 @@ namespace AuthZyin.Authorization.Requirements
                 return false;
             }
 
-            return leftValue.Type == rightValue.Type && leftValue.CompareTo(rightValue) == 0;
+            return leftValue.Type == rightValue.Type &&
+                   this.EvaluateValues(leftValue, rightValue);
+        }
+
+        /// <summary>
+        /// Evalue two JValues
+        /// </summary>
+        /// <param name="leftValue">left operand</param>
+        /// <param name="rightValue">right operand</param>
+        /// <returns>value comarison result</returns>
+        protected abstract bool EvaluateValues(JValue leftValue, JValue rightValue);
+    }
+
+    /// <summary>
+    /// Evaluates equals operation based on JToken deep equals
+    /// </summary>
+    public class EqualsEvaluator : ValuesEvaluator
+    {
+        /// <summary>
+        /// Evalue two JValues to see whether they are equal
+        /// </summary>
+        /// <param name="leftValue">left operand</param>
+        /// <param name="rightValue">right operand</param>
+        /// <returns>true if equal</returns>
+        protected override bool EvaluateValues(JValue leftValue, JValue rightValue)
+        {
+            return leftValue.CompareTo(rightValue) == 0;
         }
     }
 
     /// <summary>
     /// Evaluates GreaterThan operation based on JToken deep equals
     /// </summary>
-    public class GreaterThanEvaluator : RequirementEvaluator
+    public class GreaterThanEvaluator : ValuesEvaluator
     {
         /// <summary>
-        /// Evaluates the prameters based on the context/resource as well as the operator
+        /// Evalue two JValues to see whether left is bigger than right
         /// </summary>
-        /// <param name="context">evaluation context</param>
-        /// <returns>true if success</returns>
-        protected override bool EvaluateInternal(EvaluatorContext context)
+        /// <param name="leftValue">left operand</param>
+        /// <param name="rightValue">right operand</param>
+        /// <returns>true if left is greater than right</returns>
+        protected override bool EvaluateValues(JValue leftValue, JValue rightValue)
         {
-            var contextToken = context.CustomData.SelectToken(context.CustomDataPath);
-            var resourceToken = context.Resource.SelectToken(context.ResourcePath);
-
-            if (contextToken == null || resourceToken == null)
-            {
-                return false;
-            }
-
-            if (!(contextToken is JValue contextValue) || !(resourceToken is JValue resourceValue))
-            {
-                // The context token is not a primitive value
-                return false;
-            }
-
-            var left = (context.Direction == Direction.ContextToResource) ? contextValue : resourceValue;
-            var right = (context.Direction == Direction.ContextToResource) ? resourceValue : contextValue;
-
-            return left.Type == right.Type && left.CompareTo(right) > 0;
+            return leftValue.CompareTo(rightValue) > 0;
         }
     }
 
@@ -154,27 +157,10 @@ namespace AuthZyin.Authorization.Requirements
         /// <returns>true if success</returns>
         protected override bool EvaluateInternal(EvaluatorContext context)
         {
-            IEnumerable<JToken> left;
-            JToken right;
-
-            if (context.Direction == Direction.ContextToResource)
-            {
-                left = context.CustomData.SelectTokens(context.CustomDataPath);
-                right = context.Resource.SelectToken(context.ResourcePath);
-            }
-            else
-            {
-                left = context.Resource.SelectTokens(context.ResourcePath);
-                right = context.CustomData.SelectToken(context.CustomDataPath);
-            }
+            var left = context.LeftJObject.SelectTokens(context.LeftJPath);
+            var right = context.RightJObject.SelectToken(context.RightJPath);
 
             if (left == null || left.Count() == 0 || right == null)
-            {
-                return false;
-            }
-
-            // Left must be an array of JValue
-            if (!left.All(x => x is JValue))
             {
                 return false;
             }
@@ -185,9 +171,13 @@ namespace AuthZyin.Authorization.Requirements
                 return false;
             }
 
-            return left.Any(
-                x => x.Type == right.Type &&
-                (x as JValue).CompareTo(rightValue) == 0);
+            // Left must be an array of JValue with the same type as right
+            if (!left.All(x => x is JValue && x.Type == right.Type))
+            {
+                return false;
+            }
+
+            return left.Any(x => (x as JValue).CompareTo(rightValue) == 0);
         }
     }
 }

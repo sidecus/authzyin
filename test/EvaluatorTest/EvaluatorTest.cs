@@ -26,27 +26,21 @@ namespace test
 
             // CustomData is null
             Assert.Throws<ArgumentNullException>(() => evaluator.Evaluate(null));
-            context.CustomData = JObject.FromObject(new TestCustomData());
+            context.LeftJObject = JObject.FromObject(new TestCustomData());
 
             // Resource is null
             Assert.Throws<ArgumentNullException>(() => evaluator.Evaluate(context));
-            context.Resource = JObject.FromObject(new TestResource());
-
-            // Direction is invalid
-            Assert.Throws<ArgumentOutOfRangeException>(() => evaluator.Evaluate(context));
-            context.Direction = (Direction)3;
-            Assert.Throws<ArgumentOutOfRangeException>(() => evaluator.Evaluate(context));
-            context.Direction = Direction.ResourceToContext;
+            context.RightJObject = JObject.FromObject(new TestResource());
 
             // CustomDataPath is null or white spaces
             Assert.Throws<ArgumentNullException>(() => evaluator.Evaluate(context));
-            context.CustomDataPath = "    \t";
+            context.LeftJPath = "    \t";
             Assert.Throws<ArgumentNullException>(() => evaluator.Evaluate(context));
-            context.CustomDataPath = "$.something";
+            context.LeftJPath = "$.something";
 
             // ResourcePath is null or white spaces
             Assert.Throws<ArgumentNullException>(() => evaluator.Evaluate(context));
-            context.ResourcePath = "    \t  ";
+            context.RightJPath = "    \t  ";
             Assert.Throws<ArgumentNullException>(() => evaluator.Evaluate(context));
         }
 
@@ -57,28 +51,28 @@ namespace test
         {
             // Custom data path doesn't point to valid value
             var context = EvaluatorTestHelper.CreateEvaluatorContext().context;
-            context.CustomDataPath = "$.Nonexisting";
+            context.LeftJPath = "$.Nonexisting";
             Assert.False(evaluator.Evaluate(context));
 
             // Resource data path doesn't point to valid value
             context = EvaluatorTestHelper.CreateEvaluatorContext().context;
-            context.ResourcePath = "$.Nonexisting";
+            context.RightJPath = "$.Nonexisting";
             Assert.False(evaluator.Evaluate(context));
 
             // Context member is not a value
             context = EvaluatorTestHelper.CreateEvaluatorContext().context;
-            context.CustomDataPath = $"$.ArrayValue";
+            context.LeftJPath = $"$.ArrayValue";
             Assert.False(evaluator.Evaluate(context));
 
             // Resource data is not a value
             context = EvaluatorTestHelper.CreateEvaluatorContext().context;
-            context.ResourcePath = "$.NestedData.ArrayValue";
+            context.RightJPath = "$.NestedData.ArrayValue";
             Assert.False(evaluator.Evaluate(context));
 
             // Different token type
             context = EvaluatorTestHelper.CreateEvaluatorContext().context;
-            context.CustomDataPath = "$.IntValueInString";
-            context.ResourcePath = "$.NestedData.IntValue";
+            context.LeftJPath = "$.IntValueInString";
+            context.RightJPath = "$.NestedData.IntValue";
             Assert.False(evaluator.Evaluate(context));
         }
    }
@@ -90,11 +84,10 @@ namespace test
             var data = new TestCustomData();
             var resource = new TestResource();
             var context = new EvaluatorContext();
-            context.CustomData = JObject.FromObject(data);
-            context.Resource = JObject.FromObject(resource);
-            context.CustomDataPath = $"$.{nameof(data.StringValue)}";
-            context.ResourcePath = $"$.NestedData.{nameof(resource.NestedData.StringValue)}";
-            context.Direction = Direction.ContextToResource;
+            context.LeftJObject = JObject.FromObject(data);
+            context.RightJObject = JObject.FromObject(resource);
+            context.LeftJPath = data.JPathStringValue;
+            context.RightJPath = resource.JPathNestedDataStringValue;
 
             return (data, resource, context);
         }

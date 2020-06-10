@@ -54,7 +54,7 @@ namespace test
         public string StringValue { get; set; } = StringConst;
         public Guid GuidValue { get; set; } = GuidConst;
         public DateTime DateValue { get; set; } = DateConst;
-        public string[] ArrayValue { get; set; } = new [] { StringConst + "abcd", StringConst };
+        public string[] ArrayValue { get; set; } = new [] { StringConst + "abcd", StringConst, StringConst.Substring(0, StringConst.Length - 2) };
 
         public string JPathIntValue => $"$.{nameof(this.IntValue)}";
         public string JPathStringValue => $"$.{nameof(this.StringValue)}";
@@ -73,6 +73,7 @@ namespace test
         public string JPathNestedDataSmallerIntValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.SmallerIntValue)}";
         public string JPathNestedDataStringArrayValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.ArrayValue)}";
         public string JPathNestedDateValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.DateValue)}";
+        public string JPathNestedDataStringValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.StringValue)}";
         public string JPathNestedIntValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.IntValue)}";
         public string JPathNestedGuidValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.GuidValue)}";
     }
@@ -108,15 +109,12 @@ namespace test
             return new TestContext(policies, new ClaimsPrincipal(identity), testCustomData);
         }
 
-        public static TestContext CreateDefaultTestContext()
+        public static TestContext CreateDefaultTestContext(bool setNullCustomData = false)
         {
             var userId = Guid.NewGuid().ToString();
             var userName = "testusre";
             var roles = new string[] { "role1", "role2" };
-            var testCustomData = new TestCustomData
-            {
-                IntValue = -2342546,
-            };
+            var testCustomData = new TestCustomData();
             var policyBuilder = new AuthorizationPolicyBuilder();
             roles.ToList().ForEach(r => policyBuilder.RequireRole(r));
             var policy1 = policyBuilder.Build();
@@ -132,7 +130,7 @@ namespace test
                 userName,
                 roles,
                 policies,
-                testCustomData);
+                setNullCustomData ? null : testCustomData);
         }
     }
 }

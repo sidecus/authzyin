@@ -15,46 +15,43 @@ namespace test
             {
                 // Custom data path doesn't point to valid value
                 var context = EvaluatorTestHelper.CreateEvaluatorContext().context;
-                context.CustomDataPath = "$.Nonexisting";
+                context.LeftJPath = "$.Nonexisting";
                 Assert.False(evaluator.Evaluate(context));
 
                 // Resource data path doesn't point to valid value
                 context = EvaluatorTestHelper.CreateEvaluatorContext().context;
-                context.ResourcePath = "$.Nonexisting";
+                context.RightJPath = "$.Nonexisting";
                 Assert.False(evaluator.Evaluate(context));
             }
 
             // Left operand is not an IEnumerable<JValue>
             {
                 var (data, resource, context) = EvaluatorTestHelper.CreateEvaluatorContext();
-                context.CustomDataPath = "$";
+                context.LeftJPath = "$";
                 Assert.False(evaluator.Evaluate(context));
             }
 
             // right operand is not a value
             {
                 var (data, resource, context) = EvaluatorTestHelper.CreateEvaluatorContext();
-                context.Direction = Direction.ContextToResource;
-                context.CustomDataPath = data.JPathArrayValue + "[*]";
-                context.ResourcePath = resource.JPathNestedDataStringArrayValue;
+                context.LeftJPath = data.JPathArrayValue + "[*]";
+                context.RightJPath = resource.JPathNestedDataStringArrayValue;
                 Assert.False(evaluator.Evaluate(context));
             }
 
             // Different token type
             {
                 var (data, resource, context) = EvaluatorTestHelper.CreateEvaluatorContext();
-                context.Direction = Direction.ResourceToContext;
-                context.CustomDataPath = data.JPathIntValue;
-                context.ResourcePath = resource.JPathNestedDataStringArrayValue + "[0]";
+                context.LeftJPath = data.JPathIntValue;
+                context.RightJPath = resource.JPathNestedDataStringArrayValue + "[0]";
                 Assert.False(evaluator.Evaluate(context));
             }
 
             // doesnt' contain
             {
                 var (data, resource, context) = EvaluatorTestHelper.CreateEvaluatorContext();
-                context.Direction = Direction.ResourceToContext;
-                context.CustomDataPath = data.JPathStringValue;
-                context.ResourcePath = resource.JPathNestedDataStringArrayValue + "[0]";
+                context.LeftJPath = data.JPathStringValue;
+                context.RightJPath = resource.JPathNestedDataStringArrayValue + "[0]";
                 Assert.False(evaluator.Evaluate(context));
             }
         }
@@ -65,28 +62,19 @@ namespace test
             var evaluator = new ContainsEvaluator();
             var (data, resource, context) = EvaluatorTestHelper.CreateEvaluatorContext();
 
-            // context contains resource - int
-            context.Direction = Direction.ContextToResource;
-            context.CustomDataPath = data.JPathIntValue;
-            context.ResourcePath = resource.JPathIntValue;
+            // left contains right - int
+            context.LeftJPath = data.JPathIntValue;
+            context.RightJPath = resource.JPathIntValue;
             Assert.True(evaluator.Evaluate(context));
 
-            // resource contains context - int
-            context.Direction = Direction.ResourceToContext;
-            context.CustomDataPath = data.JPathIntValue;
-            context.ResourcePath = resource.JPathNestedIntValue;
+            // left contains right - string
+            context.LeftJPath = data.JPathArrayValue + "[*]";
+            context.RightJPath = resource.JPathNestedDataStringValue;
             Assert.True(evaluator.Evaluate(context));
 
-            // resource contains context - string
-            context.Direction = Direction.ResourceToContext;
-            context.CustomDataPath = data.JPathStringValue;
-            context.ResourcePath = resource.JPathNestedDataStringArrayValue + "[*]";
-            Assert.True(evaluator.Evaluate(context));
-
-            // context contains resource - Guid
-            context.Direction = Direction.ContextToResource;
-            context.CustomDataPath = data.JPathGuidValue;
-            context.ResourcePath = resource.JPathNestedGuidValue;
+            // Guid contains
+            context.LeftJPath = data.JPathGuidValue;
+            context.RightJPath = resource.JPathNestedGuidValue;
             Assert.True(evaluator.Evaluate(context));
         }
      }
