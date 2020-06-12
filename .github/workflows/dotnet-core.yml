@@ -19,7 +19,19 @@ jobs:
         dotnet-version: 3.1.101
     - name: Install dependencies
       run: dotnet restore
-    - name: Build
+    - name: Build server lib and server sample
       run: dotnet build --configuration Release --no-restore
-    - name: Test
+    - name: Test server lib
       run: dotnet test --no-restore --verbosity normal
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Build client lib 
+        cd authzyin.js
+        npm install
+        npm run build
+    - name: Build client SPA 
+        cd authzyin.js/example
+        npm install
+        npm run build
+    
