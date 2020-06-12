@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect, PropsWithChildren } from 'react';
-import { AuthZyinContext } from './AuthZyinContext';
+import { AuthZyinContext, ClientPolicy } from './AuthZyinContext';
+import { Requirement, IsOrRequirement, IsJsonPathRequirement } from './Requirements';
 
 /**
  * AuthZyin context api URL - this is setup by the AutZyin library automatically for you
@@ -62,14 +63,58 @@ export interface IAuthZyinProviderOptions {
      * If you are serializing as Pascal case to the client, then set this to false.
      * Defaults to true since this the most common case.
      */
-    autoJPathCamelCase: boolean;
+    jsonPathPropToCamelCase: boolean;
 };
 
 const defaultOptions: Partial<IAuthZyinProviderOptions> = {
     rootUrl: '/',
     requestInitFn: () => Promise.resolve({}),
-    autoJPathCamelCase: true,
+    jsonPathPropToCamelCase: true,
 };
+
+/**
+ * Convert property names in a json path to camel case. e.g., "$.SomeData.Value" to "$.someData.value"
+ * @param path json path
+ */
+const camelCasePropertyNamesInJsonPath = (path: string) => {
+    // TODO[sidecus] - better way to ignore case in JPath
+    let newPath = '';
+    let isPreviousCharADot = false;
+    for (let i = 0; i < path.length; i++) {
+        newPath += isPreviousCharADot ? path[i].toLowerCase() : path[i];
+        isPreviousCharADot = path[i] === '.';
+    }
+
+    return newPath;
+};
+
+const camelCasePropertyNamesInJsonPathForRequirement = (requirement: Requirement) => {
+    if (IsOrRequirement(requirement) && requirement.children) {
+        for (let i = 0; i < requirement.children.length; i ++) {
+            camelCasePropertyNamesInJsonPathForRequirement(requirement.children[i]);
+        }
+    } else if (IsJsonPathRequirement(requirement)) {
+        requirement.dataJPath = camelCasePropertyNamesInJsonPath(requirement.dataJPath);
+        requirement.resourceJPath = camelCasePropertyNamesInJsonPath(requirement.resourceJPath);
+    }
+}
+
+const camelCasePropertyNamesInJsonPathForPolicy = (policy: ClientPolicy) => {
+    if (policy && policy.requirements && policy.requirements.length > 0) {
+        for (let i = 0; i < policy.requirements.length; i ++) {
+            camelCasePropertyNamesInJsonPathForRequirement(policy.requirements[i]);
+        }
+    }
+}
+
+const camelCasePropertyNamesInJsonPathForContext = <TData extends object>(context: AuthZyinContext<TData>) => {
+    if (context && context.policies) {
+        for (let i = 0; i < context.policies.length; i ++) {
+            camelCasePropertyNamesInJsonPathForPolicy(context.policies[i]);
+        }
+    }
+}
+
 
 /*
  * HOC component which sets the authorization React context - similar as Provider from redux
@@ -98,6 +143,10 @@ export const AuthZyinProvider = <TData extends object>(
             const response = await fetch(url, request);
             if (response.ok) {
                 const newContext = await response.json() as AuthZyinContext<TData>;
+                if (options.jsonPathPropToCamelCase) {
+                    // Convert property names in JSON path to camel case
+                    camelCasePropertyNamesInJsonPathForContext(newContext);
+                }
                 setContext(newContext);
             } else {
                 throw new Error(

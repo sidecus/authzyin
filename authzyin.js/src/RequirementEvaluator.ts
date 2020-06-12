@@ -52,18 +52,6 @@ const evaluateOrRequirement = <TData extends object>(
     return false;
 };
 
-const camelCasePropertyNames = (path: string) => {
-    // TODO[sidecus] - better way to ignore case in JPath
-    let newPath = '';
-    let isPreviousCharADot = false;
-    for (let i = 0; i < path.length; i++) {
-        newPath += isPreviousCharADot ? path[i].toLowerCase() : path[i];
-        isPreviousCharADot = path[i] === '.';
-    }
-
-    return newPath;
-};
-
 const compareTokens = (
     left: Array<object>,
     right: Array<object>,
@@ -112,19 +100,12 @@ const evaulateJsonPathRequirement = <TData extends object>(
         return false;
     }
 
-    const camelCaseDataJPath = camelCasePropertyNames(
-        jsonPathRequirement.dataJPath
-    );
-    const camelCaseResourceJPath = camelCasePropertyNames(
-        jsonPathRequirement.resourceJPath
-    );
-
     const dataToken = JSONPath({
-        path: camelCaseDataJPath,
+        path: jsonPathRequirement.dataJPath,
         json: context.data
     });
     const resourceToken = JSONPath({
-        path: camelCaseResourceJPath,
+        path: jsonPathRequirement.resourceJPath,
         json: resource
     });
 
