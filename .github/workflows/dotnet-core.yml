@@ -26,11 +26,13 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Build client lib 
+    - name: Build client lib
+      run: |
         cd authzyin.js
         npm install
         npm run build
     - name: Build client SPA 
+      run: |
         cd authzyin.js/example
         npm install
         npm run build
