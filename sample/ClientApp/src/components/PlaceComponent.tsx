@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { makeStyles, Typography, Button } from '@material-ui/core';
 import { useSampleAppBoundActionCreators } from '../store/actions';
-import { authZyinContextSelector } from '../store/selectors';
-import { Place, IsAgeLimitedPlace } from '../api/Api';
-import { Severity } from '../store/store';
+import { Place, IsAgeLimitedPlace, IsBar } from '../api/Contract';
+import { Severity } from '../store/state';
 import { LightTooltip } from './LightTooltip';
 import LocalBarIcon from '@material-ui/icons/LocalBar';
+import WeekendIcon from '@material-ui/icons/Weekend';
 import { useAuthorize } from '../authzyin/Authorize';
 
 const useStyles = makeStyles((theme) => ({
@@ -14,15 +14,13 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-interface IPlaceProps {
+export const PlaceComponent = ({place, sneakIn}: {
     place: Place,
     sneakIn: boolean,
-}
-
-export const PlaceComponent = ({place, sneakIn}: IPlaceProps) => {
+}) => {
     const classes = useStyles();
     const { setAlert, setCurrentPlace, enterPlace } = useSampleAppBoundActionCreators();
-    const authorize = useAuthorize(authZyinContextSelector);
+    const authorize = useAuthorize();
     const authorized = authorize(place.policy, place);
 
     const handlePlaceChange = () => {
@@ -55,7 +53,7 @@ export const PlaceComponent = ({place, sneakIn}: IPlaceProps) => {
                     variant="contained"
                     className={classes.button}
                     color = {authorized ? "primary" : "secondary"}
-                    startIcon={<LocalBarIcon/>}
+                    startIcon={IsBar(place) ? <LocalBarIcon/> : <WeekendIcon/>}
                     onClick={() => handlePlaceChange()}
                 >
                     {place.name}

@@ -1,39 +1,30 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { AuthContext } from './AuthContext';
-import { signInfoSelector, authZyinContextSelector, userInfoSelector } from '../store/selectors';
 import { User } from './User';
 import { PlaceList } from './PlaceList';
 import { Grid, Typography } from '@material-ui/core';
+import { useAuthZyinContext } from '../authzyin/Authorize';
+import { AuthorizationData } from '../api/Contract';
 
 export const Home = () => {
-    const signInInfo = useSelector(signInfoSelector);
-    const userInfo = useSelector(userInfoSelector);
-    const clientContext = useSelector(authZyinContextSelector);
+    const context = useAuthZyinContext<AuthorizationData>();
 
-    // main rendering based on state
-    if (clientContext.userContext) {
-        return (
-            <div>
-                <Typography variant="h2" component="h2">
-                    Welcome {userInfo.userName}!
-                </Typography>
-                <Grid container direction='column' justify='center' alignItems='stretch'>
-                    <Grid item xl={12}>
-                        <PlaceList />
-                    </Grid>
-                    <Grid item xl={12}>
-                        <User />
-                    </Grid>
-                    <Grid item xl={12}>
-                        <AuthContext data={clientContext} />
-                    </Grid>
+    return (
+        <div>
+            <Typography variant="h2" component="h2">
+                Welcome {context.userContext.userName}!
+            </Typography>
+            <Grid container direction='column' justify='center' alignItems='stretch'>
+                <Grid item xl={12}>
+                    <PlaceList />
                 </Grid>
-            </div>
-        );
-    } else if (signInInfo.signInError) {
-        return <h3>Error: {signInInfo.signInError}</h3>;
-    } else {
-        return <></>;
-    }
+                <Grid item xl={12}>
+                    <User />
+                </Grid>
+                <Grid item xl={12}>
+                    <AuthContext data={context} />
+                </Grid>
+            </Grid>
+        </div>
+    );
 };

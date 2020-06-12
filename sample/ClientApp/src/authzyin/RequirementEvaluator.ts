@@ -14,11 +14,7 @@ import {
 } from "./Requirements";
 import { Resource, ConstantWrapperResource } from "./Resource";
 
-export const evaluateRequirement = <TData extends object>(
-    context: AuthZyinContext<TData>,
-    requirement: Requirement,
-    resource?: Resource
-) => {
+export const evaluateRequirement = <TData extends object>(context: AuthZyinContext<TData>, requirement: Requirement, resource?: Resource) => {
     let result = false;
 
     // use type guards to evaluate the concrement requirement type
@@ -34,16 +30,13 @@ export const evaluateRequirement = <TData extends object>(
     return result;
 }
 
-const evaluateRoleRequirement = <TData extends object>(
-    context: AuthZyinContext<TData>,
-    roleRequirement: RequiresRoleRequiremet
-) => {
+const evaluateRoleRequirement = <TData extends object>(context: AuthZyinContext<TData>, roleRequirement: RequiresRoleRequiremet) => {
     const allowedRoles = roleRequirement.allowedRoles;
     const userRoles = context.userContext.roles;
 
+    // Allow if user has one of the allowed roles
     for (let i = 0; i < allowedRoles.length; i ++) {
         if (userRoles.indexOf(allowedRoles[i]) >= 0) {
-            // Allow if user has one of the allowed roles
             return true;
         }
     }
@@ -51,15 +44,11 @@ const evaluateRoleRequirement = <TData extends object>(
     return false;
 }
 
-const evaluateOrRequirement = <TData extends object>(
-    context: AuthZyinContext<TData>,
-    orRequirement: OrRequiremet,
-    resource?: Resource
-) => {
+const evaluateOrRequirement = <TData extends object>(context: AuthZyinContext<TData>, orRequirement: OrRequiremet, resource?: Resource) => {
+    // Allow when one of the children requirements is met
     for (let i = 0; i < orRequirement.children.length; i ++) {
         const result = evaluateRequirement(context, orRequirement.children[i], resource);
         if (result) {
-            // Allow when one of the children requirements is met
             return true;
         }
     }
@@ -67,13 +56,9 @@ const evaluateOrRequirement = <TData extends object>(
     return false;
 }
 
-const evaulateJsonPathRequirement = <TData extends object>(
-    context: AuthZyinContext<TData>,
-    jsonPathRequirement: JsonPathRequiremet,
-    resource?: Resource
-) => {
+const evaulateJsonPathRequirement = <TData extends object>(context: AuthZyinContext<TData>, jsonPathRequirement: JsonPathRequiremet, resource?: Resource) => {
+    // Create dummy resource first if this is to compare with a constant.
     if (IsJsonPathConstantRequirement(jsonPathRequirement)) {
-        // This is to compare with a constant. Ignore resource and create a dummy one
         resource = { value: jsonPathRequirement.constValue } as ConstantWrapperResource;
     }
 
@@ -94,24 +79,25 @@ const evaulateJsonPathRequirement = <TData extends object>(
     return compareTokens(left, right, jsonPathRequirement.operator);
 }
 
-const compareTokens = (
-    left: Array<object>,
-    right: Array<object>,
-    operator: RequirementOperatorType
-) => {
+const compareTokens = (left: Array<object>, right: Array<object>, operator: RequirementOperatorType) => {
     if (!left || !right || left.length <= 0 || right.length <= 0) {
         return false;
     }
 
     if (operator === RequirementOperatorType.Equals) {
         // We are expecting "value" comparison with equals
-        return left.length === right.length && left.length === 1 && left[0] === right[0];
+        return left.length === right.length &&
+               left.length === 1 &&
+               left[0] === right[0];
     } else if (operator === RequirementOperatorType.Contains) {
         // We are expecting right operand to be a "value"
-        return right.length === 1 && left.some((x: unknown) => x === right[0]);
+        return right.length === 1 &&
+               left.some((x: unknown) => x === right[0]);
     } else if (operator === RequirementOperatorType.GreaterThan) {
         // We are expecting "value" comparison with greater than
-        return left.length === right.length && left.length === 1 && left > right;
+        return left.length === right.length &&
+               left.length === 1 &&
+               left[0] > right[0];
     } else {
         return false;
     }

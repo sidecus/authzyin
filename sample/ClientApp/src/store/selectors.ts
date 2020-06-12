@@ -10,20 +10,6 @@ import { ISampleStore } from './store';
 export const signInfoSelector = (store: ISampleStore) => store.signinInfo;
 
 /**
- * AuthZyin context selector
- */
-export const authZyinContextSelector = (store: ISampleStore) => store.authZyinContext;
-
-
-/**
- * user info selector
- */
-export const userInfoSelector = createSelector(
-    [authZyinContextSelector],
-    x => x.userContext
-);
-
-/**
  * places selector
  */
 export const placesStateSelector = (store: ISampleStore) => store.places;

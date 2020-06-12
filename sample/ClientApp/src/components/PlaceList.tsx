@@ -3,7 +3,7 @@ import { makeStyles, Card, CardHeader, CardContent, Switch, Typography, FormCont
 import { useSelector } from 'react-redux';
 import { useSampleAppBoundActionCreators } from '../store/actions';
 import { placesSelector, sneakInSelector } from '../store/selectors';
-import { Place } from '../api/Api';
+import { Place } from '../api/Contract';
 import { AlertBanner } from './Alert';
 import { PlaceComponent } from './PlaceComponent';
 
@@ -19,7 +19,11 @@ export const PlaceList = () => {
     const classes = useStyles();
     const places = useSelector(placesSelector);
     const sneakIn = useSelector(sneakInSelector);
-    const { setSneakIn } = useSampleAppBoundActionCreators();
+    const { setSneakIn, getPlaces } = useSampleAppBoundActionCreators();
+
+    React.useEffect(() => {
+        getPlaces();
+    }, [getPlaces]);
 
     const handleSneakInChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         setSneakIn(checked);
@@ -38,7 +42,7 @@ export const PlaceList = () => {
                     </div>
                     <FormControlLabel
                         control={<Switch checked={sneakIn} onChange={handleSneakInChange} name="sneakIn" />}
-                        label="Try to sneak in"
+                        label="Sneak in (bypass client authorization)"
                     />
                     <AlertBanner />
                 </CardContent>

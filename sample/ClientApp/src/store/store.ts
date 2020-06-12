@@ -11,29 +11,8 @@ import {
     SetAlertAction,
     SetSneakInAction
 } from './actions';
-import { SampleClientContext, Place } from '../api/Api';
-
-/* ====================== State definition =============================*/
-export interface SignInState {
-    success: boolean;
-    signInError: string;
-}
-
-export interface PlaceState {
-    places: Place[];
-    currentPlace: number;
-    sneakIn: boolean;
-}
-
-export enum Severity {
-    Info = 'info',
-    Error = 'error',
-}
-
-export interface AlertState {
-    severity: Severity,
-    message: string,
-}
+import { SampleAuthZyinContext } from '../api/Contract';
+import { SignInState, PlaceState, Severity, AlertState } from './state';
 
 /* ====================== Reducer definition =============================*/
 
@@ -51,9 +30,9 @@ const signInStateReducer = createSlicedReducer({} as SignInState, {
 /**
  * AuthZyin context reducer
  */
-const authZyinContextReducer = createSlicedReducer({} as SampleClientContext, {
+const authZyinContextReducer = createSlicedReducer({} as SampleAuthZyinContext, {
     [SampleActions.SetAuthZyinContext]: [
-        (state: SampleClientContext, action: SetAuthZyinContextAction) => {
+        (state: SampleAuthZyinContext, action: SetAuthZyinContextAction) => {
             return {...state, ...action.payload};
         }
     ],

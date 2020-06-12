@@ -36,7 +36,7 @@
 
             // Register IAuthorizationPolicyList and enable authoriztion
             services.AddSingleton<IAuthorizationPolicyList>(authZyinOptions);
-            services.AddAuthorization(authZyinOptions.ConfigureAuthorizationOptions);
+            services.AddAuthorization(authZyinOptions.CapturedConfigureAction);
 
             // Add authorization handler - must be registered as scoped
             services.AddScoped<IAuthorizationHandler, AuthZyinHandler>();

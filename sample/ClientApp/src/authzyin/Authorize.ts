@@ -1,13 +1,60 @@
+import { useContext, createContext } from "react";
 import { Resource } from "./Resource";
 import { AuthZyinContext } from "./AuthZyinContext";
-import { useSelector } from "react-redux";
 import { evaluateRequirement } from "./RequirementEvaluator";
 
-const authorize = <TData extends object>(
-    context: AuthZyinContext<TData>,
-    policy: string,
-    resource?: Resource
-) => {
+/*
+* Reference of the authorization React context object
+*/
+let authorizationContextReference: unknown = undefined;
+
+/*
+* function to create an authorization React context - similar as createStore from redux
+*/
+export const createAuthZyinContext = <TData extends object>() => {
+    if (authorizationContextReference) {
+        throw new Error('Authorization context is already created.');
+    }
+
+    const context = createContext<AuthZyinContext<TData>>(undefined!);
+    authorizationContextReference = context;
+    return context;
+};
+
+/*
+* Read AuthZyinContext object (e.g. accessing basic user info or policy info)
+*/
+export const useAuthZyinContext = <TData extends object>() => {
+    const reactContextRef = authorizationContextReference as React.Context<AuthZyinContext<TData>>;
+    if (!reactContextRef) {
+        throw new Error('AuthZyin authorization React context is not setup. Have you called createAuthZyinContext?');
+    }
+
+    const context = useContext(reactContextRef);
+    return context;
+}
+
+/*
+* Authorization hooks
+*/
+export const useAuthorize = <TData extends object>() => {
+    const reactContextRef = authorizationContextReference as React.Context<AuthZyinContext<TData>>;
+    if (!reactContextRef) {
+        throw new Error('AuthZyin authorization React context is not setup. Have you called createAuthorizationContext?');
+    }
+
+    const context = useContext(reactContextRef);
+
+    return (policy: string, resource?: Resource) => {
+        // Return false when context is not fully loaded yet
+        return context && context.userContext && authorize(context, policy, resource);
+    }
+}
+
+/*
+* authorize method which finds the policy and evaluates all requirements in it
+*/
+const authorize = <TData extends object>(context: AuthZyinContext<TData>, policy: string, resource?: Resource) => {
     const policyObject = context.policies.filter(p => p.name === policy)[0];
     const requirements = policyObject.requirements;
     let result = true;
@@ -21,27 +68,4 @@ const authorize = <TData extends object>(
     }
 
     return true;
-}
-
-/*
-* Authorization hooks
-*/
-export const useAuthorize = <TState, TData extends object>(
-    selector: (state: TState) => AuthZyinContext<TData>
-) => {
-    const context = useSelector(selector);
-
-    return (policy: string, resource?: Resource) => {
-        console.log(`Client authorization - policy: ${policy} w/ resource: ${JSON.stringify(resource)}`)
-
-        const result = authorize(context, policy, resource);
-
-        if (result) {
-            console.log('Client authorization succeeded.');
-        } else {
-            console.error('Client authorization failed.');
-        }
-
-        return result;
-    }
 }

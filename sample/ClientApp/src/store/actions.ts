@@ -1,8 +1,12 @@
 import { Dispatch } from 'redux';
-import { SignInState, AlertState, Severity } from './store';
-import { callEnterPlaceApiAsync, callAuthZyinClientContextAsync, SampleClientContext, Place, callGetPlaces } from '../api/Api';
 import { createActionCreator, useMemoizedBoundActionCreators } from 'roth.js';
+import { SignInState, AlertState, Severity } from './state';
+import {
+    callEnterPlaceApiAsync,
+    callGetPlaces,
+} from '../api/Api';
 import { signInAsync } from '../api/MsalClient';
+import { SampleAuthZyinContext, Place } from '../api/Contract';
 
 /* action type string enums */
 
@@ -17,44 +21,44 @@ export enum SampleActions {
     SetSneakIn = "SetSneakIn",
     SetAlert = "SetAlert",
     BuyDrink = 'BuyDrink',
-}
+};
 
 /**
  * set sign info action creator
  */
 const setSignInInfo = createActionCreator<SignInState>(SampleActions.SetSignInInfo);
-export type SetSignInInfoAction = ReturnType<typeof setSignInInfo>
+export type SetSignInInfoAction = ReturnType<typeof setSignInInfo>;
 
 /**
  * set authzyin context action creator
  */
-const setAuthZyinContext = createActionCreator<SampleClientContext>(SampleActions.SetAuthZyinContext);
-export type SetAuthZyinContextAction = ReturnType<typeof setAuthZyinContext>
+const setAuthZyinContext = createActionCreator<SampleAuthZyinContext>(SampleActions.SetAuthZyinContext);
+export type SetAuthZyinContextAction = ReturnType<typeof setAuthZyinContext>;
 
 /**
  * set places info action creator
  */
 const setPlaces = createActionCreator<Place[]>(SampleActions.SetPlaces);
-export type SetPlacesAction = ReturnType<typeof setPlaces>
+export type SetPlacesAction = ReturnType<typeof setPlaces>;
 
 
 /**
  * set current place action creator
  */
 const setCurrentPlace = createActionCreator<number>(SampleActions.SetCurrentPlace);
-export type SetCurrentPlaceAction = ReturnType<typeof setCurrentPlace>
+export type SetCurrentPlaceAction = ReturnType<typeof setCurrentPlace>;
 
 /**
  * set sneak in action creator
  */
 const setSneakIn = createActionCreator<boolean>(SampleActions.SetSneakIn);
-export type SetSneakInAction = ReturnType<typeof setSneakIn>
+export type SetSneakInAction = ReturnType<typeof setSneakIn>;
 
 /**
  * set error
  */
 const setAlert = createActionCreator<AlertState>(SampleActions.SetAlert);
-export type SetAlertAction = ReturnType<typeof setAlert>
+export type SetAlertAction = ReturnType<typeof setAlert>;
 
 
 /* ===============================thunk action creators============================ */
@@ -78,22 +82,6 @@ const signIn = () => {
 
         // set sign in info
         dispatch(setSignInInfo(signInInfo));
-
-        // if sign in is successful, trigger authorization context loading
-        if (signInInfo.success) {
-            dispatch(getAuthZyinContext());
-        }
-    }
-};
-
-/**
- * This is a thunk action creator used to get authorization context
- */
-const getAuthZyinContext = () => {
-    return async (dispatch: Dispatch<any>) => {
-        const context = await callAuthZyinClientContextAsync();
-        dispatch(setAuthZyinContext(context));
-        dispatch(getPlaces());
     }
 };
 
@@ -133,7 +121,6 @@ const enterPlace = (id: number) => {
 /* named dispatchers (bound action creators) */
 const namedActionCreators = {
     signIn: signIn,
-    getAuthZyinContext: getAuthZyinContext,
     getPlaces: getPlaces,
     setAlert: setAlert,
     setCurrentPlace: setCurrentPlace,

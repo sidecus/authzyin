@@ -1,11 +1,6 @@
 import { Requirement } from "./Requirements";
 
 /*
-* AuthZyin context api URL - this is setup by the AutZyin library automatically for you
-*/
-export const AuthZyinContextApiUrl = '/authzyin/context';
-
-/*
 * AuthZyin client context definition, used by client authorization.
 * This is the client contract for ClientContext class from the server.
 */

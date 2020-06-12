@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { SampleClientContext } from '../api/Api';
+import { SampleAuthZyinContext } from '../api/Contract';
 import { CardHeader, Card, CardContent } from '@material-ui/core';
 import ReactJson from 'react-json-view';
 
 interface IAuthContextProps {
-    data: SampleClientContext;
+    data: SampleAuthZyinContext;
 }
 
 export const AuthContext = ({data}: IAuthContextProps) => {

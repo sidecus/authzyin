@@ -2,6 +2,7 @@ namespace AuthZyin.Authorization
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.AspNetCore.Authorization;
 
     /// <summary>
@@ -24,7 +25,7 @@ namespace AuthZyin.Authorization
         /// <summary>
         /// We have to save it to our own map so that we can use it later.
         /// </summary>
-        private List<(string name, AuthorizationPolicy policy)> PolicyList = new List<(string name, AuthorizationPolicy policy)>();
+        private Dictionary<string, AuthorizationPolicy> policyDict = new Dictionary<string, AuthorizationPolicy>();
 
         /// <summary>
         /// Contains a list of actions to perform, used to create an Action<AuthorizationPolicy>
@@ -32,9 +33,18 @@ namespace AuthZyin.Authorization
         private List<Action<AuthorizationOptions>> configureActionList = new List<Action<AuthorizationOptions>>();
 
         /// <summary>
-        ///  Get all the configured policies
+        ///  Get all the configured policies, implementing IAuthorizationPolicyList
         /// </summary>
-        public IEnumerable<(string name, AuthorizationPolicy policy)> Policies => this.PolicyList;
+        public IEnumerable<(string name, AuthorizationPolicy policy)> Policies => this.policyDict.Select(kvp => (kvp.Key, kvp.Value));
+
+        /// <summary>
+        /// Returns an action to configure an AuthorizationOptions object with the same
+        /// actions taken on current object
+        /// </summary>
+        /// <param name="options">authorization options</param>
+        public Action<AuthorizationOptions> CapturedConfigureAction => (options) => this.configureActionList.ForEach(action => action(options));
+
+        #region AuthorizationOptions member implementation
 
         //
         // Summary:
@@ -100,18 +110,6 @@ namespace AuthZyin.Authorization
         }
 
         /// <summary>
-        /// Returns an action which configures an AuthorizationOptions object with the same configuration actions
-        /// </summary>
-        /// <param name="options">authorization options</param>
-        public void ConfigureAuthorizationOptions(AuthorizationOptions options)
-        {
-            foreach(var action in this.configureActionList)
-            {
-                action(options);
-            }
-        }
-
-        /// <summary>
         /// Add an authorization policy with the provided name.
         /// </summary>
         /// <param name="name">The name of the policy.</param>
@@ -153,6 +151,8 @@ namespace AuthZyin.Authorization
             this.AddPolicyInternal(name, policyBuilder.Build());
         }
 
+        #endregion
+
         /// <summary>
         /// Add policy internal - to both our own list and the base class dictionary
         /// </summary>
@@ -160,9 +160,15 @@ namespace AuthZyin.Authorization
         /// <param name="policy">policy object</param>
         private void AddPolicyInternal(string name, AuthorizationPolicy policy)
         {
-            this.PolicyList.Add((name, policy));
+            if (this.policyDict.ContainsKey(name))
+            {
+                throw new ArgumentException($"Policy with the same name {name} has already been added.");
+            }
 
+            this.policyDict.Add(name, policy);
             base.AddPolicy(name, policy);
+
+            // Remember the configure action
             this.configureActionList.Add(x => x.AddPolicy(name, policy));
         }
     }
