@@ -33,7 +33,7 @@ jobs:
         npm run build
     - name: Build client SPA 
       run: |
-        cd example
+        cd authzyin.js/example
         npm install
         npm run build
     
