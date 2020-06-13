@@ -78,18 +78,25 @@ Each operator can be associated with a **Direction**. For example, you can check
 
 ## How to run locally
 ### VSCode with HMR
-1. Do below first to ensure the client lib
-```
+1. Build client lib first (with HMR)
+```bash
     cd authzyin.js
+    npm install
     npm start
 ```
-2. Then use VSCode to open the project root folder, then F5.
+2. Use VSCode to open the project root folder, then F5.
 
 ### Console
-```
+You might need two console windows from project root:
+1. Start client lib
+```bash
     cd authzyin.js
-    npm run build
-    cd ../sample
+    npm install
+    npm start
+```
+2. Start the sample asp.net core project
+```bash
+    cd sample
     dotnet run
 ```
 

@@ -45,7 +45,7 @@ export const PlaceComponent = ({place, sneakIn}: {
                         <Typography color="inherit">{place.name}</Typography>
                         <Typography color="secondary">{`accepts ${place.acceptedPaymentMethods[0].toString()}`}</Typography>
                         <Typography color="secondary">{IsAgeLimitedPlace(place) && `Age:${place.minAge}-${place.maxAge}`}</Typography>
-                        <Typography color="error">{!authorized && 'Not authorized'}</Typography>
+                        <Typography color={authorized ? "primary" : "error"}>{authorized ? 'Authorized' : 'Not authorized'}</Typography>
                     </React.Fragment>
                 }
             >

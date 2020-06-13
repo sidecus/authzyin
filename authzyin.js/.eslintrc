@@ -32,6 +32,7 @@
     "react/jsx-fragments": 0,
     "react/no-unused-prop-types": 0,
     "import/export": 0,
-    "prettier/prettier": ["warning", { "endOfLine":"auto", "semi":true}]
+    "prettier/prettier": ["warn", { "endOfLine":"auto", "semi":true}],
+    "@typescript-eslint/explicit-function-return-type": "off"
   }
 }

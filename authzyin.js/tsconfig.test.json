@@ -1,6 +1,13 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "types": ["jest"],
+    "typeRoots": ["node_modules/@types"],
     "module": "commonjs"
-  }
+  },
+  "include": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+  ],
+  "exclude": ["node_modules"]
 }

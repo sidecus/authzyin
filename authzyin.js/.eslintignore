@@ -3,3 +3,14 @@ dist/
 node_modules/
 .snapshots/
 *.min.js
+**/node_modules/*
+*.test.ts
+*.test.tsx
+tsconfig.json
+tsconfig.test.json
+**/bin/*
+**/obj/*
+**/test/*
+README.MD
+package.json
+package-lock.json
