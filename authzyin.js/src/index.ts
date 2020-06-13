@@ -4,10 +4,5 @@ export {
     initializeAuthZyinContext,
     useAuthZyinContext
 } from './AuthZyinProvider';
-export type {
-    AuthZyinContext,
-    UserContext,
-    ClientPolicy
-} from './AuthZyinContext';
-export { RequirementOperatorType, Direction } from './Requirements';
+export type { AuthZyinContext, UserContext } from './AuthZyinContext';
 export type { Resource } from './Resource';

@@ -1,14 +1,14 @@
 import { authorize } from './Authorize';
 import { AuthZyinContext } from './AuthZyinContext';
-import { RequirementOperatorType, Direction } from './Requirements';
+import { OperatorType, Direction } from './Requirements';
 
 const roleRequirement = {
-    operator: RequirementOperatorType.RequiresRole,
+    operator: OperatorType.RequiresRole,
     allowedRoles: ['wrongRole', 'rightRole']
 };
 
 const ageGreaterThan21Requirement = {
-    operator: RequirementOperatorType.GreaterThan,
+    operator: OperatorType.GreaterThan,
     direction: Direction.ContextToResource,
     dataJPath: '$.age',
     constValue: 21,
@@ -16,7 +16,7 @@ const ageGreaterThan21Requirement = {
 };
 
 const hasPaymentMethodRequirement = {
-    operator: RequirementOperatorType.Contains,
+    operator: OperatorType.Contains,
     direction: Direction.ContextToResource,
     dataJPath: '$.paymentMethods[*]',
     resourceJPath: '$.allowedPaymentMethod'

@@ -6,7 +6,7 @@ import {
 } from './AuthZyinProvider';
 import {
     OrRequiremet,
-    RequirementOperatorType,
+    OperatorType,
     IsJsonPathRequirement,
     Direction
 } from './Requirements';
@@ -20,35 +20,35 @@ describe('JsonPath camel case', () => {
     const getRequirements = () => {
         const requirement1 = {
             direction: Direction.ContextToResource,
-            operator: RequirementOperatorType.Equals,
+            operator: OperatorType.Equals,
             dataJPath: dataPath,
             resourceJPath: resourcePath
         };
 
         const requirement2 = {
             direction: Direction.ContextToResource,
-            operator: RequirementOperatorType.GreaterThan,
+            operator: OperatorType.GreaterThan,
             dataJPath: dataPath,
             resourceJPath: resourcePath
         };
 
         const requirement3 = {
             direction: Direction.ContextToResource,
-            operator: RequirementOperatorType.Contains,
+            operator: OperatorType.Contains,
             dataJPath: dataPath,
             resourceJPath: resourcePath
         };
 
         const requirementInvalid = {
             direction: Direction.ContextToResource,
-            operator: RequirementOperatorType.Invalid,
+            operator: OperatorType.Invalid,
             dataJPath: dataPath,
             resourceJPath: resourcePath
         };
 
         const requirementRequiresRole = {
             direction: Direction.ContextToResource,
-            operator: RequirementOperatorType.RequiresRole,
+            operator: OperatorType.RequiresRole,
             allowedRoles: ['somerole'],
             dataJPath: dataPath,
             resourceJPath: resourcePath
@@ -75,9 +75,6 @@ describe('JsonPath camel case', () => {
     it('camelCasePropertyNamesInJsonPathForRequirement handles JsonPathRequirement correctly', () => {
         const {
             requirement1,
-            requirement2,
-            requirement3,
-            requirementInvalid,
             requirementRequiresRole
         } = getRequirements();
 
@@ -102,7 +99,7 @@ describe('JsonPath camel case', () => {
         } = getRequirements();
 
         const orRequirement = {
-            operator: RequirementOperatorType.Or,
+            operator: OperatorType.Or,
             children: [
                 requirement1,
                 requirement2,

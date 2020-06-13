@@ -50,10 +50,10 @@ namespace AuthZyin.Authentication
         private static List<string> GetAllValidIssuers(TokenValidationParameters validationParameters, string currentTenantId)
         {
             // Get all configured issuers in the validation parameter
-            var configuredIssuers = validationParameters.ValidIssuers ?? Enumerable.Empty<string>();
+            var configuredIssuers = new List<string>(validationParameters.ValidIssuers ?? Enumerable.Empty<string>());
             if (validationParameters.ValidIssuer != null)
             {
-                configuredIssuers = configuredIssuers.Append(validationParameters.ValidIssuer);
+                configuredIssuers.Add(validationParameters.ValidIssuer);
             }
 
             // Get all valid issuers by replacing {TenantId} with the true tennat id if any (to support multi tenant app scenarios)

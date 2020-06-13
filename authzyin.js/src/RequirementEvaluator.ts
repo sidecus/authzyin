@@ -9,7 +9,7 @@ import {
     IsJsonPathConstantRequirement,
     IsJsonPathRequirement,
     JsonPathRequiremet,
-    RequirementOperatorType,
+    OperatorType,
     Direction
 } from './Requirements';
 import { Resource, ConstantWrapperResource } from './Resource';
@@ -55,23 +55,23 @@ const evaluateOrRequirement = <TData extends object>(
 const compareTokens = (
     left: Array<object>,
     right: Array<object>,
-    operator: RequirementOperatorType
+    operator: OperatorType
 ) => {
     if (!left || !right || left.length <= 0 || right.length <= 0) {
         return false;
     }
 
-    if (operator === RequirementOperatorType.Equals) {
+    if (operator === OperatorType.Equals) {
         // We are expecting "value" comparison with equals
         return (
             left.length === right.length &&
             left.length === 1 &&
             left[0] === right[0]
         );
-    } else if (operator === RequirementOperatorType.Contains) {
+    } else if (operator === OperatorType.Contains) {
         // We are expecting right operand to be a "value"
         return right.length === 1 && left.some((x: unknown) => x === right[0]);
-    } else if (operator === RequirementOperatorType.GreaterThan) {
+    } else if (operator === OperatorType.GreaterThan) {
         // We are expecting "value" comparison with greater than
         return (
             left.length === right.length &&

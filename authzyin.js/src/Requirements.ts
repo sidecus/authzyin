@@ -1,7 +1,7 @@
 /*
- * Requirement operator type
+ * Requirement operator type - must match the server enum definition
  */
-export enum RequirementOperatorType {
+export enum OperatorType {
     Invalid = -100,
 
     // For asp.net core built in requirement serialization only
@@ -28,7 +28,7 @@ export enum Direction {
  * AuthZyin client requirement definition. Serialized from server and will be used in client authorization.
  */
 interface BaseRequirement {
-    operator: RequirementOperatorType;
+    operator: OperatorType;
 }
 
 export interface OrRequiremet extends BaseRequirement {
@@ -61,13 +61,13 @@ export type Requirement =
 export function IsOrRequirement(
     requirement: Requirement
 ): requirement is OrRequiremet {
-    return requirement.operator === RequirementOperatorType.Or;
+    return requirement.operator === OperatorType.Or;
 }
 
 export function IsRequiresRoleRequirement(
     requirement: Requirement
 ): requirement is RequiresRoleRequiremet {
-    return requirement.operator === RequirementOperatorType.RequiresRole;
+    return requirement.operator === OperatorType.RequiresRole;
 }
 
 export function IsJsonPathRequirement(
@@ -75,9 +75,9 @@ export function IsJsonPathRequirement(
 ): requirement is JsonPathRequiremet {
     // White listing the operator types for json requirement
     return (
-        (requirement.operator === RequirementOperatorType.Equals ||
-            requirement.operator === RequirementOperatorType.Contains ||
-            requirement.operator === RequirementOperatorType.GreaterThan) &&
+        (requirement.operator === OperatorType.Equals ||
+            requirement.operator === OperatorType.Contains ||
+            requirement.operator === OperatorType.GreaterThan) &&
         (requirement as JsonPathRequiremet).dataJPath !== undefined
     );
 }

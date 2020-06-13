@@ -14,7 +14,7 @@ npm install --save authzyin.js
 
 1. Initialize AuthZyinContext (similar as createStore in Redux, call this globally e.g. in index.tsx)
 ```
-    initializeAuthZyinContext<AuthorizationData>();
+    initializeAuthZyinContext();
 ```
 [Example index.tsx](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/index.tsx)
 

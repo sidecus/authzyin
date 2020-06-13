@@ -13,7 +13,8 @@ It contains server library and client library to make this simple for you.
 
 ## How to use this library
 ### Server:
-Simply use the AddAuthZyinAuthorization extension method to enable AuthZyin authorization and register your IAuthZyinContext context in Startup.cs.
+1.  Define your requirements and policies, like in the [sample project](https://github.com/sidecus/authzyin/blob/master/sample/AuthN/Requirements.cs). If you'd like, you can define your policies/requirements in a json config file and load it during your app startup. It depends on perosnal preference so I am not putting it as part of this library.
+2. Simply use the AddAuthZyinAuthorization extension method to enable AuthZyin authorization and register your IAuthZyinContext context in Startup.cs.
 ```CSharp
     services.AddAuthZyinAuthorization(options =>
     {
@@ -28,7 +29,7 @@ Simply use the AddAuthZyinAuthorization extension method to enable AuthZyin auth
     // Add scoped context, used for authorization on both server and client
     services.AddScoped<IAuthZyinContext, SampleAuthZyinContext>();
 ```
-Now you can use these policies in authorize attribute, or in your controllers as the standard asp.net core authorization proces.
+3. Now you can use these policies in authorize attribute, or in your controllers as the standard asp.net core authorization proces.
 ```CSharp
     // Authorize based on policy and resource
     var authResult = await this.authorizationService.AuthorizeAsync(
@@ -36,12 +37,12 @@ Now you can use these policies in authorize attribute, or in your controllers as
         bar,                            // resource
         nameof(Policies.CanEnterBar));  // policy
 ```
-Here is [an example](https://github.com/sidecus/authzyin/blob/master/sample/AuthN/Requirements.cs) of how to define these requirements and policies.
+You don't need to worry about serializing and exposing api for this data to be shared with the client. The library handles that for you automatically once you do these.
 
 ### Client:
 1. Initialize AuthZyinContext (similar as createStore in Redux, call this globally e.g. in index.tsx)
 ```TypeScript
-    initializeAuthZyinContext<AuthorizationData>();
+    initializeAuthZyinContext();
 ```
 2. Connect the AuthZyinProvider with your components. Do this **after authentication** since the authzyin context api provided by the lib requires authenticated users.
 ```TypeScript

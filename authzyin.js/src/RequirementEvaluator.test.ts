@@ -1,5 +1,5 @@
 import { evaluateRequirement } from './RequirementEvaluator';
-import { RequirementOperatorType, Direction } from './Requirements';
+import { OperatorType, Direction } from './Requirements';
 import { AuthZyinContext } from './AuthZyinContext';
 
 describe('evaluateRequirement', () => {
@@ -28,12 +28,12 @@ describe('evaluateRequirement', () => {
 
     it('evalueteRoleRequirement behaves correctly', () => {
         const roleRequirement = {
-            operator: RequirementOperatorType.RequiresRole,
+            operator: OperatorType.RequiresRole,
             allowedRoles: ['wrongRole', 'rightRole']
         };
 
         const invalidRoleRequirement = {
-            operator: RequirementOperatorType.RequiresRole,
+            operator: OperatorType.RequiresRole,
             allowedRoles: ['invalidRole1', 'invalidRole2']
         };
 
@@ -45,14 +45,14 @@ describe('evaluateRequirement', () => {
 
     it('equalsRequirement behaves correctly', () => {
         const intEqualsRequirement = {
-            operator: RequirementOperatorType.Equals,
+            operator: OperatorType.Equals,
             direction: Direction.ContextToResource,
             dataJPath: '$.age',
             resourceJPath: '$.resourceData.intValue'
         };
 
         const stringEqualsRequirement = {
-            operator: RequirementOperatorType.Equals,
+            operator: OperatorType.Equals,
             direction: Direction.ContextToResource,
             dataJPath: '$.paymentMethods[0]',
             resourceJPath: '$.allowedPaymentMethod'
@@ -64,7 +64,7 @@ describe('evaluateRequirement', () => {
 
         expect(
             evaluateRequirement(context, {
-                operator: RequirementOperatorType.Equals,
+                operator: OperatorType.Equals,
                 direction: Direction.ContextToResource,
                 dataJPath: '$.age',
                 resourceJPath: '$.resourceData.smallerIntValue'
@@ -78,7 +78,7 @@ describe('evaluateRequirement', () => {
             evaluateRequirement(
                 context,
                 {
-                    operator: RequirementOperatorType.Equals,
+                    operator: OperatorType.Equals,
                     direction: Direction.ContextToResource,
                     dataJPath: '$.paymentMethods[0]',
                     resourceJPath: '$.resourceData.randomeStringValue'
@@ -90,14 +90,14 @@ describe('evaluateRequirement', () => {
 
     it('greater than behaves correctly', () => {
         const positiveGreaterThanRequirement = {
-            operator: RequirementOperatorType.GreaterThan,
+            operator: OperatorType.GreaterThan,
             direction: Direction.ResourceToContext,
             dataJPath: '$.age',
             resourceJPath: '$.resourceData.biggeIntValue'
         };
 
         const negativeGreaterThanRequirement = {
-            operator: RequirementOperatorType.GreaterThan,
+            operator: OperatorType.GreaterThan,
             direction: Direction.ContextToResource,
             dataJPath: '$.age',
             resourceJPath: '$.resourceData.biggeIntValue'
@@ -121,14 +121,14 @@ describe('evaluateRequirement', () => {
 
     it('contains behaves correctly', () => {
         const positiveContainsThanRequirement = {
-            operator: RequirementOperatorType.Contains,
+            operator: OperatorType.Contains,
             direction: Direction.ContextToResource,
             dataJPath: '$.paymentMethods[*]',
             resourceJPath: '$.allowedPaymentMethod'
         };
 
         const negativeContainsThanRequirement = {
-            operator: RequirementOperatorType.Contains,
+            operator: OperatorType.Contains,
             direction: Direction.ResourceToContext,
             dataJPath: '$.age',
             resourceJPath: '$.resourceData.intArray[-2:]'
@@ -155,7 +155,7 @@ describe('evaluateRequirement', () => {
             evaluateRequirement(
                 context,
                 {
-                    operator: RequirementOperatorType.Contains,
+                    operator: OperatorType.Contains,
                     direction: Direction.ContextToResource,
                     dataJPath: '$.paymentMethods',
                     resourceJPath: '$.allowedPaymentMethod'
@@ -167,7 +167,7 @@ describe('evaluateRequirement', () => {
 
     it('constjsonpathrequirement behaves correctly', () => {
         const positiveIntConstEqualsRequirement = {
-            operator: RequirementOperatorType.Equals,
+            operator: OperatorType.Equals,
             direction: Direction.ContextToResource,
             dataJPath: '$.age',
             constValue: 30,
@@ -179,7 +179,7 @@ describe('evaluateRequirement', () => {
         ).toBeTruthy();
 
         const positiveStringEqualsRequirement = {
-            operator: RequirementOperatorType.Equals,
+            operator: OperatorType.Equals,
             direction: Direction.ContextToResource,
             dataJPath: '$.paymentMethods[0]',
             constValue: 'visa',
@@ -191,7 +191,7 @@ describe('evaluateRequirement', () => {
         ).toBeTruthy();
 
         const positiveIntGreaterThanRequirement = {
-            operator: RequirementOperatorType.GreaterThan,
+            operator: OperatorType.GreaterThan,
             direction: Direction.ContextToResource,
             dataJPath: '$.age',
             constValue: 10,
@@ -203,7 +203,7 @@ describe('evaluateRequirement', () => {
         ).toBeTruthy();
 
         const negativeConstContainsRequirement = {
-            operator: RequirementOperatorType.Contains,
+            operator: OperatorType.Contains,
             direction: Direction.ResourceToContext,
             dataJPath: '$.paymentMethods',
             constValue: '32#%$^$%^',
