@@ -7,7 +7,7 @@ namespace AuthZyin.Authorization.Requirements
     /// Supported requirement type. Anything less than 0 is for built in asp.net requirements,
     /// and cannot be built using RequirementBuilder.
     /// </summary>
-    public enum RequirementOperatorType
+    public enum OperatorType
     {
         Invalid = -100,
 
@@ -20,7 +20,8 @@ namespace AuthZyin.Authorization.Requirements
 
         // Below operators can have direction applied
         GreaterThan = 3,
-        Contains = 4,
+        GreaterThanOrEqualTo = 4,
+        Contains = 5,
     }
 
     /// <summary>
@@ -41,7 +42,7 @@ namespace AuthZyin.Authorization.Requirements
         /// <summary>
         /// Gets the operator type for the requirement
         /// </summary>
-        public RequirementOperatorType Operator { get; protected set; } = RequirementOperatorType.Invalid;
+        public OperatorType Operator { get; protected set; } = OperatorType.Invalid;
 
         /// <summary>
         // Evaluate current requirement against given user and resource

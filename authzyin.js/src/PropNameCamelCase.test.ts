@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import {
-    camelCasePropertyNamesInJsonPath,
-    camelCasePropertyNamesInJsonPathForRequirement
-} from './AuthZyinProvider';
+    camelCaseJsonPath,
+    camelCaseRequirement
+} from './PropNameCamelCase';
 import {
     OrRequiremet,
     OperatorType,
@@ -63,34 +62,34 @@ describe('JsonPath camel case', () => {
         };
     };
 
-    it('camelCasePropertyNamesInJsonPath converts property name to camel case correctly', () => {
-        expect(camelCasePropertyNamesInJsonPath(dataPath)).toBe(
+    it('camelCaseJsonPath converts property name to camel case correctly', () => {
+        expect(camelCaseJsonPath(dataPath)).toBe(
             camelCaseDataPath
         );
-        expect(camelCasePropertyNamesInJsonPath(resourcePath)).toBe(
+        expect(camelCaseJsonPath(resourcePath)).toBe(
             camelCaseResourcePath
         );
     });
 
-    it('camelCasePropertyNamesInJsonPathForRequirement handles JsonPathRequirement correctly', () => {
+    it('camelCaseRequirement handles JsonPathRequirement correctly', () => {
         const {
             requirement1,
             requirementRequiresRole
         } = getRequirements();
 
         expect(IsJsonPathRequirement(requirement1)).toBeTruthy();
-        camelCasePropertyNamesInJsonPathForRequirement(requirement1);
+        camelCaseRequirement(requirement1);
         expect(requirement1.dataJPath).toBe(camelCaseDataPath);
         expect(requirement1.resourceJPath).toBe(camelCaseResourcePath);
 
         // non json path requirement should be untouched
         expect(IsJsonPathRequirement(requirementRequiresRole)).toBeFalsy();
-        camelCasePropertyNamesInJsonPathForRequirement(requirementRequiresRole);
+        camelCaseRequirement(requirementRequiresRole);
         expect(requirementRequiresRole.dataJPath).toBe(dataPath);
         expect(requirementRequiresRole.resourceJPath).toBe(resourcePath);
     });
 
-    it('camelCasePropertyNamesInJsonPathForRequirement handles OrRequirement correctly', () => {
+    it('camelCaseRequirement handles OrRequirement correctly', () => {
         const {
             requirement1,
             requirement2,
@@ -108,7 +107,7 @@ describe('JsonPath camel case', () => {
             ]
         } as OrRequiremet;
 
-        camelCasePropertyNamesInJsonPathForRequirement(orRequirement);
+        camelCaseRequirement(orRequirement);
         expect(requirement1.dataJPath).toBe(camelCaseDataPath);
         expect(requirement1.resourceJPath).toBe(camelCaseResourcePath);
         expect(requirement2.dataJPath).toBe(camelCaseDataPath);
@@ -117,7 +116,7 @@ describe('JsonPath camel case', () => {
         expect(requirement3.resourceJPath).toBe(camelCaseResourcePath);
 
         expect(IsJsonPathRequirement(requirementInvalid)).toBeFalsy();
-        camelCasePropertyNamesInJsonPathForRequirement(requirementInvalid);
+        camelCaseRequirement(requirementInvalid);
         expect(requirementInvalid.dataJPath).toBe(dataPath);
         expect(requirementInvalid.resourceJPath).toBe(resourcePath);
     });

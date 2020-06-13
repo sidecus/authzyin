@@ -32,7 +32,8 @@ export const msalClient = new PublicClientApplication(msalConfig);
 // sign in popup
 export const signInAsync = async () => {
     await msalClient.loginPopup(loginParams);
-    return msalClient.getAccount();
+    const userName = msalClient.getAccount().userName;
+    console.log(`${userName} successfully logged in`);
 }
 
 // acquire token - this needs to be called each time before an api call is made

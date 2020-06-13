@@ -34,17 +34,17 @@ namespace test
         public void OrRequirementBehavesCorrectly()
         {
             var trueFalseOr = new OrRequirement(trueRequirement, falseRequirement);
-            Assert.Equal(RequirementOperatorType.Or, trueFalseOr.Operator);
+            Assert.Equal(OperatorType.Or, trueFalseOr.Operator);
             Assert.True(trueFalseOr.Evaluate(this.context, null));
             Assert.Equal(2, trueFalseOr.Children.Length);
 
             var falseTrueOr = new OrRequirement(falseRequirement, trueRequirement);
-            Assert.Equal(RequirementOperatorType.Or, falseTrueOr.Operator);
+            Assert.Equal(OperatorType.Or, falseTrueOr.Operator);
             Assert.True(falseTrueOr.Evaluate(this.context, null));
             Assert.Equal(2, trueFalseOr.Children.Length);
 
             var allFalseOr = new OrRequirement(falseRequirement, falseRequirement);
-            Assert.Equal(RequirementOperatorType.Or, allFalseOr.Operator);
+            Assert.Equal(OperatorType.Or, allFalseOr.Operator);
             Assert.False(allFalseOr.Evaluate(this.context, null));
             Assert.Equal(2, trueFalseOr.Children.Length);
         }

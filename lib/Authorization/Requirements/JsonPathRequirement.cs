@@ -20,11 +20,12 @@ namespace AuthZyin.Authorization.Requirements
         /// </summary>
         /// <typeparam name="RequirementOperatorType">operator type</typeparam>
         /// <typeparam name="RequirementEvaluator">evaluator</typeparam>
-        private static readonly Dictionary<RequirementOperatorType, RequirementEvaluator> EvaluatorMap = new Dictionary<RequirementOperatorType, RequirementEvaluator>()
+        private static readonly Dictionary<OperatorType, RequirementEvaluator> EvaluatorMap = new Dictionary<OperatorType, RequirementEvaluator>()
         {
-            { RequirementOperatorType.Equals,       new EqualsEvaluator() },
-            { RequirementOperatorType.GreaterThan,  new GreaterThanEvaluator() },
-            { RequirementOperatorType.Contains,     new ContainsEvaluator() },
+            { OperatorType.Equals,       new EqualsEvaluator() },
+            { OperatorType.GreaterThan,  new GreaterThanEvaluator() },
+            { OperatorType.GreaterThanOrEqualTo,  new GreaterThanOrEqualToEvaluator() },
+            { OperatorType.Contains,     new ContainsEvaluator() },
         };
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace AuthZyin.Authorization.Requirements
         /// <param name="dataPath">jsonPath to context object</param>
         /// <param name="resourcePath">jsonPath to resource object</param>
         /// <param name="direction">operation direction</param>
-        public JsonPathRequirement(RequirementOperatorType operatorType, string dataPath, string resourcePath, Direction direction)
+        public JsonPathRequirement(OperatorType operatorType, string dataPath, string resourcePath, Direction direction)
         {
             this.DataJPath = dataPath ?? throw new ArgumentNullException(nameof(dataPath));
             this.ResourceJPath = resourcePath ?? throw new ArgumentNullException(nameof(resourcePath));

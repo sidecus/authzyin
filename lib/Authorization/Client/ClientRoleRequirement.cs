@@ -22,7 +22,7 @@ namespace AuthZyin.Authorization.Client
         public ClientRoleRequirement(IEnumerable<string> allowedRoles)
         {
             this.AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
-            this.Operator = RequirementOperatorType.RequiresRole;
+            this.Operator = OperatorType.RequiresRole;
         }
 
         /// <summary>

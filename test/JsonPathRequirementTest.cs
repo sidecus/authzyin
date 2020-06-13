@@ -12,25 +12,25 @@ namespace test
             var resource = new TestResource();
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new JsonPathRequirement<TestCustomData, TestResource>(
-                RequirementOperatorType.Invalid,
+                OperatorType.Invalid,
                 "",
                 "",
                 Direction.ContextToResource));
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new JsonPathRequirement<TestCustomData, TestResource>(
-                RequirementOperatorType.Or,
+                OperatorType.Or,
                 "$",
                 "",
                 Direction.ContextToResource));
 
             Assert.Throws<ArgumentNullException>(() => new JsonPathRequirement<TestCustomData, TestResource>(
-                RequirementOperatorType.GreaterThan,
+                OperatorType.GreaterThan,
                 null,
                 resource.JPathIntValue,
                 Direction.ContextToResource));
 
             Assert.Throws<ArgumentNullException>(() => new JsonPathRequirement<TestCustomData, TestResource>(
-                RequirementOperatorType.RequiresRole,
+                OperatorType.RequiresRole,
                 "abc",
                 null,
                 Direction.ContextToResource));
@@ -45,7 +45,7 @@ namespace test
             var resource = new TestResource();
 
             var equalsRequirement = new JsonPathRequirement<TestCustomData, TestResource>(
-                RequirementOperatorType.Equals,
+                OperatorType.Equals,
                 dataJPathIntValue,
                 resource.JPathIntValue,
                 Direction.ContextToResource);
@@ -61,21 +61,21 @@ namespace test
             var resource = new TestResource();
 
             var greaterThanRequirement = new JsonPathRequirement<TestCustomData, TestResource>(
-                RequirementOperatorType.GreaterThan,
+                OperatorType.GreaterThan,
                 context.Data.JPathIntValue,
                 resource.JPathNestedDataSmallerIntValue,
                 Direction.ContextToResource);
             Assert.True(greaterThanRequirement.Evaluate(context, resource));
 
             var containsRequirement = new JsonPathRequirement<TestCustomData, TestResource>(
-                RequirementOperatorType.GreaterThan,
+                OperatorType.GreaterThan,
                 context.Data.JPathIntValue,
                 resource.JPathNestedDataSmallerIntValue,
                 Direction.ContextToResource);
             Assert.True(containsRequirement.Evaluate(context, resource));
 
             var equalsRequirement = new JsonPathRequirement<TestCustomData, TestResource>(
-                RequirementOperatorType.Equals,
+                OperatorType.Equals,
                 context.Data.JPathIntValue,
                 resource.JPathNestedIntValue,
                 Direction.ContextToResource);

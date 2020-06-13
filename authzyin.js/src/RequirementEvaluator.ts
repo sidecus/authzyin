@@ -21,9 +21,9 @@ const evaluateRoleRequirement = <TData extends object>(
     const allowedRoles = roleRequirement.allowedRoles;
     const userRoles = context.userContext.roles;
 
-    // Allow if user has one of the allowed roles
     for (let i = 0; i < allowedRoles.length; i++) {
         if (userRoles.indexOf(allowedRoles[i]) >= 0) {
+            // Allow if user has one of the allowed roles
             return true;
         }
     }
@@ -36,15 +36,11 @@ const evaluateOrRequirement = <TData extends object>(
     orRequirement: OrRequiremet,
     resource?: Resource
 ) => {
-    // Allow when one of the children requirements is met
     for (let i = 0; i < orRequirement.children.length; i++) {
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        const result = evaluateRequirement(
-            context,
-            orRequirement.children[i],
-            resource
-        );
+        const result = evaluateRequirement(context, orRequirement.children[i], resource);
         if (result) {
+            // Allow when one of the children requirements is met
             return true;
         }
     }
@@ -52,34 +48,28 @@ const evaluateOrRequirement = <TData extends object>(
     return false;
 };
 
-const compareTokens = (
-    left: Array<object>,
-    right: Array<object>,
-    operator: OperatorType
-) => {
+const compareTokens = (left: Array<object>, right: Array<object>, operator: OperatorType) => {
     if (!left || !right || left.length <= 0 || right.length <= 0) {
         return false;
     }
 
-    if (operator === OperatorType.Equals) {
-        // We are expecting "value" comparison with equals
-        return (
-            left.length === right.length &&
-            left.length === 1 &&
-            left[0] === right[0]
-        );
-    } else if (operator === OperatorType.Contains) {
-        // We are expecting right operand to be a "value"
-        return right.length === 1 && left.some((x: unknown) => x === right[0]);
-    } else if (operator === OperatorType.GreaterThan) {
-        // We are expecting "value" comparison with greater than
-        return (
-            left.length === right.length &&
-            left.length === 1 &&
-            left[0] > right[0]
-        );
-    } else {
-        return false;
+    switch (operator) {
+        case OperatorType.Equals:
+        case OperatorType.GreaterThan:
+        case OperatorType.GreaterThanOrEqualTo:
+            // We are expecting "value" comparisons for these cases
+            return (
+                left.length === 1 &&
+                left.length === right.length &&
+                ((operator === OperatorType.Equals && left[0] === right[0]) ||
+                    (operator === OperatorType.GreaterThan && left[0] > right[0]) ||
+                    (operator === OperatorType.GreaterThanOrEqualTo && left[0] >= right[0]))
+            );
+        case OperatorType.Contains:
+            // We are expecting right operand to be a "value"
+            return right.length === 1 && left.some((x: unknown) => x === right[0]);
+        default:
+            return false;
     }
 };
 
@@ -109,14 +99,8 @@ const evaulateJsonPathRequirement = <TData extends object>(
         json: resource
     });
 
-    const left =
-        jsonPathRequirement.direction === Direction.ContextToResource
-            ? dataToken
-            : resourceToken;
-    const right =
-        jsonPathRequirement.direction === Direction.ContextToResource
-            ? resourceToken
-            : dataToken;
+    const left = jsonPathRequirement.direction === Direction.ContextToResource ? dataToken : resourceToken;
+    const right = jsonPathRequirement.direction === Direction.ContextToResource ? resourceToken : dataToken;
 
     return compareTokens(left, right, jsonPathRequirement.operator);
 };

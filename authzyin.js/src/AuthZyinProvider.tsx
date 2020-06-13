@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect, PropsWithChildren } from 'react';
-import { AuthZyinContext, ClientPolicy } from './AuthZyinContext';
-import {
-    Requirement,
-    IsOrRequirement,
-    IsJsonPathRequirement
-} from './Requirements';
+import { AuthZyinContext } from './AuthZyinContext';
+import { camelCaseContext } from './PropNameCamelCase';
 
 /**
  * AuthZyin context api URL - this is setup by the AutZyin library automatically for you
@@ -24,27 +20,21 @@ let authZyinReactContext: React.Context<any>;
  */
 export const initializeAuthZyinContext = <TData extends object = object>() => {
     if (authZyinReactContext) {
-        throw new Error('Authorization context is already initialized.');
+        throw new Error('AuthZyin React context is already initialized.');
     }
 
     // Initialize with an empty context object as default value.
     // The value is only useful for testing scenarios.
-    authZyinReactContext = React.createContext<AuthZyinContext<TData>>(
-        {} as AuthZyinContext<TData>
-    );
+    authZyinReactContext = React.createContext<AuthZyinContext<TData>>({} as AuthZyinContext<TData>);
 };
 
 /*
  * Read AuthZyinContext object (e.g. accessing basic user info or policy info)
  */
 export const useAuthZyinContext = <TData extends object = object>() => {
-    const reactContext = authZyinReactContext as React.Context<
-        AuthZyinContext<TData>
-    >;
+    const reactContext = authZyinReactContext as React.Context<AuthZyinContext<TData>>;
     if (!reactContext) {
-        throw new Error(
-            'AuthZyin React context is not setup. Have you called createAuthZyinContext?'
-        );
+        throw new Error('AuthZyin React context is not setup. Call createAuthZyinContext first.');
     }
 
     const context = React.useContext(reactContext);
@@ -84,65 +74,6 @@ const defaultOptions: Partial<AuthZyinProviderOptions> = {
 };
 
 /**
- * Convert property names in a json path to camel case. e.g., "$.SomeData.Value" to "$.someData.value"
- * @param path json path
- */
-export const camelCasePropertyNamesInJsonPath = (path: string) => {
-    // TODO[sidecus] - more performant way to ignore case in JPath
-    let newPath = '';
-    let isPreviousCharADot = false;
-    for (let i = 0; i < path.length; i++) {
-        newPath += isPreviousCharADot ? path[i].toLowerCase() : path[i];
-        isPreviousCharADot = path[i] === '.';
-    }
-
-    return newPath;
-};
-
-export const camelCasePropertyNamesInJsonPathForRequirement = (
-    requirement: Requirement
-) => {
-    if (IsOrRequirement(requirement) && requirement.children) {
-        for (let i = 0; i < requirement.children.length; i++) {
-            camelCasePropertyNamesInJsonPathForRequirement(
-                requirement.children[i]
-            );
-        }
-    } else if (IsJsonPathRequirement(requirement)) {
-        requirement.dataJPath = camelCasePropertyNamesInJsonPath(
-            requirement.dataJPath
-        );
-        requirement.resourceJPath = camelCasePropertyNamesInJsonPath(
-            requirement.resourceJPath
-        );
-    }
-};
-
-export const camelCasePropertyNamesInJsonPathForPolicy = (
-    policy: ClientPolicy
-) => {
-    if (policy && policy.requirements && policy.requirements.length > 0) {
-        for (let i = 0; i < policy.requirements.length; i++) {
-            camelCasePropertyNamesInJsonPathForRequirement(
-                policy.requirements[i]
-            );
-        }
-    }
-};
-
-export const camelCasePropertyNamesInJsonPathForContext = <
-    TData extends object
->(
-    context: AuthZyinContext<TData>
-) => {
-    if (context && context.policies) {
-        for (let i = 0; i < context.policies.length; i++) {
-            camelCasePropertyNamesInJsonPathForPolicy(context.policies[i]);
-        }
-    }
-};
-
-/**
  * HOC component which sets the authorization React context - similar as Provider from redux
  * @param props - component props - refer to AuthZyinProviderOptions for things you can provide.
  */
@@ -150,9 +81,7 @@ export const AuthZyinProvider = <TData extends object = object>(
     props: PropsWithChildren<{ options: Partial<AuthZyinProviderOptions> }>
 ): JSX.Element => {
     if (!authZyinReactContext) {
-        throw new Error(
-            'AuthZyin react context not initialized. Call initializeAuthZyinContext first.'
-        );
+        throw new Error('AuthZyin react context not initialized. Call initializeAuthZyinContext first.');
     }
 
     const [context, setContext] = useState({} as AuthZyinContext<TData>);
@@ -175,13 +104,11 @@ export const AuthZyinProvider = <TData extends object = object>(
                 const newContext = result as AuthZyinContext<TData>;
                 if (options.jsonPathPropToCamelCase) {
                     // Convert property names in JSON path to camel case
-                    camelCasePropertyNamesInJsonPathForContext(newContext);
+                    camelCaseContext(newContext);
                 }
                 setContext(newContext);
             } else {
-                throw new Error(
-                    `AuthZyinContext loading error: ${response.status}`
-                );
+                throw new Error(`AuthZyinContext loading error: ${response.status}`);
             }
         };
 

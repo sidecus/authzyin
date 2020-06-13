@@ -32,7 +32,7 @@ namespace AuthZyin.Authorization.Requirements
         /// <param name="dataPath">jsonPath to context object</param>
         /// <param name="constValue">const to compare with</param>
         public JsonPathConstantRequirement(
-            RequirementOperatorType operatorType,
+            OperatorType operatorType,
             string dataPath,
             TConst constValue)
             : base(

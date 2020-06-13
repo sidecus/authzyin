@@ -48,8 +48,7 @@ namespace AuthZyin.Authorization.Requirements
                 return false;
             }
 
-            return leftValue.Type == rightValue.Type &&
-                   this.EvaluateValues(leftValue, rightValue);
+            return leftValue.Type == rightValue.Type && this.EvaluateValues(leftValue, rightValue);
         }
 
         /// <summary>
@@ -79,7 +78,7 @@ namespace AuthZyin.Authorization.Requirements
     }
 
     /// <summary>
-    /// Evaluates GreaterThan operation based on JToken deep equals
+    /// Evaluates GreaterThan operation based on JValue.CompareTo
     /// </summary>
     public class GreaterThanEvaluator : ValuesEvaluator
     {
@@ -92,6 +91,23 @@ namespace AuthZyin.Authorization.Requirements
         protected override bool EvaluateValues(JValue leftValue, JValue rightValue)
         {
             return leftValue.CompareTo(rightValue) > 0;
+        }
+    }
+
+    /// <summary>
+    /// Evaluates GreaterThanOrEqualTo operation based on JValue.CompareTo
+    /// </summary>
+    public class GreaterThanOrEqualToEvaluator : ValuesEvaluator
+    {
+        /// <summary>
+        /// Evalue two JValues to see whether left is bigger than or equal to right
+        /// </summary>
+        /// <param name="leftValue">left operand</param>
+        /// <param name="rightValue">right operand</param>
+        /// <returns>true if left is greater than or equal to right</returns>
+        protected override bool EvaluateValues(JValue leftValue, JValue rightValue)
+        {
+            return leftValue.CompareTo(rightValue) >= 0;
         }
     }
 

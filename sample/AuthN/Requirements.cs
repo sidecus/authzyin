@@ -45,13 +45,13 @@ namespace sample.AuthN
 
         // Has driver's license
         public static readonly JsonPathConstantRequirement<AuthorizationData, bool> HasDriversLicense = new JsonPathConstantRequirement<AuthorizationData, bool>(
-            operatorType: RequirementOperatorType.Equals,
+            operatorType: OperatorType.Equals,
             dataPath: "$.WithDriversLicense",
             constValue: true);
 
         // Has Passport
         public static readonly JsonPathConstantRequirement<AuthorizationData, bool> HasPassport = new JsonPathConstantRequirement<AuthorizationData, bool>(
-            operatorType: RequirementOperatorType.Equals,
+            operatorType: OperatorType.Equals,
             dataPath: "$.WithPassport",
             constValue: true);
 
@@ -60,26 +60,26 @@ namespace sample.AuthN
 
         // const Age above 21
         public static readonly JsonPathConstantRequirement<AuthorizationData, int> AgeAbove21 = new JsonPathConstantRequirement<AuthorizationData, int>(
-            operatorType: RequirementOperatorType.GreaterThan,
+            operatorType: OperatorType.GreaterThan,
             dataPath: "$.Age",
             constValue: 21);
 
         // Has a payment method which the place accepts
         public static readonly JsonPathRequirement<AuthorizationData, Place> HasAcceptedPaymentMethod = new JsonPathRequirement<AuthorizationData, Place>(
-            operatorType: RequirementOperatorType.Contains,
+            operatorType: OperatorType.Contains,
             dataPath: "$.PaymentMethods[*].Type",
             resourcePath: "$.AcceptedPaymentMethods[0]",
             direction: Direction.ContextToResource);
 
         // Age requirement based on resource
         public static readonly JsonPathRequirement<AuthorizationData, AgeLimitedPlace> MeetsMinAgeLimit = new JsonPathRequirement<AuthorizationData, AgeLimitedPlace>(
-            operatorType: RequirementOperatorType.GreaterThan,
+            operatorType: OperatorType.GreaterThanOrEqualTo,
             dataPath: "$.Age",
             resourcePath: "$.MinAge",
             direction: Direction.ContextToResource);
 
         public static readonly JsonPathRequirement<AuthorizationData, AgeLimitedPlace> MeetsMaxAgeLimit = new JsonPathRequirement<AuthorizationData, AgeLimitedPlace>(
-            operatorType: RequirementOperatorType.GreaterThan,
+            operatorType: OperatorType.GreaterThanOrEqualTo,
             dataPath: "$.Age",
             resourcePath: "$.MaxAge",
             direction: Direction.ResourceToContext);

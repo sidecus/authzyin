@@ -5,7 +5,8 @@ import { AuthZyinContext } from './AuthZyinContext';
 describe('evaluateRequirement', () => {
     const data = {
         age: 30,
-        paymentMethods: ['visa', 'creditcard']
+        paymentMethods: ['visa', 'creditcard'],
+        stringValue: 'random@#$@%#$%'
     };
 
     const context = {
@@ -22,6 +23,7 @@ describe('evaluateRequirement', () => {
             intValue: 30,
             smallerIntValue: 29,
             biggeIntValue: 31,
+            biggerStringValue: data.stringValue + ' ',
             intArray: [30, 35, 36, 38, 39]
         }
     };
@@ -117,6 +119,27 @@ describe('evaluateRequirement', () => {
                 resource
             )
         ).toBeFalsy();
+    });
+
+    // Table driven test case for greater than or equal to
+    test.each([
+        [Direction.ContextToResource, '$.age', '$.resourceData.biggeIntValue', false],
+        [Direction.ResourceToContext, '$.age', '$.resourceData.biggeIntValue', true],
+        [Direction.ContextToResource, '$.age', '$.resourceData.intValue', true],
+        [Direction.ResourceToContext, '$.age', '$.resourceData.intValue', true],
+        [Direction.ContextToResource, '$.age', '$.resourceData.smallerIntValue', true],
+        [Direction.ResourceToContext, '$.age', '$.resourceData.smallerIntValue', false],
+        [Direction.ContextToResource, '$.stringValue', '$.resourceData.biggerStringValue', false],
+        [Direction.ResourceToContext, '$.stringValue', '$.resourceData.biggerStringValue', true]
+    ])('GreaterThanOrEqualTo(%#)', (direction, dataPath, resourcePath, expected) => {
+        const requirement = {
+            operator: OperatorType.GreaterThanOrEqualTo,
+            direction: direction,
+            dataJPath: dataPath,
+            resourceJPath: resourcePath
+        };
+
+        expect(evaluateRequirement(context, requirement, resource)).toBe(expected);
     });
 
     it('contains behaves correctly', () => {

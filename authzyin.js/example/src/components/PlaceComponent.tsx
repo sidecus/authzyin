@@ -25,10 +25,9 @@ export const PlaceComponent = ({place, sneakIn}: {
 
     const handlePlaceChange = () => {
         setCurrentPlace(-1);
-
-        // Authorize on client
         if (sneakIn || authorized) {
-            enterPlace(place.id);       // invoke server api if client authorization failed or we can bypass
+            // invoke server api if client authorization succeeded or sneak in option is selected
+            enterPlace(place.id);
         } else {
             setAlert({
                 severity: Severity.Error,

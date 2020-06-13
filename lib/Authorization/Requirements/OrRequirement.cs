@@ -32,7 +32,7 @@ namespace AuthZyin.Authorization.Requirements
                 throw new ArgumentNullException(nameof(requirements));
             }
 
-            this.Operator = RequirementOperatorType.Or;
+            this.Operator = OperatorType.Or;
             this.children = requirements;
         }
 

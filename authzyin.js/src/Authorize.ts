@@ -45,10 +45,6 @@ export const authorize = <TData extends object = object>(
 export const useAuthorize = <TData extends object = object>() => {
     const context = useAuthZyinContext<TData>();
     return (policy: string, resource?: Resource) => {
-        return (
-            context &&
-            context.userContext &&
-            authorize(context, policy, resource)
-        );
+        return context && context.userContext && authorize(context, policy, resource);
     };
 };

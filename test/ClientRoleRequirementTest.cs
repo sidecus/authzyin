@@ -21,7 +21,7 @@ namespace test
             var roles = new[] { "role1", "role2", "role3", };
             var requirement = new ClientRoleRequirement(roles);
 
-            Assert.Equal(RequirementOperatorType.RequiresRole, requirement.Operator);
+            Assert.Equal(OperatorType.RequiresRole, requirement.Operator);
             Assert.Equal(requirement.AllowedRoles, roles);
         }
     }

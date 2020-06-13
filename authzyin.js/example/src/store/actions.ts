@@ -72,9 +72,8 @@ const signIn = () => {
 
         try
         {
-            const account = await signInAsync();
+            await signInAsync();
             signInInfo.success = true;
-            console.log(account);
         } catch(error) {
             signInInfo.success = false;
             signInInfo.signInError = error.message;

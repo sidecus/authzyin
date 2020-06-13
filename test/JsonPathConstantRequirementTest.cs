@@ -25,49 +25,49 @@ namespace test
 
         public static readonly IEnumerable<object[]> ConstTypePositiveCase = new List<object[]>
         {
-            new object[] { RequirementOperatorType.Equals, intConst },
-            new object[] { RequirementOperatorType.GreaterThan, intConst },
-            new object[] { RequirementOperatorType.Contains, intConst },
-            new object[] { RequirementOperatorType.Equals, stringConst },
-            new object[] { RequirementOperatorType.GreaterThan, stringConst },
-            new object[] { RequirementOperatorType.Contains, stringConst },
-            new object[] { RequirementOperatorType.Equals, dateConst },
-            new object[] { RequirementOperatorType.GreaterThan, dateConst },
-            new object[] { RequirementOperatorType.Contains, dateConst },
+            new object[] { OperatorType.Equals, intConst },
+            new object[] { OperatorType.GreaterThan, intConst },
+            new object[] { OperatorType.Contains, intConst },
+            new object[] { OperatorType.Equals, stringConst },
+            new object[] { OperatorType.GreaterThan, stringConst },
+            new object[] { OperatorType.Contains, stringConst },
+            new object[] { OperatorType.Equals, dateConst },
+            new object[] { OperatorType.GreaterThan, dateConst },
+            new object[] { OperatorType.Contains, dateConst },
         };
 
         public static readonly IEnumerable<object[]> ConstRequirementEvaluateBehaviors = new List<object[]>
         {
-            new object[] { RequirementOperatorType.Equals, data.JPathIntValue, data.IntValue, true },
-            new object[] { RequirementOperatorType.Equals, data.JPathIntValue, data.IntValue - 1, false },
-            new object[] { RequirementOperatorType.GreaterThan, data.JPathIntValue, data.IntValue - 1, true },
-            new object[] { RequirementOperatorType.Equals, data.JPathStringValue, data.StringValue, true },
-            new object[] { RequirementOperatorType.Equals, data.JPathStringValue, null, false },
-            new object[] { RequirementOperatorType.GreaterThan, data.JPathStringValue, string.Empty, true },
-            new object[] { RequirementOperatorType.Contains, data.JPathArrayValue + "[*]", data.StringValue, true },
-            new object[] { RequirementOperatorType.Contains, data.JPathArrayValue + "[*]", "random non existing string value", false },
+            new object[] { OperatorType.Equals, data.JPathIntValue, data.IntValue, true },
+            new object[] { OperatorType.Equals, data.JPathIntValue, data.IntValue - 1, false },
+            new object[] { OperatorType.GreaterThan, data.JPathIntValue, data.IntValue - 1, true },
+            new object[] { OperatorType.Equals, data.JPathStringValue, data.StringValue, true },
+            new object[] { OperatorType.Equals, data.JPathStringValue, null, false },
+            new object[] { OperatorType.GreaterThan, data.JPathStringValue, string.Empty, true },
+            new object[] { OperatorType.Contains, data.JPathArrayValue + "[*]", data.StringValue, true },
+            new object[] { OperatorType.Contains, data.JPathArrayValue + "[*]", "random non existing string value", false },
         };
 
         [Fact]
         public void ConsructorThrowsOnInvalidArg()
         {
             Assert.Throws<ArgumentNullException>(() => new JsonPathConstantRequirement<TestCustomData, int>(
-                RequirementOperatorType.GreaterThan,
+                OperatorType.GreaterThan,
                 null,
                 3));
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new JsonPathConstantRequirement<TestCustomData, int>(
-                RequirementOperatorType.Invalid,
+                OperatorType.Invalid,
                 "",
                 3));
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new JsonPathConstantRequirement<TestCustomData, int>(
-                RequirementOperatorType.RequiresRole,
+                OperatorType.RequiresRole,
                 string.Empty,
                 3));
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new JsonPathConstantRequirement<TestCustomData, int>(
-                RequirementOperatorType.Or,
+                OperatorType.Or,
                 "$",
                 3));
         }
@@ -83,7 +83,7 @@ namespace test
 
         [Theory]
         [MemberData(nameof(ConstTypePositiveCase))]
-        public void SetsConstResourceAndPathAndDirectionCorrectly(RequirementOperatorType operatorType, object constValue)
+        public void SetsConstResourceAndPathAndDirectionCorrectly(OperatorType operatorType, object constValue)
         {
             var contextPath = "$.IntMember$#$%#FD";
 
@@ -101,7 +101,7 @@ namespace test
         [Theory]
         [MemberData(nameof(ConstRequirementEvaluateBehaviors))]
         public void ValidateConstRequirementBehavior(
-            RequirementOperatorType operatorType,
+            OperatorType operatorType,
             string dataJPath,
             object constValue,
             bool expectedReseult)
