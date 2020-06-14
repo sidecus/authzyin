@@ -37,45 +37,26 @@ It contains server library and client library to make this simple for you.
         bar,                            // resource
         nameof(Policies.CanEnterBar));  // policy
 ```
-You don't need to worry about serializing and exposing api for this data to be shared with the client. The library handles that for you automatically once you do these.
+You don't need to worry about serializing and exposing api for this data to be shared with the client. The library handles that for you automatically once you do these. You might also have have more complex authorization scenarios to handle. You can mix this with standard asp.net core requirement/handler behaviors - as long as those requirements are not inherited from Requirement class from this library they won't be sent or processed by the client.
 
 ### Client:
-1. Initialize AuthZyinContext (similar as createStore in Redux, call this globally e.g. in index.tsx)
+1. Initialize AuthZyinContext (similar as createStore in Redux, call this globally like [this](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/index.tsx).
 ```TypeScript
     initializeAuthZyinContext();
 ```
-2. Connect the AuthZyinProvider with your components. Do this **after authentication** since the authzyin context api provided by the lib requires authenticated users.
+2. Connect the AuthZyinProvider with your components. Do this **after authentication** since the authzyin context api provided by the lib requires authenticated users. [Example](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/App.tsx) here.
 ```TypeScript
     <AuthZyinProvider options={{ requestInitFn: getAuthorizationHeadersAsync }}>
         <MainContent />
     </AuthZyinProvider>
 ```
-3. Use the useAuthorize hooks in your components
+3. Use the useAuthorize hooks in your components as this [example](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/components/PlaceComponent.tsx).
 ```TypeScript
     const authorize = useAuthorize();
     const authorized = authorize('CanEnterBar', bar);
 ```
 More details can be found [here](https://github.com/sidecus/authzyin/tree/master/authzyin.js).
-
-## A bit more technical details
-I chose to use [JSON path](https://goessner.net/articles/JsonPath/) to represent requirement rules, so that requirements can be evaluated on the server, and at the same time can be serialized "as is" to the client for the UI to evaluate - in some kind of an automatic way. Both the asp.net core policy and requirements are sent to client so you can use the same policy definition for your client authorization.
-
-Since I am a React fan, there is React hooks to help with authorization scenarios for the client as well.
-
-**Server evaluation** - done with [Newtonsoft.Json](https://www.newtonsoft.com/json). Newtonsoft.Json is limited in JSON path parsing, e.g. array filters like this ```[(@.length-1)]``` won't work. I'll research for a better parser in the future.
-
-**Client evlauation** - done with [JsonPath-Plus](https://www.npmjs.com/package/jsonpath-plus).
-
-Currently supported requirement evaluation operations:
-- RquiresRole
-- Or condition with children requirements
-- Value equals
-- Value greater than
-- Contains
-
-Each operator can be associated with a **Direction**. For example, you can check whether certain properties in the authorization context contains some values from a resource, or use a Contains with a reverse direction to check whether certain properties from the resource contains a value from the authorization context. This also means we don't need to support less than since it's just the reverse of greater than.
-
-*Kindly note* - you might have more complex authorization scenarios to handle. You don't have to be limited by this library and can mix this with the native asp.net core requirement/handler behaviors. Those won't be sent or processed by the client.
+The client library can be used as a standalone library without having to use the server part. To do this, just call ```initializeAuthZyinContext``` and provide your own AuthZyinContext object. In this case the client lib will use the provided object as the context and skipping loading from the api provided by the server api.
 
 ## How to run locally
 ### VSCode with HMR
@@ -100,6 +81,27 @@ You might need two console windows from project root:
     cd sample
     dotnet run
 ```
+
+## A bit more technical details
+I chose to use [JSON path](https://goessner.net/articles/JsonPath/) to represent requirement rules, so that requirements can be evaluated on the server, and at the same time can be serialized "as is" to the client for the UI to evaluate - in some kind of an automatic way. Both the asp.net core policy and requirements are sent to client so you can use the same policy definition for your client authorization.
+
+Since I am a React fan, there is React hooks to help with authorization scenarios for the client as well.
+
+**Server evaluation** - done with [Newtonsoft.Json](https://www.newtonsoft.com/json). Newtonsoft.Json is limited in JSON path parsing, e.g. array filters like this ```[(@.length-1)]``` won't work. I'll research for a better parser in the future.
+
+**Client evlauation** - done with [JsonPath-Plus](https://www.npmjs.com/package/jsonpath-plus).
+
+Currently supported requirement evaluation operations:
+- RquiresRole
+- Or condition with children requirements
+- Value equals
+- Value greater than
+- Value greater than or equal to
+- Contains
+
+Each operator can be associated with a **Direction**. For example, you can check whether certain properties in the authorization context contains some values from a resource, or use a Contains with a reverse direction to check whether certain properties from the resource contains a value from the authorization context. This also means we don't need to support less than since it's just the reverse of greater than.
+
+*Kindly note* - you might have more complex authorization scenarios to handle. You don't have to be limited by this library and can mix this with the native asp.net core requirement/handler behaviors. Those won't be sent or processed by the client.
 
 ## Code structure
 - [/lib](https://github.com/sidecus/authzyin/tree/master/lib): server library
