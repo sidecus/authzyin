@@ -4,7 +4,7 @@ import { Requirement } from './Requirements';
  * AuthZyin client context definition, used by client authorization.
  * This is the client contract for ClientContext class from the server.
  */
-export interface AuthZyinContext<TData extends object> {
+export interface AuthZyinContext<TData extends object = object> {
     userContext: UserContext;
     policies: ClientPolicy[];
     data: TData;
