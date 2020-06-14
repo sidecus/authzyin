@@ -2,6 +2,7 @@
 asp.net core and TypeScript library enables server & client authorization by defining just once and code less.
 
 ![.NET Core](https://github.com/sidecus/authzyin/workflows/.NET%20Core/badge.svg)
+![npm](https://github.com/sidecus/authzyin/workflows/npm/badge.svg)
 
 ## Motivation
 Authorization is both simple and complex. Often we need to have proper authorization to protect server apis, and at the same time, provide similar authorization on the UI to make our experience more user firendly. The common practice is to write authorization logic once on the server (asp.net core in my case), and once on the client (e.g. in React).
