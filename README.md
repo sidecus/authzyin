@@ -57,7 +57,7 @@ You don't need to worry about serializing and exposing api for this data to be s
     const authorized = authorize('CanEnterBar', bar);
 ```
 More details can be found [here](https://github.com/sidecus/authzyin/tree/master/authzyin.js).
-The client library can be used as a standalone library without having to use the server part. To do this, just call ```initializeAuthZyinContext``` and provide your own AuthZyinContext object. In this case the client lib will use the provided object as the context and skipping loading from the api provided by the server api.
+The client library can be used as a standalone library without having to use the server part. To do this, just call ```initializeAuthZyinContext``` and provide your own AuthZyinContext object. In this case the client lib will use the provided object as the context and skipping loading from the api provided by the server library.
 
 ## How to run locally
 ### VSCode with HMR

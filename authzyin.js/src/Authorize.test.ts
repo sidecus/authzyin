@@ -1,6 +1,8 @@
-import { authorize } from './Authorize';
+import { authorize, useAuthorize } from './Authorize';
 import { AuthZyinContext } from './AuthZyinContext';
 import { OperatorType, Direction } from './Requirements';
+import { getAuthZyinContextWrapper } from './AuthZyinProvider.test';
+import { renderHook } from '@testing-library/react-hooks';
 
 const roleRequirement = {
     operator: OperatorType.RequiresRole,
@@ -51,37 +53,55 @@ const resource = {
     }
 };
 
-describe('authorize behaves correctly', () => {
-    it('authorize passes on candrink', () => {
-        expect(authorize(context, 'candrink', resource)).toBeTruthy();
-    });
+const contextWithoutPolicies = {
+    userContext: {
+        roles: ['someOtherRole', 'rightRole']
+    },
+    data: data
+} as AuthZyinContext<typeof data>;
 
-    it('authorize fails on canpay', () => {
-        expect(authorize(context, 'canpay', resource)).toBeFalsy();
+it('authorize fails on candrink with no policies', () => {
+    expect(authorize(contextWithoutPolicies, 'candrink', resource)).toBeFalsy();
+});
+
+const contextWithNoMatchingPolicy = {
+    userContext: {
+        roles: ['someOtherRole', 'rightRole']
+    },
+    policies: [{name: 'random'}],
+    data: data
+} as AuthZyinContext<typeof data>;
+
+// Test authorize behavior based on different inputs
+describe('authorize function behaves correctly', () => {
+    test.each([
+        [context,                       'candrink', true],
+        [context,                       'canpay',   false],
+        [context,                       'canpay',   false],
+        [contextWithoutPolicies,        'candrink', false],
+        [contextWithNoMatchingPolicy,   'candrink', false],
+    ])('authorize behavior (%#)', (context: AuthZyinContext, policy: string, expectedResult: boolean) =>
+    {
+        expect(authorize(context, policy, resource)).toBe(expectedResult);
     });
 });
 
-describe('authorize returns false if no context or policies defined', () => {
-    const contextWithoutPolicies = {
-        userContext: {
-            roles: ['someOtherRole', 'rightRole']
-        },
-        data: data
-    } as AuthZyinContext<typeof data>;
-    
-    it('authorize fails on candrink with no policies', () => {
-        expect(authorize(contextWithoutPolicies, 'candrink', resource)).toBeFalsy();
-    });
-
-    const contextWithNoMatchingPolicy = {
-        userContext: {
-            roles: ['someOtherRole', 'rightRole']
-        },
-        policies: [{name: 'random'}],
-        data: data
-    } as AuthZyinContext<typeof data>;
-
-    it('authorize fails on canpay with no matching policy', () => {
-        expect(authorize(contextWithNoMatchingPolicy, 'canpay', resource)).toBeFalsy();
-    });
+// Make sure the useAuthorize hook works properly
+describe('useAuthorize hook works as expected', () => {
+    test.each([
+        [context,                       'candrink', true],
+        [context,                       'canpay',   false],
+        [context,                       'canpay',   false],
+        [contextWithoutPolicies,        'candrink', false],
+        [contextWithNoMatchingPolicy,   'candrink', false],
+    ])(
+        'useAuthorize behavior (%#)',
+        async (context: AuthZyinContext, policy: string, expectedResult: boolean) =>
+        {
+            const wrapper = getAuthZyinContextWrapper(context, {});
+            const { result } = renderHook(useAuthorize, { wrapper });
+            const func = result.current;
+            expect(func(policy, resource)).toBe(expectedResult);
+        }
+    );
 });

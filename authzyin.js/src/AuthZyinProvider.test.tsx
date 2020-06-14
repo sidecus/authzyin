@@ -2,7 +2,6 @@ import { enableFetchMocks } from 'jest-fetch-mock';
 enableFetchMocks()
 
 import fetchMock from "jest-fetch-mock";
-
 import * as React from 'react';
 import { initializeAuthZyinContext, useAuthZyinContext, resetAuthZyinContext, AuthZyinProvider, AuthZyinProviderOptions } from './AuthZyinProvider';
 import { AuthZyinContext } from './AuthZyinContext';
@@ -48,7 +47,10 @@ const getNewDummyContextInstance = () => {
 };
 
 // Get a function component with given default value and options, and wrapping the children with AuthZyinProvider
-const getAuthZyinContextWrapper = (contextValue: AuthZyinContext, options: Partial<AuthZyinProviderOptions>) => ({children}) => {
+export const getAuthZyinContextWrapper = (
+    contextValue: AuthZyinContext | undefined,
+    options: Partial<AuthZyinProviderOptions>
+) => ({children}: any) => {
     resetAuthZyinContext();
     initializeAuthZyinContext(contextValue);
 
@@ -62,21 +64,24 @@ describe('initializeAuthZyinContext/useAuthZyinContext', () => {
     test.each([
         [undefined, undefined],
         [DummyContext, DummyContext],
-    ])('initialize & use hooks work as expected w/o AuthZyinProvider (%#)', (contextValue, expectedResult) => {
-        // initialize for the first time leads to right result in useAuthZyinContext
-        resetAuthZyinContext();
-        initializeAuthZyinContext(contextValue);
+    ])(
+        'initialize & use hooks work as expected w/o AuthZyinProvider (%#)',
+        (contextValue, expectedResult) => {
+            // initialize for the first time leads to right result in useAuthZyinContext
+            resetAuthZyinContext();
+            initializeAuthZyinContext(contextValue);
 
-        const { result } = renderHook(useAuthZyinContext);
-        if (expect === undefined) {
-            expect(result.current).toBeUndefined();
-        } else {
-            expect(result.current).toBe(expectedResult);
+            const { result } = renderHook(useAuthZyinContext);
+            if (expectedResult === undefined) {
+                expect(result.current).toBeUndefined();
+            } else {
+                expect(result.current).toBe(expectedResult);
+            }
+
+            // initialize again should cause error.
+            expect(() => initializeAuthZyinContext(contextValue)).toThrowError();
         }
-
-        // initialize again should cause error.
-        expect(() => initializeAuthZyinContext(contextValue)).toThrowError();
-    });
+    );
 
     // AuthZyinProvider uses the devalue value if provided by initializeAuthZyinContext
     test.each([
@@ -105,7 +110,7 @@ describe('initializeAuthZyinContext/useAuthZyinContext', () => {
         'AuthZyinProvider makes proper api call (%#)',
         async (options: Partial<AuthZyinProviderOptions>, expectedDataPath: string, expectedResourcePath: string) => {
             const urlPredicator = !options.url ? /^\/authzyin\/context$/ : options.url;
-            fetchMock.mockIf(urlPredicator, (req) => {
+            fetchMock.mockIf(urlPredicator, () => {
                 return Promise.resolve(DummyContextJsonString);
             });
 
