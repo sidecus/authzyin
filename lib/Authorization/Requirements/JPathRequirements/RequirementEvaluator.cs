@@ -1,4 +1,4 @@
-namespace AuthZyin.Authorization.Requirements
+namespace AuthZyin.Authorization.JPathRequirements
 {
     using System;
     using System.Linq;

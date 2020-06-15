@@ -100,8 +100,8 @@ describe('useAuthorize hook works as expected', () => {
         {
             const wrapper = getAuthZyinContextWrapper(context, {});
             const { result } = renderHook(useAuthorize, { wrapper });
-            const func = result.current;
-            expect(func(policy, resource)).toBe(expectedResult);
+            const authorizeFunc = result.current;
+            expect(authorizeFunc(policy, resource)).toBe(expectedResult);
         }
     );
 });

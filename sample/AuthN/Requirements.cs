@@ -44,44 +44,29 @@ namespace sample.AuthN
         public static readonly string CustomerRole = "Customer";
 
         // Has driver's license
-        public static readonly JsonPathConstantRequirement<AuthorizationData, bool> HasDriversLicense = new JsonPathConstantRequirement<AuthorizationData, bool>(
-            operatorType: OperatorType.Equals,
-            dataPath: "$.WithDriversLicense",
-            constValue: true);
+        public static readonly EqualsValueRequirement<AuthorizationData, bool> HasDriversLicense =
+            new EqualsValueRequirement<AuthorizationData, bool>(dataPath: "$.WithDriversLicense", value: true);
 
         // Has Passport
-        public static readonly JsonPathConstantRequirement<AuthorizationData, bool> HasPassport = new JsonPathConstantRequirement<AuthorizationData, bool>(
-            operatorType: OperatorType.Equals,
-            dataPath: "$.WithPassport",
-            constValue: true);
+        public static readonly EqualsValueRequirement<AuthorizationData, bool> HasPassport =
+            new EqualsValueRequirement<AuthorizationData, bool>(dataPath: "$.WithPassport", value: true);
 
         // Has valid ID
         public static readonly OrRequirement HasValidId = new OrRequirement(HasDriversLicense, HasPassport);
 
-        // const Age above 21
-        public static readonly JsonPathConstantRequirement<AuthorizationData, int> AgeAbove21 = new JsonPathConstantRequirement<AuthorizationData, int>(
-            operatorType: OperatorType.GreaterThan,
-            dataPath: "$.Age",
-            constValue: 21);
+        // const Age greater than 20 (or GTE 21)
+        public static readonly GreaterThanValueRequirement<AuthorizationData, int> AgeAbove21 =
+            new GreaterThanValueRequirement<AuthorizationData, int>(dataPath: "$.Age", value: 20);
 
         // Has a payment method which the place accepts
-        public static readonly JsonPathRequirement<AuthorizationData, Place> HasAcceptedPaymentMethod = new JsonPathRequirement<AuthorizationData, Place>(
-            operatorType: OperatorType.Contains,
-            dataPath: "$.PaymentMethods[*].Type",
-            resourcePath: "$.AcceptedPaymentMethods[0]",
-            direction: Direction.ContextToResource);
+        public static readonly ContainsRequirement<AuthorizationData, Place> HasAcceptedPaymentMethod =
+            new ContainsRequirement<AuthorizationData, Place>(dataPath: "$.PaymentMethods[*].Type", resourcePath: "$.AcceptedPaymentMethods[0]", direction: Direction.ContextToResource);
 
         // Age requirement based on resource
-        public static readonly JsonPathRequirement<AuthorizationData, AgeLimitedPlace> MeetsMinAgeLimit = new JsonPathRequirement<AuthorizationData, AgeLimitedPlace>(
-            operatorType: OperatorType.GreaterThanOrEqualTo,
-            dataPath: "$.Age",
-            resourcePath: "$.MinAge",
-            direction: Direction.ContextToResource);
+        public static readonly GreaterThanOrEqualToRequirement<AuthorizationData, AgeLimitedPlace> MeetsMinAgeLimit =
+            new GreaterThanOrEqualToRequirement<AuthorizationData, AgeLimitedPlace>(dataPath: "$.Age", resourcePath: "$.MinAge", direction: Direction.ContextToResource);
 
-        public static readonly JsonPathRequirement<AuthorizationData, AgeLimitedPlace> MeetsMaxAgeLimit = new JsonPathRequirement<AuthorizationData, AgeLimitedPlace>(
-            operatorType: OperatorType.GreaterThanOrEqualTo,
-            dataPath: "$.Age",
-            resourcePath: "$.MaxAge",
-            direction: Direction.ResourceToContext);
+        public static readonly GreaterThanOrEqualToRequirement<AuthorizationData, AgeLimitedPlace> MeetsMaxAgeLimit =
+            new GreaterThanOrEqualToRequirement<AuthorizationData, AgeLimitedPlace>(dataPath: "$.Age", resourcePath: "$.MaxAge", direction: Direction.ResourceToContext);
     }
 }

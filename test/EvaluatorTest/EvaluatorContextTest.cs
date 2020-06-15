@@ -5,6 +5,7 @@ namespace test
     using Newtonsoft.Json.Linq;
     using Xunit;
     using AuthZyin.Authorization.Requirements;
+    using AuthZyin.Authorization.JPathRequirements;
     using System.Collections.Generic;
 
     public class EvaluatorContxtTest

@@ -1,6 +1,7 @@
-namespace AuthZyin.Authorization.Requirements
+namespace AuthZyin.Authorization.JPathRequirements
 {
     using System;
+    using AuthZyin.Authorization.Requirements;
     using Newtonsoft.Json.Linq;
 
     /// <summary>

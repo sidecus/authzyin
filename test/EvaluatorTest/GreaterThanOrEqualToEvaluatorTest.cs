@@ -3,6 +3,7 @@ namespace test
     using System;
     using Xunit;
     using AuthZyin.Authorization.Requirements;
+    using AuthZyin.Authorization.JPathRequirements;
     using Newtonsoft.Json.Linq;
     using System.Collections.Generic;
 

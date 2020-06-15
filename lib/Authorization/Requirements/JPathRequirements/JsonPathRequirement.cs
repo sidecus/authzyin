@@ -1,8 +1,9 @@
-namespace AuthZyin.Authorization.Requirements
+namespace AuthZyin.Authorization.JPathRequirements
 {
     using System;
     using System.Collections.Generic;
     using Newtonsoft.Json.Linq;
+    using AuthZyin.Authorization.Requirements;
 
     /// <summary>
     /// Authorization requirement which uses JsonPath for filtering and comparison.

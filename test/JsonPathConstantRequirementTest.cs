@@ -3,9 +3,9 @@ namespace test
     using System;
     using Xunit;
     using AuthZyin.Authorization.Requirements;
+    using AuthZyin.Authorization.JPathRequirements;
     using AuthZyin.Authorization;
     using System.Collections.Generic;
-    using Microsoft.AspNetCore.Authorization;
     using System.Reflection;
 
     public class JsonPathConstantRequirementTest
@@ -111,11 +111,20 @@ namespace test
             var genericType = typeof(JsonPathConstantRequirement<,>);
             var constType = constValue != null ? constValue.GetType() : typeof(string);             //special case for null value and defaul the type to string
             var constRequirementType = genericType.MakeGenericType(typeof(TestCustomData), constType);
-            var requirement = Activator.CreateInstance(constRequirementType, operatorType, dataJPath, constValue);
 
-            var evaluateMethod = this.GetEvaluateMethod(constRequirementType);
-            Assert.Equal(expectedReseult, (bool)evaluateMethod.Invoke(requirement, new object[] { authZyinContext, null as Resource }));
-            Assert.Equal(expectedReseult, (bool)evaluateMethod.Invoke(requirement, new object[] { authZyinContext, new TestResourceInvalid() }));
+            if (constValue == null)
+            {
+                // cosnt value can never be null. The constructor will throw but exception will be converted to TargetInvocationException by Reflection.
+                Assert.Throws<TargetInvocationException>(() => Activator.CreateInstance(constRequirementType, operatorType, dataJPath, constValue));
+            }
+            else
+            {
+                // Create the requirement based on the parameter and validate w/ or w/o resource
+                var requirement = Activator.CreateInstance(constRequirementType, operatorType, dataJPath, constValue);
+                var evaluateMethod = this.GetEvaluateMethod(constRequirementType);
+                Assert.Equal(expectedReseult, (bool)evaluateMethod.Invoke(requirement, new object[] { authZyinContext, null as Resource }));
+                Assert.Equal(expectedReseult, (bool)evaluateMethod.Invoke(requirement, new object[] { authZyinContext, new TestResourceInvalid() }));
+            }
         }
 
         [Fact]
