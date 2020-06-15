@@ -14,6 +14,7 @@ export interface PlaceState {
 
 export enum Severity {
     Info = 'info',
+    Warn = 'warning',
     Error = 'error',
 }
 

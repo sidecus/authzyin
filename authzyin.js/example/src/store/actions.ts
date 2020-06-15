@@ -97,21 +97,21 @@ const getPlaces = () => {
 /**
  * This is a thunk action creator used to call enter a place
  */
-const enterPlace = (id: number) => {
+const enterPlace = (place: Place) => {
     return async (dispatch: Dispatch<any>) => {
         try {
-            const ret = await callEnterPlaceApiAsync(id);
-            console.log(`Entered place ${id}: server call succeeded`);
+            const ret = await callEnterPlaceApiAsync(place.id);
+            console.log(`Entered "${ret.name}": server OK`);
             dispatch(setCurrentPlace(ret.id))
             dispatch(setAlert({
                 severity: Severity.Info,
-                message: `You just walked into: ${ret.name}`,
+                message: `You just walked into "${ret.name}"`,
             }));
         } catch (error) {
-            console.error(`Server authorization failed for place ${id}: ${error.message}`);
+            console.error(`Server authorization failed for"${place.name}": ${error.message}`);
             dispatch(setAlert({
                 severity: Severity.Error,
-                message: `You tried to sneak into the place ${id} but got rejected by server`,
+                message: `You tried to sneak into "${place.name}" but got denied by server`,
             }));
         }
     }

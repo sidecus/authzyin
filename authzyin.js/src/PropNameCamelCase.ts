@@ -7,15 +7,27 @@ import { Requirement, IsOrRequirement, IsJsonPathRequirement } from './Requireme
  * @param path json path
  */
 export const camelCaseJsonPath = (path: string) => {
-    // TODO[sidecus] - more performant way to ignore case in JPath
-    let newPath = '';
-    let isPreviousCharADot = false;
-    for (let i = 0; i < path.length; i++) {
-        newPath += isPreviousCharADot ? path[i].toLowerCase() : path[i];
-        isPreviousCharADot = path[i] === '.';
+    if (!path) {
+        return path;
     }
 
-    return newPath;
+    const pathLength = path.length;
+    let result = '';
+    let nextStart = 0;
+    while (nextStart < pathLength) {
+        let current = path.indexOf('.', nextStart);
+        current = current === -1 ? pathLength : current + 1;
+        // copy from the next start position till  this dot
+        result += path.substr(nextStart, current - nextStart);
+        if (current < pathLength && path[current] !== '.') {
+            // camel case next character after this dot (unless it is aslo dot)
+            result += path[current].toLowerCase();
+            current++;
+        }
+        nextStart = current;
+    }
+
+    return result;
 };
 
 export const camelCaseRequirement = (requirement: Requirement) => {

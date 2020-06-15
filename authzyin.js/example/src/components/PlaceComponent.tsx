@@ -27,11 +27,11 @@ export const PlaceComponent = ({place, sneakIn}: {
         setCurrentPlace(-1);
         if (sneakIn || authorized) {
             // invoke server api if client authorization succeeded or sneak in option is selected
-            enterPlace(place.id);
+            enterPlace(place);
         } else {
             setAlert({
-                severity: Severity.Error,
-                message: `Client authorizatio failed - not allowed to go to ${place.name}`,
+                severity: Severity.Warn,
+                message: `Client authorization failed - "${place.name}" forbidden by policy "${place.policy}"`,
             });
         }
     }

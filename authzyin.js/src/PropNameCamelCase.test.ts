@@ -1,123 +1,101 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import {
-    camelCaseJsonPath,
-    camelCaseRequirement
-} from './PropNameCamelCase';
-import {
-    OrRequiremet,
-    OperatorType,
-    IsJsonPathRequirement,
-    Direction
-} from './Requirements';
+import { camelCaseJsonPath, camelCaseRequirement } from './PropNameCamelCase';
+import { OrRequiremet, OperatorType, IsJsonPathRequirement, Direction, Requirement } from './Requirements';
 
 describe('JsonPath camel case', () => {
     const dataPath = '$.Data.Array[@.length-1].[?(@.IntProperty > 0)]';
     const camelCaseDataPath = '$.data.array[@.length-1].[?(@.intProperty > 0)]';
     const resourcePath = '$..BookTitleA.AuthorNamess[-1:]';
     const camelCaseResourcePath = '$..bookTitleA.authorNamess[-1:]';
-
-    const getRequirements = () => {
-        const requirement1 = {
-            direction: Direction.ContextToResource,
-            operator: OperatorType.Equals,
-            dataJPath: dataPath,
-            resourceJPath: resourcePath
-        };
-
-        const requirement2 = {
-            direction: Direction.ContextToResource,
-            operator: OperatorType.GreaterThan,
-            dataJPath: dataPath,
-            resourceJPath: resourcePath
-        };
-
-        const requirement3 = {
-            direction: Direction.ContextToResource,
-            operator: OperatorType.Contains,
-            dataJPath: dataPath,
-            resourceJPath: resourcePath
-        };
-
-        const requirementInvalid = {
-            direction: Direction.ContextToResource,
-            operator: OperatorType.Invalid,
-            dataJPath: dataPath,
-            resourceJPath: resourcePath
-        };
-
-        const requirementRequiresRole = {
-            direction: Direction.ContextToResource,
-            operator: OperatorType.RequiresRole,
-            allowedRoles: ['somerole'],
-            dataJPath: dataPath,
-            resourceJPath: resourcePath
-        };
-
-        return {
-            requirement1,
-            requirement2,
-            requirement3,
-            requirementInvalid,
-            requirementRequiresRole
-        };
+    const requirement1 = {
+        direction: Direction.ContextToResource,
+        operator: OperatorType.Equals,
+        dataJPath: dataPath,
+        resourceJPath: resourcePath
     };
 
-    it('camelCaseJsonPath converts property name to camel case correctly', () => {
-        expect(camelCaseJsonPath(dataPath)).toBe(
-            camelCaseDataPath
-        );
-        expect(camelCaseJsonPath(resourcePath)).toBe(
-            camelCaseResourcePath
-        );
+    const requirement2 = {
+        direction: Direction.ContextToResource,
+        operator: OperatorType.GreaterThan,
+        dataJPath: dataPath,
+        resourceJPath: resourcePath
+    };
+
+    const requirement3 = {
+        direction: Direction.ContextToResource,
+        operator: OperatorType.Contains,
+        dataJPath: dataPath,
+        resourceJPath: resourcePath
+    };
+
+    const requirementInvalid = {
+        direction: Direction.ContextToResource,
+        operator: OperatorType.Invalid,
+        dataJPath: dataPath,
+        resourceJPath: resourcePath
+    };
+
+    const requirementRequiresRole = {
+        direction: Direction.ContextToResource,
+        operator: OperatorType.RequiresRole,
+        allowedRoles: ['somerole'],
+        dataJPath: dataPath,
+        resourceJPath: resourcePath
+    };
+
+    test.each([
+        [dataPath, camelCaseDataPath],
+        [camelCaseDataPath, camelCaseDataPath],
+        [resourcePath, camelCaseResourcePath],
+        [camelCaseResourcePath, camelCaseResourcePath],
+        ['$.Value', '$.value'],
+        ['$..Payment.AllowedPaymentMethods[*]', '$..payment.allowedPaymentMethods[*]'],
+        ['$..Book[?(@.Price<10)]', '$..book[?(@.price<10)]'],
+        ['', ''],
+        ['.A..A...A....A', '.a..a...a....a'],
+        ['..........', '..........']
+    ])('camelCaseJsonPath camel behavior (%#)', (input: string, expectedOutout: string) => {
+        expect(camelCaseJsonPath(input)).toBe(expectedOutout);
     });
 
-    it('camelCaseRequirement handles JsonPathRequirement correctly', () => {
-        const {
-            requirement1,
-            requirementRequiresRole
-        } = getRequirements();
+    test.each([
+        [requirement1, true, camelCaseDataPath, camelCaseResourcePath],
+        [requirement2, true, camelCaseDataPath, camelCaseResourcePath],
+        [requirement3, true, camelCaseDataPath, camelCaseResourcePath],
+        [requirementInvalid, false, dataPath, resourcePath],
+        [requirementRequiresRole, false, dataPath, resourcePath]
+    ])(
+        'camelCaseRequirement behavior (%#)',
+        (requirement: Requirement, jsonPathReq: boolean, expectedDataPath, expectedResourcePath) => {
+            const requirementCopy = {...requirement} as any;
+            expect(IsJsonPathRequirement(requirementCopy)).toBe(jsonPathReq);
+            camelCaseRequirement(requirementCopy);
+            expect(requirementCopy.dataJPath).toBe(expectedDataPath);
+            expect(requirementCopy.resourceJPath).toBe(expectedResourcePath);
+        }
+    );
 
-        expect(IsJsonPathRequirement(requirement1)).toBeTruthy();
-        camelCaseRequirement(requirement1);
-        expect(requirement1.dataJPath).toBe(camelCaseDataPath);
-        expect(requirement1.resourceJPath).toBe(camelCaseResourcePath);
-
-        // non json path requirement should be untouched
-        expect(IsJsonPathRequirement(requirementRequiresRole)).toBeFalsy();
-        camelCaseRequirement(requirementRequiresRole);
-        expect(requirementRequiresRole.dataJPath).toBe(dataPath);
-        expect(requirementRequiresRole.resourceJPath).toBe(resourcePath);
-    });
-
-    it('camelCaseRequirement handles OrRequirement correctly', () => {
-        const {
-            requirement1,
-            requirement2,
-            requirement3,
-            requirementInvalid
-        } = getRequirements();
-
+    it('camelCaseRequirement w/ OrRequirement(%#)', () => {
+        const req1 = {...requirement1};
+        const req2 = {...requirement2};
+        const req3 = {...requirement3};
+        const reqInvalid = {...requirementInvalid};
         const orRequirement = {
             operator: OperatorType.Or,
-            children: [
-                requirement1,
-                requirement2,
-                requirement3,
-                requirementInvalid
-            ]
+            children: [req1, req2, req3, reqInvalid]
         } as OrRequiremet;
 
         camelCaseRequirement(orRequirement);
-        expect(requirement1.dataJPath).toBe(camelCaseDataPath);
-        expect(requirement1.resourceJPath).toBe(camelCaseResourcePath);
-        expect(requirement2.dataJPath).toBe(camelCaseDataPath);
-        expect(requirement2.resourceJPath).toBe(camelCaseResourcePath);
-        expect(requirement3.dataJPath).toBe(camelCaseDataPath);
-        expect(requirement3.resourceJPath).toBe(camelCaseResourcePath);
+        expect(req1.dataJPath).toBe(camelCaseDataPath);
+        expect(req1.resourceJPath).toBe(camelCaseResourcePath);
+        expect(req2.dataJPath).toBe(camelCaseDataPath);
+        expect(req2.resourceJPath).toBe(camelCaseResourcePath);
+        expect(req3.dataJPath).toBe(camelCaseDataPath);
+        expect(req3.resourceJPath).toBe(camelCaseResourcePath);
 
-        expect(IsJsonPathRequirement(requirementInvalid)).toBeFalsy();
-        camelCaseRequirement(requirementInvalid);
-        expect(requirementInvalid.dataJPath).toBe(dataPath);
-        expect(requirementInvalid.resourceJPath).toBe(resourcePath);
+        expect(IsJsonPathRequirement(reqInvalid)).toBeFalsy();
+        camelCaseRequirement(reqInvalid);
+        expect(reqInvalid.dataJPath).toBe(dataPath);
+        expect(reqInvalid.resourceJPath).toBe(resourcePath);
     });
 });
