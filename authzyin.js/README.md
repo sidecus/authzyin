@@ -6,19 +6,19 @@
 
 ## Install
 TODO - not published to npm yet. Let me know if this is useful and I'll publish it as a standalone package.
-```bash
+```Shell
 npm install --save authzyin.js
 ```
 
 ## Usage
 ### Use together with the authzyin server library
-Full policy and requirement based authorization. Built in capability to automatically load policy definitions exposed by the server library. Policies and requirements are resolved and evaluated automatically for you whenever you authorize.
-1. Initialize AuthZyinContext (similar as ```createStore``` in Redux, call this globally) and wrap your main component with AuthZyinProvider like below.
+The client library supports full policy and requirement based authorization, with built in capability to automatically fetch policy definitions exposed by the server library. Policies and requirements are resolved and evaluated automatically for you whenever you authorize.
+1. Initialize AuthZyinContext (similar as ```createStore``` in Redux, call this globally) and wrap your main component with ```AuthZyinProvider``` like below. Do this *after authentication* since the api provided by the lib requires authenticated call by default for security reasons. You can use the ```requestInitFn``` callback in the ```options``` parameter to provide authoriztaion headers. Ignore options if you are using cookie auth.
 ```TSX
-    // initialize the authzyin context (like redux createStore)
+    // Initialize context
     initializeAuthZyinContext();
 
-    // Wrap your main content with AuthZyinProvider (like redux Provider)
+    // Wrap main content with AuthZyinProvider after signing in
     export const App = () => {
         if (signedIn) {
             return (
@@ -29,9 +29,7 @@ Full policy and requirement based authorization. Built in capability to automati
         }
     }
 ```
-```AuthZyinProvider``` will automatically invoke the authzyin context api to retrieve context/policy/requirement definitions from the built in api provided by authzyin server library. Do this after authentication since the api requires authenticated calls by default for security reasons. You can use the optional ```requestInitFn``` callback parameter in the options to provide your authoriztaion headers if needed.
-
-2. Now you can use the useAuthorize hooks in your components like below:
+2. Now you can call the ```useAuthorize``` hook to achieve policy based authorization in your components like below. More in the [sample](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/components/PlaceComponent.tsx):
 ```TSX
     const authorize = useAuthorize();
     const authorized = authorize('CanEnterBar' /*policy*/, bar /*resource*);
@@ -44,9 +42,9 @@ The client library can be used as a standalone library without having to use the
     const authZyinContext = /*create my own context*/;
     initializeAuthZyinContext(authZyinContext);
 ```
-AuthZyinProvider will automatically use this context object and stop loading it from the server library api.
+```AuthZyinProvider``` will automatically use the provided context object and stop fetching from the server library api.
 
-AuthZyinContext type is defined at [here](https://github.com/sidecus/authzyin/blob/master/authzyin.js/src/AuthZyinContext.ts). The type parameter T represents the custom data type, against which all JSON path requirement will be evaluated.
+```AuthZyinContext``` type is defined at [here](https://github.com/sidecus/authzyin/blob/master/authzyin.js/src/AuthZyinContext.ts). The type parameter T represents the custom data type, against which context related JSON path requirement will be evaluated.
 
 [Test cases for AuthZyinProvider](https://github.com/sidecus/authzyin/blob/master/authzyin.js/src/AuthZyinProvider.test.tsx) illustrates this usage pattern.
 

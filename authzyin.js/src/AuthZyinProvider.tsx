@@ -12,7 +12,7 @@ const contextApiUrl = '/authzyin/context';
  * Global reference of the authorization React context object
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let authZyinReactContext: React.Context<any>;
+let AuthZyinReactContext: React.Context<any>;
 
 /**
  * Function to initialize the authorization React context - similar as createStore from redux.
@@ -20,13 +20,13 @@ let authZyinReactContext: React.Context<any>;
  * @param context - optional AuthZyin context object. Only pass the param when you want to initialize your context manually.
  */
 export const initializeAuthZyinContext = <TData extends object = object>(context?: AuthZyinContext<TData>) => {
-    if (authZyinReactContext) {
+    if (AuthZyinReactContext) {
         throw new Error('AuthZyin React context is already initialized.');
     }
 
     // Create the React context wrapping around the context object
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    authZyinReactContext = React.createContext<AuthZyinContext<TData>>(context!);
+    AuthZyinReactContext = React.createContext<AuthZyinContext<TData>>(context!);
 };
 
 /**
@@ -34,14 +34,14 @@ export const initializeAuthZyinContext = <TData extends object = object>(context
  */
 export const resetAuthZyinContext = () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    authZyinReactContext = undefined!;
+    AuthZyinReactContext = undefined!;
 };
 
 /**
  * Hooks to read AuthZyinContext object from React context (e.g. to access basic user info or policies)
  */
 export const useAuthZyinContext = <TData extends object = object>() => {
-    const reactContext = authZyinReactContext as React.Context<AuthZyinContext<TData>>;
+    const reactContext = AuthZyinReactContext as React.Context<AuthZyinContext<TData>>;
     if (!reactContext) {
         throw new Error('AuthZyin React context is not setup. Call createAuthZyinContext first.');
     }
@@ -95,7 +95,7 @@ export const AuthZyinProvider = <TData extends object = object>(
     useEffect(() => {
         const options = { ...defaultOptions, ...props?.options } as AuthZyinProviderOptions;
 
-        const processAndSetContext = (contextToSave: AuthZyinContext<TData>) => {
+        const handleContext = (contextToSave: AuthZyinContext<TData>) => {
             if (options.jsonPathPropToCamelCase) {
                 // Convert property names in JSON path to camel case
                 camelCaseContext(contextToSave);
@@ -104,7 +104,7 @@ export const AuthZyinProvider = <TData extends object = object>(
             setContext(contextToSave);
         };
 
-        const loadAndSetContext = async (): Promise<void> => {
+        const fetcAndHandleContext = async (): Promise<void> => {
             const request = await options.requestInitFn();
             request.method = 'GET';
             request.body = undefined;
@@ -113,7 +113,7 @@ export const AuthZyinProvider = <TData extends object = object>(
             const response = await fetch(options.url, request);
             if (response.ok) {
                 const result = (await response.json()) as AuthZyinContext<TData>;
-                processAndSetContext(result);
+                handleContext(result);
             } else {
                 throw new Error(`AuthZyinContext loading error: ${response.status}`);
             }
@@ -121,18 +121,18 @@ export const AuthZyinProvider = <TData extends object = object>(
 
         if (defaultAuthZyinContext) {
             // If a default value is provided in initializeAuthZyinContext, use it
-            processAndSetContext(defaultAuthZyinContext);
+            handleContext(defaultAuthZyinContext);
         } else {
             // No default value provided. Load it from server instead.
-            loadAndSetContext();
+            fetcAndHandleContext();
         }
     }, [props]);
 
     // Return children components wrapped with proper React context.
     // Children are only rendered when context is set correctly.
     return (
-        <authZyinReactContext.Provider value={context}>
+        <AuthZyinReactContext.Provider value={context}>
             {context && context.userContext && props.children}
-        </authZyinReactContext.Provider>
+        </AuthZyinReactContext.Provider>
     );
 };
