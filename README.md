@@ -42,7 +42,7 @@ You might also have have more complex authorization scenarios to handle, and you
 Full policy and requirement based authorization. Built in capability to automatically load policy definitions exposed by the server library. Policies and requirements are resolved and evaluated automatically for you whenever you authorize. *The client library can be used standalone without having to use the server library*.
 **More details** about the client lib can be found [here](https://github.com/sidecus/authzyin/tree/master/authzyin.js).
 1. Initialize AuthZyinContext (similar as ```createStore``` in Redux, call this globally) and wrap your main component with AuthZyinProvider like below.
-```TypeScript
+```TSX
     initializeAuthZyinContext();
 
     export const App = () => {
@@ -56,8 +56,9 @@ Full policy and requirement based authorization. Built in capability to automati
     }
 ```
 Do this after authentication since the api provided by the lib requires authenticated api call by default for security reasons. You can use the optional ```requestInitFn``` callback parameter in the options to provide your authoriztaion headers if needed.
+
 2. Now you can use the useAuthorize hooks in your components like below or as the [sample](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/components/PlaceComponent.tsx):
-```TypeScript
+```TSX
     const authorize = useAuthorize();
     const authorized = authorize('CanEnterBar' /*policy*/, bar /*resource*);
 ```

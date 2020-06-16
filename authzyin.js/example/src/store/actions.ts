@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { createActionCreator, useMemoizedBoundActionCreators } from 'roth.js';
+import { createActionCreator, useBoundActions } from 'roth.js';
 import { SignInState, AlertState, Severity } from './state';
 import {
     callEnterPlaceApiAsync,
@@ -117,18 +117,18 @@ const enterPlace = (place: Place) => {
     }
 }
 
-/* named dispatchers (bound action creators) */
-const namedActionCreators = {
-    signIn: signIn,
-    getPlaces: getPlaces,
-    setAlert: setAlert,
-    setCurrentPlace: setCurrentPlace,
-    setSneakIn: setSneakIn,
-    enterPlace: enterPlace,
+/* action creators */
+const actionCreators = {
+    signIn,
+    getPlaces,
+    setAlert,
+    setCurrentPlace,
+    setSneakIn,
+    enterPlace,
 }
 
 /**
- * Custom hooks for dispatchers (bound action creators).
- * You can create one of this for each domain area to logically separate the dispatchers.
+ * Custom hooks for auto bound action creators.
+ * You can create one for each domain area to logically separate them.
  */
-export const useSampleAppBoundActionCreators = () => useMemoizedBoundActionCreators(namedActionCreators);
+export const useAppBoundActions = () => useBoundActions(actionCreators);

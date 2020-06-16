@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { makeStyles, Card, CardHeader, CardContent, Switch, Typography, FormControlLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import { useSampleAppBoundActionCreators } from '../store/actions';
+import { useAppBoundActions } from '../store/actions';
 import { placesSelector, sneakInSelector } from '../store/selectors';
 import { Place } from '../api/Contract';
 import { AlertBanner } from './Alert';
@@ -19,7 +19,7 @@ export const PlaceList = () => {
     const classes = useStyles();
     const places = useSelector(placesSelector);
     const sneakIn = useSelector(sneakInSelector);
-    const { setSneakIn, getPlaces } = useSampleAppBoundActionCreators();
+    const { setSneakIn, getPlaces } = useAppBoundActions();
 
     React.useEffect(() => {
         getPlaces();

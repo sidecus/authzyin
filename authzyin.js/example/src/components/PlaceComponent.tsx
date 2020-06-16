@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { makeStyles, Typography, Button } from '@material-ui/core';
-import { useSampleAppBoundActionCreators } from '../store/actions';
+import { useAppBoundActions } from '../store/actions';
 import { Place, IsAgeLimitedPlace, IsBar } from '../api/Contract';
 import { Severity } from '../store/state';
 import { LightTooltip } from './LightTooltip';
@@ -19,7 +19,7 @@ export const PlaceComponent = ({place, sneakIn}: {
     sneakIn: boolean,
 }) => {
     const classes = useStyles();
-    const { setAlert, setCurrentPlace, enterPlace } = useSampleAppBoundActionCreators();
+    const { setAlert, setCurrentPlace, enterPlace } = useAppBoundActions();
     const authorize = useAuthorize();
     const authorized = authorize(place.policy, place);
 

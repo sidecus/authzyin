@@ -4,7 +4,7 @@ import { createMuiTheme, MuiThemeProvider, makeStyles } from '@material-ui/core/
 import { Paper, Container } from '@material-ui/core';
 import { initializeAuthZyinContext, AuthZyinProvider } from 'authzyin.js';
 import { getAuthorizationHeadersAsync } from './api/Api';
-import { useSampleAppBoundActionCreators } from './store/actions';
+import { useAppBoundActions } from './store/actions';
 import { signInfoSelector } from './store/selectors';
 import { Home } from './components/Home';
 
@@ -30,7 +30,7 @@ initializeAuthZyinContext();
 export default () => {
     const classes = useStyles();
     const signInInfo = useSelector(signInfoSelector);
-    const { signIn } = useSampleAppBoundActionCreators();
+    const { signIn } = useAppBoundActions();
 
     // Effect to trigger log in during page load
     React.useEffect(() => {
