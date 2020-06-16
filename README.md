@@ -9,13 +9,13 @@ Authorization is both simple and complex. Often we need to have proper authoriza
 
 If there are only a few authoriztaion policies/requirements, this is relatively easy and no big deal. But as our application grows, the work required to maintain and make sure both sides in sync also grows dramatically, and it's likely no longer a simple task.
 
-I was thinking about whether we can have some libraries to enable the same authorization on both server and client - aka - write once, use in both places. This repo is my first try over the past few days.
-It contains server library and client library to make this simple for you.
+I was thinking about whether we can have some libraries to enable the same authorization on both server and client, aka write once, use in both places leveraging the good policy based patterns from asp.net core. This repo is my first try over the past few days. It contains server library and client library to make this simple for you.
 
-*Kindly note*: the server & client libraries can be used together, or standalone by themselves. When using together the libraries make the authorization much easier, but it's not a must.
+*Kindly note*: the server & client libraries can be used together, or standalone. When using together the libraries make the authorization much easier, but it's not a must.
 
 ## How to use this library
 ### Server:
+Similar policy/requirement authorization pattern from asp.net core without having to use AuthroziationHandlers, with JSON path based requirement definition and evlauation, as well as built in api to expose the policy/requirement definitions so that client can consume direclty. The only thing additional you need to do compared is to register a scoped ```IAuthZyinContext``` service into the DI container.
 1. Define your requirements and policies, like in the [sample project](https://github.com/sidecus/authzyin/blob/master/sample/AuthN/Requirements.cs).
 2. Use the AddAuthZyinAuthorization extension method to enable AuthZyin authorization and register your IAuthZyinContext context in Startup.cs.
 ```CSharp
@@ -30,8 +30,7 @@ It contains server library and client library to make this simple for you.
     // Add scoped context, used for authorization on both server and client
     services.AddScoped<IAuthZyinContext, SampleAuthZyinContext>();
 ```
-
-Now you can use the policies in the standard asp.net core way (as param to ```AuthorizeAttribute``` for those not requiring resources, or as part of ```AuthorizeAsync```).
+3. Now you can use the policies in the standard asp.net core way (as param to ```AuthorizeAttribute``` for those not requiring resources, or as part of ```AuthorizeAsync```).
 ```CSharp
     // Authorize based on policy and resource
     var authResult = await this.authorizationService.AuthorizeAsync(user, bar, "CanEnterBar");
@@ -40,44 +39,45 @@ Now you can use the policies in the standard asp.net core way (as param to ```Au
 You might also have have more complex authorization scenarios to handle, and you can mix this with standard asp.net core requirement/handler behaviors - as long as those requirements are not inherited from ```AuthZyin.Authorization.Requirement``` they won't be processed by this lib. If you'd like, you can also define your policies/requirements in a json config file and load it during your app startup. It depends on perosnal preference so not included as part of this library.
 
 ### Client:
-1. Initialize AuthZyinContext (similar as ```createStore``` in Redux, call this globally like [this](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/index.tsx)).
+Full policy and requirement based authorization. Built in capability to automatically load policy definitions exposed by the server library. Policies and requirements are resolved and evaluated automatically for you whenever you authorize. *The client library can be used standalone without having to use the server library*.
+**More details** about the client lib can be found [here](https://github.com/sidecus/authzyin/tree/master/authzyin.js).
+1. Initialize AuthZyinContext (similar as ```createStore``` in Redux, call this globally) and wrap your main component with AuthZyinProvider like below.
 ```TypeScript
     initializeAuthZyinContext();
-```
-2. Wrap your main components with AuthZyinProvider like [this](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/App.tsx).
-```TypeScript
-    <AuthZyinProvider options={{ requestInitFn: getAuthorizationHeadersAsync }}>
-        <MainContent />
-    </AuthZyinProvider>
-```
-Do this after authentication since the api provided by the lib requires authenticated api call by default for security reasons. You can use the ```requestInitFn``` param in the options to provide your authoriztaion headers.
 
-Now you can use the useAuthorize hooks in your components like [this](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/components/PlaceComponent.tsx):
+    export const App = () => {
+        if (signedIn) {
+            return (
+                <AuthZyinProvider options={{ requestInitFn: getAuthorizationHeadersAsync }}>
+                    <MainContent />
+                </AuthZyinProvider>
+            );
+        }
+    }
+```
+Do this after authentication since the api provided by the lib requires authenticated api call by default for security reasons. You can use the optional ```requestInitFn``` callback parameter in the options to provide your authoriztaion headers if needed.
+2. Now you can use the useAuthorize hooks in your components like below or as the [sample](https://github.com/sidecus/authzyin/blob/master/authzyin.js/example/src/components/PlaceComponent.tsx):
 ```TypeScript
     const authorize = useAuthorize();
-    const authorized = authorize('CanEnterBar', bar);
+    const authorized = authorize('CanEnterBar' /*policy*/, bar /*resource*);
 ```
-**The client library can be used as a standalone library without having to use the server part**. To do this, just call ```initializeAuthZyinContext``` and provide your own ```AuthZyinContext``` object as the parameter. The client lib will then use the provided object as the context and skipping loading from server automatically.
-
-More details can be found [here](https://github.com/sidecus/authzyin/tree/master/authzyin.js).
 
 ## How to run locally
-### VSCode with HMR
-1. Build client lib first (with HMR)
+### VSCode
+1. Build client lib first
 ```bash
     cd authzyin.js
     npm install
-    npm start
+    npm run build # or 'npm start' if you need HMR
 ```
 2. Use VSCode to open the project root folder, then F5.
 
 ### Console
-You might need two console windows from project root:
 1. Start client lib
 ```bash
     cd authzyin.js
     npm install
-    npm start
+    npm run build # or 'npm start' if you need HMR
 ```
 2. Start the sample asp.net core project
 ```bash

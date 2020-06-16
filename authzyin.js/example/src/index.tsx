@@ -4,10 +4,6 @@ import { Provider } from 'react-redux';
 import {sampleStore} from './store/store';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import { initializeAuthZyinContext } from 'authzyin.js';
-
-// Initialize authzyin context first
-initializeAuthZyinContext();
 
 ReactDOM.render(
     <Provider store={sampleStore}>

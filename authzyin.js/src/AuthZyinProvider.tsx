@@ -87,18 +87,20 @@ const defaultOptions: Partial<AuthZyinProviderOptions> = {
 export const AuthZyinProvider = <TData extends object = object>(
     props: PropsWithChildren<{ options?: Partial<AuthZyinProviderOptions> }>
 ): JSX.Element => {
-    const defaultAuthZyinContext = useAuthZyinContext<TData>();
     const [context, setContext] = useState({} as AuthZyinContext<TData>);
+
+    // useAuthZyinContext here will return the defaultValue set by initializeAuthZyinContext
+    const defaultAuthZyinContext = useAuthZyinContext<TData>();
 
     useEffect(() => {
         const options = { ...defaultOptions, ...props?.options } as AuthZyinProviderOptions;
+
         const processAndSetContext = (contextToSave: AuthZyinContext<TData>) => {
             if (options.jsonPathPropToCamelCase) {
                 // Convert property names in JSON path to camel case
                 camelCaseContext(contextToSave);
             }
 
-            // Set context to the state
             setContext(contextToSave);
         };
 

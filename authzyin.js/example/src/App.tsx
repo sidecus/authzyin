@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { createMuiTheme, MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import { Paper, Container } from '@material-ui/core';
-import { AuthZyinProvider } from 'authzyin.js';
+import { initializeAuthZyinContext, AuthZyinProvider } from 'authzyin.js';
 import { getAuthorizationHeadersAsync } from './api/Api';
 import { useSampleAppBoundActionCreators } from './store/actions';
 import { signInfoSelector } from './store/selectors';
@@ -24,6 +24,9 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
+// Initialize authzyin context globally
+initializeAuthZyinContext();
+
 export default () => {
     const classes = useStyles();
     const signInInfo = useSelector(signInfoSelector);
@@ -36,6 +39,7 @@ export default () => {
 
     if (signInInfo.success) {
         return (
+            // Sign in succeeded, render main content wrapped with AuthZyinProvider
             <AuthZyinProvider options={{ requestInitFn: getAuthorizationHeadersAsync }}>
                 <Container>
                     <MuiThemeProvider theme={darkTheme}>
