@@ -62,7 +62,7 @@ The client library supports full policy and requirement based authorization, wit
 ```
 
 ## How to run the sample project locally
-###Build client lib:
+### Build client lib:
 ```Shell
     cd authzyin.js   # from project root
     npm install
