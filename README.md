@@ -62,21 +62,23 @@ The client library supports full policy and requirement based authorization, wit
 ```
 
 ## How to run the sample project locally
-###Build client lib:
-```Shell
-    cd authzyin.js   # from project root
-    npm install
-    npm run build    # or 'npm start' if you need HMR
+### Using VS Code
 ```
-### Run with VS Code or terminal
-1. VS Code
+    Open project root folder with VS Code, then F5.
 ```
-Open project root folder with VS Code, then F5.
-```
-2. Terminal
+Or
+### Using Terminal
 ```Shell
     cd sample        # from project root
     dotnet run
+```
+After that simply visit https://localhost:5001. Please allow popup since the sample app uses MSAL.js popup based log in. The first build will take some time since it needs to run npm install for both the client lib and the SPA app. 
+
+If you want to update the client lib code, please do this before you run the project:
+```Shell
+    cd authzyin.js   # from project root
+    npm install
+    npm start
 ```
 
 ## More technical details
