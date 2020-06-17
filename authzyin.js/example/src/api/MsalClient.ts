@@ -5,9 +5,9 @@ import { PublicClientApplication, TokenResponse } from '@azure/msal-browser';
 // visit https://azuread.github.io/microsoft-authentication-library-for-js/docs/msal/modules/_authenticationparameters_.html
 const msalConfig = {
     auth: {
-        clientId: "1be718bf-6d75-4a33-a493-ed7e3df882de",
-        authority: "https://login.microsoftonline.com/common",
-        redirectUri: "https://localhost:5001/auth.html",
+        clientId: '1be718bf-6d75-4a33-a493-ed7e3df882de',
+        authority: 'https://login.microsoftonline.com/common',
+        redirectUri: `https://${document.location.host}/auth.html`,
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored

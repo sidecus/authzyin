@@ -5,8 +5,9 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
-    <SpaRoot>..\authzyin.js\example</SpaRoot>
-    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+    <SpaRoot>..\authzyin.js\example\</SpaRoot>
+    <AuthZyinJsRoot>..\authzyin.js\</AuthZyinJsRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**;$(AuthZyinJsRoot)node_modules\**</DefaultItemExcludes>
     <UserSecretsId>d9f61943-6dbe-48ca-b144-591d9d8b44fd</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
@@ -18,28 +19,42 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    <Content Remove="$(AuthZyinJsRoot)**" />
+    <None Remove="$(AuthZyinJsRoot)**" />
+    <None Include="$(AuthZyinJsRoot)**" Exclude="$(AuthZyinJsRoot)node_modules\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\lib.csproj" />
   </ItemGroup>
-  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+  <Target Name="DebugEnsureNodeEnvForAuthZyinJS" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(AuthZyinJsRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project." />
+    <Message Importance="high" Text="Restoring dependencies for authzyin.js" />
+    <Exec WorkingDirectory="$(AuthZyinJsRoot)" Command="npm install" />
+  </Target>
+  <Target Name="DebugEnsureAuthZyinJSIsBuilt" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(AuthZyinJsRoot)dist') ">
+    <!-- Ensure Node.js is installed -->
+    <Message Importance="high" Text="Building authzyin.js since it's not built before" />
+    <Exec WorkingDirectory="$(AuthZyinJsRoot)" Command="npm run build" />
+  </Target>
+  <Target Name="DebugEnsureNodeEnvForSPA" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+    <Message Importance="high" Text="Restoring dependencies for the sample SPA project." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+    <Exec WorkingDirectory="$(AuthZyinJsRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(AuthZyinJsRoot)" Command="npm run build" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
-    <!-- Include the newly-built files in the publish output -->
+    <!-- Include the newly-built SPA files in the publish output -->
     <ItemGroup>
-      <DistFiles Include="$(SpaRoot)build\**; $(SpaRoot)build-ssr\**" />
+      <DistFiles Include="$(SpaRoot)build\**;" />
       <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
-        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <RelativePath>ClientApp\%(DistFiles.RecursiveDir)%(DistFiles.Filename)%(DistFiles.Extension)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       </ResolvedFileToPublish>

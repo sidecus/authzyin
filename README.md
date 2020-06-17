@@ -15,7 +15,7 @@ I was thinking about whether we can have some libraries to enable the same autho
 
 ## How to use this library
 ### Server:
-Similar policy/requirement authorization pattern from asp.net core without having to use AuthroziationHandlers, with JSON path based requirement definition and evlauation, as well as built in api to expose the policy/requirement definitions so that client can consume direclty. The only thing additional you need to do compared is to register a scoped ```IAuthZyinContext``` service into the DI container.
+This library provides similar policy/requirement authorization pattern from asp.net core without having to use AuthroziationHandlers, with JSON path based requirement definition and evlauation. It also provides a built in api to expose the policy/requirement definitions so that client can consume direclty. Compared to standard asp.net core pattern the only additional thing you need to do is to register a scoped ```IAuthZyinContext``` service into the DI container to construct the context instance which will used as part of the requirement evaluation. The lib is built on asp.net core 3.1, if you are using a lower version of asp.net core, you can reuse majority of the code but will have to write your own extension method similar as ```AddAuthZyinAuthorization```.
 1. Define your requirements and policies, like in the [sample project](https://github.com/sidecus/authzyin/blob/master/sample/AuthN/Requirements.cs).
 2. Use the ```AddAuthZyinAuthorization``` extension method to enable AuthZyin authorization and register your scoped ```IAuthZyinContext``` context in Startup.cs.
 ```C#

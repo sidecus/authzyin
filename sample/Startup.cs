@@ -38,9 +38,10 @@ namespace sample
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
+            // See sample.csproj about how to use custom publish tasks to copy these files over.
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "../../authzyin.js/example/build";
+                configuration.RootPath = "ClientApp";
             });
 
             var authConfig = new AuthConfig();
@@ -79,7 +80,6 @@ namespace sample
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
@@ -92,7 +92,7 @@ namespace sample
 
             app.UseSpa(spa =>
             {
-                spa.Options.SourcePath = "../authzyin.js/example";
+                spa.Options.SourcePath = "../authzyin.js/example/";
 
                 if (env.IsDevelopment())
                 {
