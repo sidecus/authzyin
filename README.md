@@ -62,24 +62,24 @@ The client library supports full policy and requirement based authorization, wit
 ```
 
 ## How to run the sample project locally
+### Prerequisites
+Install these pre-req first if you don't have them:
+[.net core 3.1 SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+[node.js](https://nodejs.org/en/)
+[npm](https://www.npmjs.com/get-npm)
+[yarn](https://classic.yarnpkg.com/en/docs/install)
+I decided to switch to yarn since I've been battling with [this npm issue](https://github.com/npm/npm/issues/17722) for a day on my Mac and Windows.
 ### Using VS Code
 ```
     Open project root folder with VS Code, then F5.
 ```
-Or
+**Or**
 ### Using Terminal
 ```Shell
     cd sample        # from project root
     dotnet run
 ```
-After that simply visit https://localhost:5001. Please allow popup since the sample app uses MSAL.js popup based log in. The first build will take some time since it needs to run npm install for both the client lib and the SPA app. 
-
-If you want to update the client lib code, please do this before you run the project:
-```Shell
-    cd authzyin.js   # from project root
-    npm install
-    npm start
-```
+After that simply visit https://localhost:5001. Please **allow popup** since the sample app uses msal.js popup based log in. The first run will take some time since it needs to restore node modules for both the client lib and the SPA app. 
 
 ## More technical details
 ### Requirement evaluation
