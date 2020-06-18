@@ -15,7 +15,7 @@ I was thinking about whether we can have some libraries to enable the same autho
 
 ## How to use this library
 ### Server:
-Similar policy/requirement authorization pattern from asp.net core without having to use AuthroziationHandlers, with JSON path based requirement definition and evlauation, as well as built in api to expose the policy/requirement definitions so that client can consume direclty. The only thing additional you need to do compared is to register a scoped ```IAuthZyinContext``` service into the DI container.
+This library provides similar policy/requirement authorization pattern from asp.net core without having to use AuthroziationHandlers, with JSON path based requirement definition and evlauation. It also provides a built in api to expose the policy/requirement definitions so that client can consume direclty. Compared to standard asp.net core pattern the only additional thing you need to do is to register a scoped ```IAuthZyinContext``` service into the DI container to construct the context instance which will used as part of the requirement evaluation. The lib is built on asp.net core 3.1, if you are using a lower version of asp.net core, you can reuse majority of the code but will have to write your own extension method similar as ```AddAuthZyinAuthorization```.
 1. Define your requirements and policies, like in the [sample project](https://github.com/sidecus/authzyin/blob/master/sample/AuthN/Requirements.cs).
 2. Use the ```AddAuthZyinAuthorization``` extension method to enable AuthZyin authorization and register your scoped ```IAuthZyinContext``` context in Startup.cs.
 ```C#
@@ -62,22 +62,24 @@ The client library supports full policy and requirement based authorization, wit
 ```
 
 ## How to run the sample project locally
-### Build client lib:
-```Shell
-    cd authzyin.js   # from project root
-    npm install
-    npm run build    # or 'npm start' if you need HMR
+### Prerequisites
+Install these pre-req first if you don't have them:
+[.net core 3.1 SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+[node.js](https://nodejs.org/en/)
+[npm](https://www.npmjs.com/get-npm)
+[yarn](https://classic.yarnpkg.com/en/docs/install)
+I decided to switch to yarn since I've been battling with [this npm issue](https://github.com/npm/npm/issues/17722) for a day on my Mac and Windows.
+### Using VS Code
 ```
-### Run with VS Code or terminal
-1. VS Code
+    Open project root folder with VS Code, then F5.
 ```
-Open project root folder with VS Code, then F5.
-```
-2. Terminal
+**Or**
+### Using Terminal
 ```Shell
     cd sample        # from project root
     dotnet run
 ```
+After that simply visit https://localhost:5001. Please **allow popup** since the sample app uses msal.js popup based log in. The first run will take some time since it needs to restore node modules for both the client lib and the SPA app. 
 
 ## More technical details
 ### Requirement evaluation
