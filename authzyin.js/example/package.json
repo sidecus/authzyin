@@ -27,6 +27,7 @@
     "react-json-view": "^1.19.1",
     "react-redux": "^7.2.0",
     "react-scripts": "link:../node_modules/react-scripts",
+    "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",

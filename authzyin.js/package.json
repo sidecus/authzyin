@@ -1,10 +1,17 @@
 {
   "name": "authzyin.js",
   "version": "0.1.0",
-  "description": "React based client library for authzyin",
+  "description": "React library for policy based authorization with JSON path based requirement evaluation",
   "author": "sidecus",
   "license": "MIT",
   "repository": "sidecus/authzyin",
+  "keywords": [
+    "react",
+    "policy",
+    "authorization",
+    "hooks",
+    "authzyin"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
@@ -12,20 +19,18 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "microbundle-crl --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "test": "run-s test:unit test:lint test:build",
-    "test:build": "run-s build",
-    "test:lint": "eslint . --ext .ts --ext .tsx",
+    "build": "microbundle --jsx React.createElement",
+    "start": "microbundle watch --no-compress --jsx React.createElement",
+    "test": "run-s test:unit test:lint",
+    "test:lint": "eslint . --ext ts --ext tsx",
     "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
-    "predeploy": "cd example && npm install && npm run build",
-    "deploy": "gh-pages -d example/build"
+    "test:watch": "react-scripts test --env=jsdom"
   },
   "peerDependencies": {
     "react": "^16.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.10.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/react-hooks": "^3.3.0",
@@ -50,7 +55,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "gh-pages": "^2.2.0",
     "jest-fetch-mock": "^3.0.3",
-    "microbundle-crl": "^0.13.10",
+    "microbundle": "^0.12.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.4",
     "react": "^16.13.1",
