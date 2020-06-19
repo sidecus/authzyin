@@ -23,8 +23,8 @@ namespace AuthZyin.Authorization.Client
         public string Name { get; }
 
         /// <summary>
-        /// Gets or sets the requirement list. In fact all requirements to send to client should be of type AbstractRequirement.
         /// TODO[sidecus]: Workaround for new System.Text.Json serialization
+        /// Gets or sets the requirement list. In fact all requirements to send to client should be inherited from type Requirement.
         /// The reason to use List<object> instead of List<AbstractRequirement> as the item type is to force System.Text.Json
         /// to serialize all members in web api response.
         /// https://github.com/dotnet/runtime/issues/31742 & https://github.com/dotnet/runtime/issues/29937

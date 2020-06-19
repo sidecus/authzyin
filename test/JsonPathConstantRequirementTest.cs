@@ -92,7 +92,7 @@ namespace test
             var requirement = Activator.CreateInstance(constRequirementType, operatorType, contextPath, constValue);
 
             Assert.Equal(contextPath, this.GetPropertyValue(constRequirementType, "DataJPath", requirement));
-            Assert.Equal(ConstantWrapperResource<int>.ValueJsonPath, this.GetPropertyValue(constRequirementType, "ResourceJPath", requirement));
+            Assert.Equal(ValueWrapperResource<int>.ValueJsonPath, this.GetPropertyValue(constRequirementType, "ResourceJPath", requirement));
             Assert.Equal(operatorType, this.GetPropertyValue(constRequirementType, "Operator", requirement));
             Assert.Equal(Direction.ContextToResource, this.GetPropertyValue(constRequirementType, "Direction", requirement));
             Assert.Equal(constValue, this.GetPropertyValue(constRequirementType, "ConstValue", requirement));
@@ -106,7 +106,7 @@ namespace test
             object constValue,
             bool expectedReseult)
         {
-            var authZyinContext = TestContext.CreateDefaultTestContext();
+            var authZyinContext = new TestContext();
 
             var genericType = typeof(JsonPathConstantRequirement<,>);
             var constType = constValue != null ? constValue.GetType() : typeof(string);             //special case for null value and defaul the type to string
@@ -125,14 +125,6 @@ namespace test
                 Assert.Equal(expectedReseult, (bool)evaluateMethod.Invoke(requirement, new object[] { authZyinContext, null as Resource }));
                 Assert.Equal(expectedReseult, (bool)evaluateMethod.Invoke(requirement, new object[] { authZyinContext, new TestResourceInvalid() }));
             }
-        }
-
-        [Fact]
-        public void ConstantWrapperResourceValueJsonPath()
-        {
-            // Ensure the wrapper resource use a member named "Value" to save the constant right operand.
-            // It's needed since the client is betting it to be harded coded to "$.Value".
-            Assert.Equal("$.Value", ConstantWrapperResource<int>.ValueJsonPath);
         }
 
         private object GetPropertyValue(Type type, string memberName, object target)

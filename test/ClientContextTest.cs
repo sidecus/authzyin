@@ -12,14 +12,14 @@ namespace test
         [Fact]
         public void ConstructorThrowsOnInvalidArg()
         {
-            Assert.Throws<ArgumentNullException>(() => new ClientContext<TestCustomData>(null));
+            Assert.Throws<ArgumentNullException>(() => new ClientContext(null));
         }
 
         [Fact]
         public void UserContextAndPoliciesAreConstructedCorrectly()
         {
-            var context = TestContext.CreateDefaultTestContext();
-            var clientContext = new ClientContext<TestCustomData>(context);
+            var context = new TestContext();
+            var clientContext = new ClientContext(context);
 
             // Check client context generation
             Assert.Same(clientContext.UserContext, context.UserContext);

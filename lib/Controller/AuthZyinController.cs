@@ -3,6 +3,7 @@ namespace AuthZyin.Controller
     using System;
     using System.Threading.Tasks;
     using AuthZyin.Authorization;
+    using AuthZyin.Authorization.Client;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +39,7 @@ namespace AuthZyin.Controller
         [Route("context")]
         public async Task<IActionResult> GetPolicies()
         {
-            var data = await Task.FromResult(this.authZyinContext.ClientContext);
+            var data = await Task.FromResult(new ClientContext(this.authZyinContext));
             return this.Ok(data);
         }
     }

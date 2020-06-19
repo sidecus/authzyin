@@ -7,34 +7,30 @@ namespace test
 
     public class JsonPathRequirementTest
     {
-        [Fact]
-        public void ConsructorThrowsOnInvalidArg()
+        private static readonly TestResource TestResource = new TestResource();
+        public static readonly object[][] ConstrucNegativeCases = new []
         {
-            var resource = new TestResource();
+            new object[] { OperatorType.Invalid, string.Empty, string.Empty, Direction.ContextToResource },
+            new object[] { OperatorType.Or, "$", string.Empty, Direction.ContextToResource },
+            new object[] { OperatorType.GreaterThan, null, TestResource.JPathIntValue, Direction.ContextToResource },
+            new object[] { OperatorType.RequiresRole, "abc", null, Direction.ResourceToContext },
+            new object[] { OperatorType.RequiresRole, "abc", "dcd", (Direction) 0 },
+        };
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new JsonPathRequirement<TestCustomData, TestResource>(
-                OperatorType.Invalid,
-                "",
-                "",
-                Direction.ContextToResource));
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => new JsonPathRequirement<TestCustomData, TestResource>(
-                OperatorType.Or,
-                "$",
-                "",
-                Direction.ContextToResource));
-
-            Assert.Throws<ArgumentNullException>(() => new JsonPathRequirement<TestCustomData, TestResource>(
-                OperatorType.GreaterThan,
-                null,
-                resource.JPathIntValue,
-                Direction.ContextToResource));
-
-            Assert.Throws<ArgumentNullException>(() => new JsonPathRequirement<TestCustomData, TestResource>(
-                OperatorType.RequiresRole,
-                "abc",
-                null,
-                Direction.ContextToResource));
+        [Theory]
+        [MemberData(nameof(ConstrucNegativeCases))]
+        public void ConsructorThrowsOnInvalidArg(
+            OperatorType operatorType,
+            string dataPath,
+            string resourcePath,
+            Direction direction
+        )
+        {
+            Assert.ThrowsAny<ArgumentException>(() => new JsonPathRequirement<TestCustomData, TestResource>(
+                operatorType,
+                dataPath,
+                resourcePath,
+                direction));
         }
         
         [Fact]
@@ -42,7 +38,7 @@ namespace test
         {
             var dataJPathIntValue = new TestCustomData().JPathIntValue;
 
-            var context = TestContext.CreateDefaultTestContext(setNullCustomData: true);
+            var context = new TestContext(setNullCustomData: true);
             var resource = new TestResource();
 
             var equalsRequirement = new JsonPathRequirement<TestCustomData, TestResource>(
@@ -58,7 +54,7 @@ namespace test
         [Fact]
         public void JsonPathRequirementPositiveBehavior()
         {
-            var context = TestContext.CreateDefaultTestContext();
+            var context = new TestContext();
             var resource = new TestResource();
 
             var greaterThanRequirement = new JsonPathRequirement<TestCustomData, TestResource>(
