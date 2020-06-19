@@ -45,7 +45,7 @@ namespace test
         [MemberData(nameof(ConcreteRequirementsTestCases))]
         public void TestConcreteRequirements(Requirement requirement, bool expectedResult)
         {
-            var context = TestContext.CreateDefaultTestContext();
+            var context = new TestContext();
             Assert.Equal(expectedResult, requirement.Evaluate(context, MyResource));
         }
     }

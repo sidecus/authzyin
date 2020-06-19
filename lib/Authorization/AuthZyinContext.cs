@@ -6,7 +6,7 @@ namespace AuthZyin.Authorization
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using AuthZyin.Authentication;
-    using AuthZyin.Authorization.Client;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Interface to construct required authorization data.
@@ -15,12 +15,25 @@ namespace AuthZyin.Authorization
     public interface IAuthZyinContext
     {
         /// <summary>
-        /// Gets client context used for client authorization.
-        /// Use object because:
-        /// 1. we don't know the exact type of Data here
-        /// 2. object helps with System.Text.Json serialization to include all needed members.
+        /// User context contains basic user info plus roles
         /// </summary>
-        object ClientContext { get; }
+        UserContext UserContext { get; }
+
+        /// <summary>
+        // Authorization policy list
+        /// </summary>
+        IEnumerable<(string name, AuthorizationPolicy policy)> Policies { get; }
+
+        /// <summary>
+        /// Gets the data object as type object
+        /// </summary>
+        object GetData();
+
+        /// <summary>
+        /// Get the data object as JObject. This will be used by JSONPath based requirement evaluation.
+        /// </summary>
+        /// <returns>An JObject representing the data object</returns>
+        JObject GetDataAsJObject();
     }
 
     /// <summary>
@@ -31,20 +44,20 @@ namespace AuthZyin.Authorization
     public class AuthZyinContext<T> : IAuthZyinContext where T : class
     {
         /// <summary>
-        /// private instance of the data T which will be used in JsonPath based requirements
-        /// </summary>
-        private T dataInstance;
-
-        /// <summary>
-        /// Gets the data factory which produces the custom data. Override this to extend the custom data loading behavior.
-        // For example your own AuthZyinContext derived calss can depend on other services.
-        /// </summary>
-        protected virtual Func<T> dataFactory { get; }
-
-        /// <summary>
         /// Claims accessor
         /// </summary>
         protected AadClaimsAccessor claimsAccessor { get; }
+
+        /// <summary>
+        /// Lazy data T to avoid unnecessary computation if not needed.
+        /// </summary>
+        protected Lazy<T> lazyData { get; }
+
+        /// <summary>
+        /// Lazy JObject data which will be called by Json Path based requirements evaluation (if any).
+        /// </summary>
+        /// <value></value>
+        protected Lazy<JObject> lazyJObject { get; }
 
         /// <summary>
         /// Authorization user context
@@ -58,28 +71,8 @@ namespace AuthZyin.Authorization
 
         /// <summary>
         /// Custom data for authorization purpose.
-        /// Retrieved via the custom data factory set in construtor.
-        /// This is not thread safe so your factory method might be called multiple times.
         /// </summary>
-        public T Data
-        {
-            get
-            {
-                if (this.dataInstance == null &&
-                    this.dataFactory != null)
-                {
-                    this.dataInstance = this.dataFactory();
-                }
-
-                return this.dataInstance;
-            }
-        }
-
-        /// <summary>
-        /// Gets an object representing the authorization context to send to client
-        /// Implementing IAuthZyinContext.
-        /// </summary>
-        public object ClientContext => new ClientContext<T>(this);
+        public T Data => this.lazyData.Value;
 
         /// <summary>
         /// Initializes a new instance of the AuthZyinContext class. This constructor is for DI purpose.
@@ -107,6 +100,27 @@ namespace AuthZyin.Authorization
 
             this.claimsAccessor = new AadClaimsAccessor(claimsPrincipal);
             this.UserContext = new UserContext(claimsAccessor);
+            this.lazyData = new Lazy<T>(this.CreateData);
+            this.lazyJObject = new Lazy<JObject>(() => JObject.FromObject(this.Data));
         }
+
+        /// <summary>
+        /// Get the data object as JObject. This will be used by JSONPath based requirement evaluation.
+        /// </summary>
+        /// <returns>An JObject representing the data object</returns>
+        public JObject GetDataAsJObject() => this.lazyJObject.Value;
+
+        /// <summary>
+        /// Gets an object representing the authorization context to send to client
+        /// Implementing IAuthZyinContext.
+        /// </summary>
+        public object GetData() => this.Data;
+
+        /// <summary>
+        /// Gets data needed. Override this in your own AuthZyinContext implementation if you use JsonPath
+        /// based requirements. This will only be called once for each Http request scope.
+        /// </summary>
+        /// <returns>Data object of type T</returns>
+        protected virtual T CreateData() => null;
     }
 }

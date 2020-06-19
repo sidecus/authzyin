@@ -8,7 +8,7 @@ namespace AuthZyin.Authorization.Client
     /// Class representing context data to send to the client for client authorization.
     /// </summary>
     /// <typeparam name="T">Custom data type</typeparam>
-    public class ClientContext<T> where T : class
+    public class ClientContext
     {
         /// <summary>
         /// Gets the user context, which will also be sent to client
@@ -24,13 +24,13 @@ namespace AuthZyin.Authorization.Client
         /// <summary>
         /// Gets or sets custom data used to do "resource" based authorization on client. It's of type T.
         /// </summary>
-        public T Data { get; set; }
+        public object Data { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the ClientContext class to send to client
         /// </summary>
         /// <param name="context">AuthZyin context</param>
-        public ClientContext(AuthZyinContext<T> context)
+        public ClientContext(IAuthZyinContext context)
         {
             if (context == null)
             {
@@ -39,7 +39,7 @@ namespace AuthZyin.Authorization.Client
 
             this.UserContext = context.UserContext;
             this.Policies = context.Policies.Select(x => new ClientPolicy(x.name, x.policy)).ToList();
-            this.Data = context.Data;
+            this.Data = context.GetData();
         }
     }
 }

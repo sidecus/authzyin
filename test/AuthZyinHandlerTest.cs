@@ -1,7 +1,6 @@
 namespace test
 {
     using System;
-    using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
     using AuthZyin.Authorization;
@@ -12,7 +11,7 @@ namespace test
 
     public class AuthZyinHandlerTest
     {
-        private readonly AuthZyinContext<TestCustomData> context = TestContext.CreateDefaultTestContext();
+        private readonly AuthZyinContext<TestCustomData> context = new TestContext();
         private readonly ILogger<AuthZyinHandler> logger = TestLoggerFactory.CreateLogger<AuthZyinHandler>();
 
         [Fact]

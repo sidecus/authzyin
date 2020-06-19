@@ -6,7 +6,7 @@
 #
 name: authzyin
 services:
-- name: sample
+- name: authzyin_sample
   project: sample/sample.csproj
   bindings:
   - port: 5001

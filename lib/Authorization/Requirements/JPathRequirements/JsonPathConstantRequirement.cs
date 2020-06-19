@@ -2,17 +2,21 @@ namespace AuthZyin.Authorization.JPathRequirements
 {
     using System;
     using AuthZyin.Authorization.Requirements;
-    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Authorization requirement which uses JsonPath for filtering and comparison from custom AuthZData to a constant.
     /// </summary>
     /// <typeparam name="TData">Type of custom data in AuthZyinContext</typeparam>
     /// <typeparam name="TValue">Type of constant</typeparam>
-    public class JsonPathConstantRequirement<TData, TValue> : JsonPathRequirement<TData, ConstantWrapperResource<TValue>>
+    public class JsonPathConstantRequirement<TData, TValue> : JsonPathRequirement<TData, ValueWrapperResource<TValue>>
         where TData : class
         where TValue: IConvertible
     {
+        /// <summary>
+        /// Dummy resource object used by JsonPath const requirement evaluation.
+        /// </summary>
+        private readonly ValueWrapperResource<TValue> valueWrapperResource;
+
         /// <summary>
         /// This needs a const value so doesn't need a resource.
         /// </summary>
@@ -31,38 +35,39 @@ namespace AuthZyin.Authorization.JPathRequirements
         /// </summary>
         /// <param name="operatorType">Requirement operator type</param>
         /// <param name="dataPath">jsonPath to context object</param>
-        /// <param name="constValue">const to compare with</param>
-        public JsonPathConstantRequirement(
-            OperatorType operatorType,
-            string dataPath,
-            TValue constValue)
+        /// <param name="value">const to compare with</param>
+        public JsonPathConstantRequirement(OperatorType operatorType, string dataPath, TValue value)
             : base(
                 operatorType,
                 dataPath,
-                ConstantWrapperResource<TValue>.ValueJsonPath,
+                ValueWrapperResource<TValue>.ValueJsonPath,
                 Direction.ContextToResource)
         {
-            if (constValue as object == null)
+            // We don't allow null as the value, so boxing it to compare.
+            if (value as object == null)
             {
-                throw new ArgumentNullException(nameof(constValue));
+                throw new ArgumentNullException(nameof(value));
             }
 
-            this.ConstValue = constValue;
+            this.ConstValue = value;
+            this.valueWrapperResource = new ValueWrapperResource<TValue>(value);
         }
 
         /// <summary>
-        /// Get a const value resource with the const value. The passed in resource will be replaced by this.
+        // Evaluate current requirement against given user and typed resource.
         /// </summary>
-        /// <param name="resource">JObject representing resource - always null in this case</param>
-        /// <returns>a resource object wrapping the const value in JObject format</returns>
-        protected sealed override JObject GetResourceJObject(ConstantWrapperResource<TValue> resource)
+        /// <param name="context">authorization data context</param>
+        /// <param name="resource">resource object</param>
+        /// <returns>true if allowed</returns>
+        protected override bool Evaluate(AuthZyinContext<TData> context, ValueWrapperResource<TValue> resource)
         {
             if (resource != null)
             {
                 throw new InvalidOperationException("Unexpected resource passed to JsonPathConstantRequirement evaluation");
             }
 
-            return JObject.FromObject(new ConstantWrapperResource<TValue>(this.ConstValue));
+            // Call base and replace the resource with the dummy resource wrapping around the const value
+            return base.Evaluate(context, this.valueWrapperResource);
         }
     }
 }

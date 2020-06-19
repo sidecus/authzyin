@@ -8,7 +8,6 @@ namespace test
     using AuthZyin.Authorization.Requirements;
     using AuthZyin.Authorization;
     using AuthZyin.Authentication;
-    using Newtonsoft.Json.Linq;
 
     public class TestRequirement<T> : Requirement<TestCustomData, T> where T: Resource
     {
@@ -78,59 +77,50 @@ namespace test
         public string JPathNestedGuidValue => $"$.{nameof(this.NestedData)}.{nameof(this.NestedData.GuidValue)}";
     }
 
+    /// <summary>
+    /// Test context class with some default values set for easy validation purpose
+    /// </summary>
     public class TestContext : AuthZyinContext<TestCustomData>
     {
-        private readonly TestCustomData testCustomData;
+        public  static readonly string DefaultUserId = Guid.NewGuid().ToString();
+        public  static readonly string DefaultUserName = "testusre";
+        public  static readonly string[] DefaultRoles = new string[] { "role1", "role2" };
+        public  static readonly List<(string name, AuthorizationPolicy policy)> DefaultPolicies;
+        public static readonly ClaimsPrincipal DefaultClaimsPrincipal;
 
-        public TestContext(
-            IEnumerable<(string name, AuthorizationPolicy policy)> policies,
-            ClaimsPrincipal claimsPrincipal,
-            TestCustomData testCustomData) : base(policies, claimsPrincipal)
+        private readonly Func<TestCustomData> TestCustomDataCreator;
+
+        static TestContext()
         {
-            this.testCustomData = testCustomData;
-        }
-
-        protected override Func<TestCustomData> dataFactory => () => this.testCustomData;
-
-        public static TestContext CreateTestContext(
-            string userId,
-            string userName,
-            IEnumerable<string> roles,
-            List<(string name, AuthorizationPolicy policy)> policies,
-            TestCustomData testCustomData)
-        {
-            var userIdClaim = new Claim(AadClaimsAccessor.UserIdClaimType, userId);
-            var userNameClaim = new Claim(AadClaimsAccessor.NameClaimType, userName);
-
-            var identity = new ClaimsIdentity();
-            identity.AddClaims(new Claim[] { userIdClaim, userNameClaim });
-            identity.AddClaims(roles.Select(r => new Claim(AadClaimsAccessor.RoleClaimType, r)));
-
-            return new TestContext(policies, new ClaimsPrincipal(identity), testCustomData);
-        }
-
-        public static TestContext CreateDefaultTestContext(bool setNullCustomData = false)
-        {
-            var userId = Guid.NewGuid().ToString();
-            var userName = "testusre";
-            var roles = new string[] { "role1", "role2" };
-            var testCustomData = new TestCustomData();
             var policyBuilder = new AuthorizationPolicyBuilder();
-            roles.ToList().ForEach(r => policyBuilder.RequireRole(r));
+            DefaultRoles.ToList().ForEach(r => policyBuilder.RequireRole(r));
             var policy1 = policyBuilder.Build();
             var policy2 = policyBuilder.Build();
 
-            var policies = new List<(string name, AuthorizationPolicy policy)>
+            DefaultPolicies = new List<(string name, AuthorizationPolicy policy)>
             {
                 (nameof(policy1), policy1), (nameof(policy2), policy2),
             };
 
-            return TestContext.CreateTestContext(
-                userId,
-                userName,
-                roles,
-                policies,
-                setNullCustomData ? null : testCustomData);
+            var userIdClaim = new Claim(AadClaimsAccessor.UserIdClaimType, DefaultUserId);
+            var userNameClaim = new Claim(AadClaimsAccessor.NameClaimType, DefaultUserName);
+
+            var identity = new ClaimsIdentity();
+            identity.AddClaims(new Claim[] { userIdClaim, userNameClaim });
+            identity.AddClaims(DefaultRoles.Select(r => new Claim(AadClaimsAccessor.RoleClaimType, r)));
+            DefaultClaimsPrincipal = new ClaimsPrincipal(identity);
         }
+
+        public TestContext(): base(DefaultPolicies, DefaultClaimsPrincipal)
+        {
+            this.TestCustomDataCreator = () => new TestCustomData();
+        }
+
+        public TestContext(bool setNullCustomData) : this()
+        {
+            this.TestCustomDataCreator = () => null;
+        }
+
+        protected override TestCustomData CreateData() => TestCustomDataCreator();
     }
 }

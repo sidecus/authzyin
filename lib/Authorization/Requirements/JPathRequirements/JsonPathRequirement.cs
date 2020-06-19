@@ -2,7 +2,6 @@ namespace AuthZyin.Authorization.JPathRequirements
 {
     using System;
     using System.Collections.Generic;
-    using Newtonsoft.Json.Linq;
     using AuthZyin.Authorization.Requirements;
 
     /// <summary>
@@ -23,10 +22,10 @@ namespace AuthZyin.Authorization.JPathRequirements
         /// <typeparam name="RequirementEvaluator">evaluator</typeparam>
         private static readonly Dictionary<OperatorType, RequirementEvaluator> EvaluatorMap = new Dictionary<OperatorType, RequirementEvaluator>()
         {
-            { OperatorType.Equals,       new EqualsEvaluator() },
-            { OperatorType.GreaterThan,  new GreaterThanEvaluator() },
-            { OperatorType.GreaterThanOrEqualTo,  new GreaterThanOrEqualToEvaluator() },
-            { OperatorType.Contains,     new ContainsEvaluator() },
+            { OperatorType.Equals,                  new EqualsEvaluator() },
+            { OperatorType.GreaterThan,             new GreaterThanEvaluator() },
+            { OperatorType.GreaterThanOrEqualTo,    new GreaterThanOrEqualToEvaluator() },
+            { OperatorType.Contains,                new ContainsEvaluator() },
         };
 
         /// <summary>
@@ -77,17 +76,22 @@ namespace AuthZyin.Authorization.JPathRequirements
         // Evaluate current requirement against given user and typed resource.
         /// </summary>
         /// <param name="context">authorization data context</param>
-        /// <param name="typedResource">resource object</param>
+        /// <param name="resource">resource object</param>
         /// <returns>true if allowed</returns>
-        protected sealed override bool Evaluate(AuthZyinContext<TData> context, TResource resource)
+        protected override bool Evaluate(AuthZyinContext<TData> context, TResource resource)
         {
-            if (context.Data == null)
+            if (context?.Data == null)
             {
                 throw new ArgumentNullException("JsonPath requirement needs the data to be set in context");
             }
 
-            var dataJObject = this.GetDataJObject(context);
-            var resourceJObj = this.GetResourceJObject(resource);
+            if (resource == null)
+            {
+                throw new ArgumentNullException("JsonPath based requirement needs the resource object");
+            }
+
+            var dataJObject = context.GetDataAsJObject();
+            var resourceJObj = resource.GetResourceAsJObject();
 
             if (dataJObject == null || resourceJObj == null)
             {
@@ -102,26 +106,6 @@ namespace AuthZyin.Authorization.JPathRequirements
                 this.ResourceJPath,
                 this.Direction);
             return EvaluatorMap[this.Operator].Evaluate(evaluatorContext);
-        }
-
-        /// <summary>
-        /// Get the JObject representing the custom data in the AuthZyinContext
-        /// </summary>
-        /// <param name="context">AuthZyin context object</param>
-        /// <returns>JObject for the custom data</returns>
-        protected JObject GetDataJObject(AuthZyinContext<TData> context)
-        {
-            return JObject.FromObject(context.Data);
-        }
-
-        /// <summary>
-        /// Get the resource in JObject format. Can be overridden
-        /// </summary>
-        /// <param name="resource">resource object</param>
-        /// <returns>resource object wrapped in JObject format</returns>
-        protected virtual JObject GetResourceJObject(TResource resource)
-        {
-            return JObject.FromObject(resource);
         }
     }
 }
