@@ -7,7 +7,6 @@ namespace sample
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authorization;
     using AuthZyin.Authentication;
     using AuthZyin.Authorization;
     using sample.AuthN;
@@ -41,7 +40,7 @@ namespace sample
             // See sample.csproj about how to use custom publish tasks to copy these files over.
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp";
+                configuration.RootPath = "ClientApp/build";
             });
 
             var authConfig = new AuthConfig();
@@ -92,7 +91,7 @@ namespace sample
 
             app.UseSpa(spa =>
             {
-                spa.Options.SourcePath = "../authzyin.js/example/";
+                spa.Options.SourcePath = "ClientApp";
 
                 if (env.IsDevelopment())
                 {
