@@ -180,7 +180,7 @@ ClientBin/
 *.publishsettings
 orleans.codegen.cs
 
-**node_modules
+**/node_modules
 
 # RIA/Silverlight projects
 Generated_Code/
@@ -233,5 +233,3 @@ _Pvt_Extensions
 
 # Tye
 .tye/
-
-/**/node_modules
