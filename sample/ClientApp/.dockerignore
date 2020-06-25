@@ -1,0 +1,10 @@
+# documents
+**/*.yml
+**/*.md
+**/Dockerfile
+
+# build objects
+**/obj
+**/bin
+**/node_modules
+**/build

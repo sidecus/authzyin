@@ -1,0 +1,17 @@
+# development stuff
+.github
+.vscode
+.git
+
+# documents
+**/*.yml
+**/*.md
+**/Dockerfile
+
+# build objects
+**/obj
+**/bin
+**/node_modules
+
+# exclude client app - it'll be built with a different docker iamge
+ClientApp
