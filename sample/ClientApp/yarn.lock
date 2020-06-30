@@ -61,7 +61,7 @@
     semver "^5.4.1"
     source-map "^0.5.0"
 
-"@babel/core@^7.1.0", "@babel/core@^7.4.5":
+"@babel/core@^7.1.0", "@babel/core@^7.10.3", "@babel/core@^7.4.5":
   version "7.10.3"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.10.3.tgz#73b0e8ddeec1e3fdd7a2de587a60e17c440ec77e"
   integrity sha512-5YqWxYE3pyhIi84L84YcwjeEgS+fa7ZjK6IBVGTjDVfm64njkR2lfDhVR5OudLk8x2GK59YoSyVv+L/03k1q9w==
@@ -2323,10 +2323,10 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-authzyin.js@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/authzyin.js/-/authzyin.js-0.1.1.tgz#6af857be9d8e43b2505a53001b5804b607610f7e"
-  integrity sha512-FOs+DUbX+wR22RchJkJtcGh4NB4UJux7euwYGuezQeBeo4vwBqtNu4/nAQGHm80hjRC3mSKyB8bJP9vSFyhl0w==
+authzyin.js@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/authzyin.js/-/authzyin.js-0.1.2.tgz#84235e7df649c0ecf3ff92e0fd11c9fab7ceaef0"
+  integrity sha512-Ot/0njUsLmq9TUhsZo+pttBLFo15hr0t/mwSHHMQCBE7l3tJ2YA1vVLhnPKEriAaxJ5klcYcg8hB8BK9vnGx4A==
   dependencies:
     jsonpath-plus "^4.0.0"
 
