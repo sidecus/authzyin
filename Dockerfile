@@ -1,5 +1,5 @@
 #
-# build image
+# build stage
 #
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
@@ -13,13 +13,15 @@ COPY test/test.csproj test/
 RUN dotnet restore
 
 # copy everything else and build app
+# we are skiping SPA in this image. SPA is handled by a different docker image with nginx.
+# check sample.csproj for how SkipSPA is defined.
 COPY lib/ lib/
 COPY sample/ sample/
 WORKDIR /authzyin/sample
-RUN dotnet publish -c Release
+RUN dotnet publish -c Release /p:SkipSPA=true
 
 #
-# runtime image
+# runtime stage
 #
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine
