@@ -22,7 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\lib\lib.csproj" />
   </ItemGroup>
-  <Target Name="DebugEnsureNodeAndYarn" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+  <Target Name="EnsureNodeAndYarn" BeforeTargets="Build" Condition=" !Exists('$(SpaRoot)node_modules') And '$(SkipSPA)' != 'true' ">
     <!-- Ensure Node.js and yarn are installed -->
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
@@ -36,8 +36,13 @@
     <Message Importance="high" Text="Restoring dependencies for SPA, this might take sveral minutes..." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="yarn install" />
   </Target>
-  <!-- Disabling SPA publish in release. We use docker to build them into two different images instead. -->
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition="'$(Configuration)' == 'Debug'">
+  <Target Name="BuildSPA" AfterTargets="Build" Condition=" '$(Configuration)' != 'Debug' And '$(SkipSPA)' != 'true' ">
+    <!-- build spa app for non debug when SkipSPA is not specified. Debug build will bulid the spa during run time usin the spa middleware -->
+    <Message Importance="high" Text="Building SPA ClientApp..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="yarn build" />
+  </Target>
+  <!-- Publish SPA. We will skip this when SkipSPA option is specified. -->
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition=" '$(SkipSPA)' != 'true' ">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec WorkingDirectory="$(SpaRoot)" Command="yarn install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="yarn build" />

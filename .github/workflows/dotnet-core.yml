@@ -19,10 +19,7 @@ jobs:
         dotnet-version: 3.1.101
     - name: Install dependencies
       run: dotnet restore
-    - name: Build
+    - name: Build lib and sample including SPA
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    # publish will trigger ClientApp SPA building
-    - name: Publish (with SPA)
-      run: dotnet publish
